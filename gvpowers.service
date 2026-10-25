@@ -1,0 +1,22 @@
+[Unit]
+Description=GV Powers ERP - Gunicorn Service
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/gv_powers_erp
+ExecStart=/opt/gv_powers_erp/venv/bin/gunicorn wsgi:application -c gunicorn.conf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=5
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+Environment="PATH=/opt/gv_powers_erp/venv/bin"
+EnvironmentFile=/opt/gv_powers_erp/.env
+
+[Install]
+WantedBy=multi-user.target
