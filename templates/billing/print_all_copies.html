@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{# ==========================================================================
+   "Print All 3 Copies" â€” ONE browser print dialog, THREE A4 pages.
+
+   Every page is produced by the one canonical macro
+   templates/invoices/standard_invoice.html with the one canonical stylesheet
+   static/css/invoice.css â€” the same files the downloadable PDF uses â€” so the
+   three printed pages are identical to the three individually downloaded PDFs.
+   Only the copy label differs.
+   ========================================================================== #}
+{% from "invoices/standard_invoice.html" import standard_invoice with context %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<link rel="stylesheet" href="{{ invoice_css_url if invoice_css_url else url_for('static', filename='css/invoice.css') }}?v=2.2">
+</head>
+<body class="gvp-print-doc gvp-page">
+
+<div class="gvp-toolbar no-print">
+    <div class="gvp-toolbar-row">
+        <a class="gvp-btn pdf" href="{{ url_for('download_all_pdfs', inv_id=invoice.id) }}">&#128196;&nbsp; Download All (PDF)</a>
+        <button class="gvp-btn" onclick="window.print()">&#128438;&nbsp; Print All 3 Copies</button>
+        <button class="gvp-btn close" onclick="window.close()">&times;&nbsp; Close Tab</button>
+    </div>
+</div>
+
+<div class="gvp-copies">
+{% for copy in copies %}
+{{ standard_invoice(invoice, company, copy, amount_words, logo_url=logo_url) }}
+{% endfor %}
+</div>
+
+<script>
+    (function () {
+        function markFillPages() {
+            var available = (294 - 10 - 20) * 96 / 25.4;
+            document.querySelectorAll('[data-print-sheet]').forEach(function (sheet) {
+                var main = sheet.querySelector('.gvp-main');
+                var bottom = sheet.querySelector('.gvp-bottom');
+                if (!main || !bottom) return;
+                var needed = main.getBoundingClientRect().height +
+                             bottom.getBoundingClientRect().height;
+                if (needed <= available - 3) sheet.classList.add('gvp-fill-page');
+            });
+        }
+        function doPrint() {
+            markFillPages();
+            try { window.print(); } catch (e) {}
+        }
+        if (document.readyState === 'complete') {
+            setTimeout(doPrint, 600);
+        } else {
+            window.addEventListener('load', function () {
+                setTimeout(doPrint, 600);
+            });
+        }
+    })();
+</script>
+</body>
+</html>
+

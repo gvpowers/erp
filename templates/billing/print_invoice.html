@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+{# ==========================================================================
+   Single printable invoice copy (ADMIN/OWNER | CUSTOMER | GST).
+
+   This view is a THIN WRAPPER ONLY. The entire invoice is rendered by the one
+   canonical template templates/invoices/standard_invoice.html using the one
+   canonical stylesheet static/css/invoice.css â€” the exact same markup and CSS
+   that app.py::_generate_invoice_pdf_canonical feeds to WeasyPrint for the
+   downloaded PDF. The ERP preview page uses the identical pair as well.
+
+   DOWNLOAD PDF == PRINTABLE INVOICE == BROWSER PRINT
+
+   Asset URLs:
+     invoice_css_url  the stylesheet URL. Defaults to the Flask static URL for
+                      the browser; the PDF renderer passes an absolute file://
+                      URI so the PDF engine never needs the web server.
+     logo_url         handled inside the canonical template / logo macro.
+
+   The <title> is intentionally EMPTY: a non-empty title makes some browsers
+   print a stray title line at the top of the page. The ERP never emits a
+   date, a time, a URL or any other browser-visible locator into the invoice.
+   ========================================================================== #}
+{% from "invoices/standard_invoice.html" import standard_invoice with context %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<link rel="stylesheet" href="{{ invoice_css_url if invoice_css_url else url_for('static', filename='css/invoice.css') }}?v=2.2">
+</head>
+<body class="gvp-print-doc gvp-page">
+
+<div class="gvp-toolbar no-print">
+    <div class="gvp-toolbar-row">
+        <a class="gvp-btn pdf" href="{{ url_for('download_invoice_pdf', inv_id=invoice.id, copy_type=copy_type) }}">&#128196;&nbsp; Download PDF</a>
+        <button class="gvp-btn" onclick="window.print()">&#128438;&nbsp; Print Invoice</button>
+        <button class="gvp-btn close" onclick="window.close()">&times;&nbsp; Close Tab</button>
+    </div>
+</div>
+
+{{ standard_invoice(invoice, company, copy_type, amount_words, logo_url=logo_url,
+                        fill_page=fill_page if fill_page is defined else false,
+                        bottom_spacer=bottom_spacer if bottom_spacer is defined else 0) }}
+
+<script>
+    (function () {
+        function markFillPages() {
+            var available = (294 - 10 - 20) * 96 / 25.4;
+            document.querySelectorAll('[data-print-sheet]').forEach(function (sheet) {
+                var main = sheet.querySelector('.gvp-main');
+                var bottom = sheet.querySelector('.gvp-bottom');
+                if (!main || !bottom) return;
+                var needed = main.getBoundingClientRect().height +
+                             bottom.getBoundingClientRect().height;
+                if (needed <= available - 3) sheet.classList.add('gvp-fill-page');
+            });
+        }
+        function doPrint() {
+            markFillPages();
+            try { window.print(); } catch (e) {}
+        }
+        if (document.readyState === 'complete') {
+            setTimeout(doPrint, 600);
+        } else {
+            window.addEventListener('load', function () {
+                setTimeout(doPrint, 600);
+            });
+        }
+    })();
+</script>
+</body>
+</html>
+

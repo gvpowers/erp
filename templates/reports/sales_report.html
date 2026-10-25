@@ -1,0 +1,247 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Sales Report{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('reports_page') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Reports</a>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="rpt-page">
+  <div class="rpt-hero">
+    <div>
+      <div class="rpt-crumb">Analytics / Sales</div>
+      <h4>Sales Report</h4>
+      <p>Detailed sales analytics for the selected period with trend, tax &amp; payment breakdowns.</p>
+    </div>
+    <div class="rpt-actions">
+      <button class="rpt-btn print" onclick="RP.printPage()"><i data-lucide="printer"></i> Print</button>
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='sales', **filters) }}"><i data-lucide="file-down"></i> PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='sales', **filters) }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='sales', **filters) }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+  </div>
+
+  <form method="GET" class="rpt-filters">
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Period</label>
+      <select class="rpt-select" name="period">
+        {% for k, v in [('today','Today'),('yesterday','Yesterday'),('week','This Week'),('month','This Month'),('year','This Year')] %}
+        <option value="{{ k }}" {{ 'selected' if request.args.get('period')==k }}>{{ v }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">From</label>
+      <input type="date" class="rpt-input" name="start_date" value="{{ request.args.get('start_date') or '' }}">
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">To</label>
+      <input type="date" class="rpt-input" name="end_date" value="{{ request.args.get('end_date') or '' }}">
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Status</label>
+      <select class="rpt-select" name="status">
+        <option value="">All</option>
+        {% for st in ['completed','pending','cancelled','draft'] %}
+        <option value="{{ st }}" {{ 'selected' if request.args.get('status')==st }}>{{ st.title() }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Payment</label>
+      <select class="rpt-select" name="payment_status">
+        <option value="">All</option>
+        {% for st in ['paid','partial','pending','cancelled'] %}
+        <option value="{{ st }}" {{ 'selected' if request.args.get('payment_status')==st }}>{{ st.title() }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Payment Method</label>
+      <select class="rpt-select" name="payment_method">
+        <option value="">All</option>
+        {% for m in ['Cash','UPI','Card','Credit'] %}
+        <option value="{{ m }}" {{ 'selected' if request.args.get('payment_method')==m }}>{{ m }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Customer</label>
+      <select class="rpt-select" name="customer_id">
+        <option value="">All</option>
+        {% for c in customers %}<option value="{{ c.id }}" {{ 'selected' if filters.get('customer_id')==c.id }}>{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Salesperson</label>
+      <select class="rpt-select" name="salesperson_id">
+        <option value="">All</option>
+        {% for u in sales_users %}<option value="{{ u.id }}" {{ 'selected' if filters.get('salesperson_id')==u.id }}>{{ u.full_name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Product</label>
+      <select class="rpt-select" name="product_id">
+        <option value="">All</option>
+        {% for p in products %}<option value="{{ p.id }}" {{ 'selected' if filters.get('product_id')==p.id }}>{{ p.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Search</label>
+      <input type="text" class="rpt-input" name="q" placeholder="Customer / Invoice / GSTIN" value="{{ request.args.get('q') or '' }}">
+    </div>
+    <div class="rpt-fgroup">
+      <button type="submit" class="rpt-btn rpt-btn-filter"><i data-lucide="filter"></i> Apply</button>
+    </div>
+    <div class="rpt-fgroup">
+      <a href="{{ url_for('sales_report') }}" class="rpt-btn rpt-btn-reset"><i data-lucide="rotate-ccw"></i> Reset</a>
+    </div>
+  </form>
+
+  <div class="rpt-stats">
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="receipt"></i></span></div><div class="rpt-stat-value">{{ summary.count }}</div><div class="rpt-stat-label">Total Invoices</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="indian-rupee"></i></span></div><div class="rpt-stat-value">{{ format_currency(summary.total) }}</div><div class="rpt-stat-label">Total Sales (Gross)</div></div>
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="layers"></i></span></div><div class="rpt-stat-value">{{ format_currency(summary.taxable) }}</div><div class="rpt-stat-label">Taxable Value</div></div>
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="percent"></i></span></div><div class="rpt-stat-value">{{ format_currency(summary.tax) }}</div><div class="rpt-stat-label">GST Collected</div></div>
+    <div class="rpt-stat red"><div class="rpt-stat-row"><span class="rpt-stat-ico red"><i data-lucide="badge-percent"></i></span></div><div class="rpt-stat-value">{{ format_currency(summary.discount) }}</div><div class="rpt-stat-label">Discounts Given</div></div>
+    <div class="rpt-stat purple"><div class="rpt-stat-row"><span class="rpt-stat-ico purple"><i data-lucide="scale"></i></span></div><div class="rpt-stat-value">{{ format_currency(summary.avg) }}</div><div class="rpt-stat-label">Average Sale</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="hand-coins"></i></span></div><div class="rpt-stat-value">{{ format_currency(summary.paid) }}</div><div class="rpt-stat-label">Amount Collected</div></div>
+    <div class="rpt-stat red"><div class="rpt-stat-row"><span class="rpt-stat-ico red"><i data-lucide="wallet"></i></span></div><div class="rpt-stat-value">{{ format_currency(summary.balance) }}</div><div class="rpt-stat-label">Outstanding Balance</div></div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="chart-line"></i> Daily Sales Trend</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="dailyChart"></canvas></div></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="calendar-range"></i> Monthly Sales</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="monthlyChart"></canvas></div></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="circle-dollar-sign"></i> Payment Status</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="statusChart"></canvas></div></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="credit-card"></i> Payment Methods</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="methodChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="trophy"></i> Top Customers</h3></div>
+      <div class="rpt-scroll no-h">
+        <table class="rpt-table">
+          <thead><tr><th>Customer</th><th class="tar">Invoices</th><th class="tar">Total</th></tr></thead>
+          <tbody>
+          {% if top_customers %}
+            {% for name, cnt, tot in top_customers %}
+            <tr><td>{{ name or 'Walk-in' }}</td><td class="tar">{{ cnt }}</td><td class="tar">{{ format_currency(tot) }}</td></tr>
+            {% endfor %}
+          {% else %}<tr class="empty-row"><td colspan="3">No customers in range</td></tr>{% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="package"></i> Top Products</h3></div>
+      <div class="rpt-scroll no-h">
+        <table class="rpt-table">
+          <thead><tr><th>Product</th><th class="tar">Qty</th><th class="tar">Value</th></tr></thead>
+          <tbody>
+          {% if top_products %}
+            {% for name, qty, val in top_products %}
+            <tr><td>{{ name }}</td><td class="tar">{{ qty }}</td><td class="tar">{{ format_currency(val) }}</td></tr>
+            {% endfor %}
+          {% else %}<tr class="empty-row"><td colspan="3">No data in range</td></tr>{% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="rpt-card" data-report-table>
+    <div class="rpt-card-head"><h3><i data-lucide="file-text"></i> Invoice Details</h3><span class="rpt-count"></span></div>
+    <div class="rpt-toolbar">
+      <div class="rpt-search"><i data-lucide="search"></i><input type="text" placeholder="Search invoices..."></div>
+      <div class="rpt-perpage">Show <select><option>25</option><option>50</option><option>100</option><option>200</option></select> rows</div>
+    </div>
+    <div class="rpt-scroll">
+      <table class="rpt-table">
+        <thead><tr>
+          <th>Invoice #</th><th>Date</th><th>Customer</th><th>GSTIN</th>
+          <th class="tar">Subtotal</th><th class="tar">Discount</th><th class="tar">Taxable</th>
+          <th class="tar">Tax</th><th class="tar">Grand Total</th><th class="tar">Paid</th><th class="tar">Balance</th>
+          <th>Status</th><th>Payment</th>
+        </tr></thead>
+        <tbody>
+        {% for inv in invoices %}
+        <tr>
+          <td>{{ inv.invoice_number }}</td>
+          <td>{{ inv.invoice_date.strftime('%d %b %Y') if inv.invoice_date else '' }}</td>
+          <td>{{ inv.customer_name or 'Walk-in' }}</td>
+          <td class="rpt-muted">{{ (inv.customer_gstin or '')[:15] }}{% if inv.customer_gstin and inv.customer_gstin|length > 15 %}…{% endif %}</td>
+          <td class="tar">{{ format_currency(inv.subtotal or 0) }}</td>
+          <td class="tar">{{ format_currency(inv.total_discount or 0) }}</td>
+          <td class="tar">{{ format_currency(inv.total_taxable or 0) }}</td>
+          <td class="tar">{{ format_currency((inv.total_cgst or 0)+(inv.total_sgst or 0)+(inv.total_igst or 0)) }}</td>
+          <td class="tar"><b>{{ format_currency(inv.grand_total or 0) }}</b></td>
+          <td class="tar">{{ format_currency(inv.amount_paid or 0) }}</td>
+          <td class="tar">{{ format_currency((inv.grand_total or 0)-(inv.amount_paid or 0)) }}</td>
+          <td>{% if inv.status == 'cancelled' %}<span class="rpt-badge gray">Cancelled</span>{% elif (inv.grand_total or 0) <= (inv.amount_paid or 0) %}<span class="rpt-badge green">Paid</span>{% else %}<span class="rpt-badge amber">Partial</span>{% endif %}</td>
+          <td class="rpt-muted">{{ (inv.payment_method or '—')|title }}</td>
+        </tr>
+        {% else %}
+        <tr class="empty-row"><td colspan="13">No invoices found for the selected filters.</td></tr>
+        {% endfor %}
+        </tbody>
+        {% if invoices %}
+        <tfoot><tr><td colspan="4">Totals</td>
+          <td class="tar">{{ format_currency(summary.total) }}</td>
+          <td class="tar">{{ format_currency(summary.discount) }}</td>
+          <td class="tar">{{ format_currency(summary.taxable) }}</td>
+          <td class="tar">{{ format_currency(summary.tax) }}</td>
+          <td class="tar">{{ format_currency(summary.total) }}</td>
+          <td class="tar">{{ format_currency(summary.paid) }}</td>
+          <td class="tar">{{ format_currency(summary.balance) }}</td>
+          <td colspan="2"></td></tr></tfoot>
+        {% endif %}
+      </table>
+    </div>
+    <div class="rpt-pager"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/reports.js') }}?v=2"></script>
+<script>
+  var daily = {{ daily_data | tojson }};
+  var monthly = {{ monthly_data | tojson }};
+  var status = {{ status_data | tojson }};
+  var method = {{ method_data | tojson }};
+  var pal = RP.PALETTE;
+
+  var dk = Object.keys(daily).sort();
+  if (dk.length) RP.drawChart({ el: document.getElementById('dailyChart'), type:'bar', labels: dk, money:true, legend:false,
+    datasets:[{ label:'Sales', data: dk.map(function(k){return daily[k].total;}), backgroundColor: pal[0]+'33', borderColor: pal[0], borderWidth:2, borderRadius:4 }]});
+
+  var mk = Object.keys(monthly).sort();
+  if (mk.length) RP.drawChart({ el: document.getElementById('monthlyChart'), type:'line', labels: mk, money:true, legend:false,
+    datasets:[{ label:'Monthly', data: mk.map(function(k){return monthly[k].total;}), borderColor: pal[1], backgroundColor: pal[1]+'22', fill:true, tension:0.3, pointRadius:3 }]});
+
+  if (status.length) RP.drawChart({ el: document.getElementById('statusChart'), type:'doughnut', money:true, legend:true,
+    labels: status.map(function(s){return (s.status||'NA').replace(/_/g,' ');}),
+    datasets:[{ data: status.map(function(s){return s.total;}),
+      backgroundColor: pal.slice(0, status.length).map(function(c){return c+'CC';}),
+      borderColor: ['#fff'], borderWidth:2 }]});
+
+  if (method.length) RP.drawChart({ el: document.getElementById('methodChart'), type:'bar', money:true, legend:false,
+    labels: method.map(function(m){return m.method;}),
+    datasets:[{ label:'By method', data: method.map(function(m){return m.total;}), backgroundColor: method.map(function(_,i){return pal[i%pal.length]+'AA';}), borderRadius:5 }]});
+</script>
+{% endblock %}

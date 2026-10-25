@@ -1,0 +1,11 @@
+/* ============================================
+   GV Powers ERP - Billing Print & Preview
+   Print-specific styles for invoices
+   ============================================ */
+
+/* Invoice Preview Print - supplemental rules beyond responsive.css */
+@media print {
+  .preview-card { box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+  .preview-wrapper { padding: 0 !important; }
+  .items-table thead th { background: #2563EB !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

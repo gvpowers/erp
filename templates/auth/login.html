@@ -1,0 +1,409 @@
+﻿{% extends "base.html" %}
+{% from "partials/logo.html" import gv_logo %}
+{% block title %}Login - GV Powers ERP{% endblock %}
+
+{% block head %}
+<style>
+    body {
+        display: flex;
+        min-height: 100vh;
+        background: var(--bg-page);
+        overflow: hidden;
+    }
+    .login-split {
+        display: flex;
+        width: 100%;
+        min-height: 100vh;
+    }
+    .login-brand-panel {
+        flex: 0 0 45%;
+        background: #081C3A;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+    .login-brand-panel::before {
+        content: '';
+        position: absolute;
+        top: -40%;
+        left: -40%;
+        width: 180%;
+        height: 180%;
+        background: radial-gradient(ellipse at 30% 20%, rgba(37,99,235,.2) 0%, transparent 50%),
+                    radial-gradient(ellipse at 70% 80%, rgba(37,99,235,.1) 0%, transparent 50%);
+        animation: brandPulse 12s ease-in-out infinite;
+    }
+    @keyframes brandPulse {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(-2%, -1%) scale(1.02); }
+    }
+    .login-brand-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        max-width: 400px;
+    }
+    .login-brand-logo {
+        width: 100px;
+        height: 100px;
+        border-radius: 24px;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.15);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 32px;
+        overflow: hidden;
+    }
+    .login-brand-logo img {
+        width: 72px;
+        height: 72px;
+        object-fit: contain;
+    }
+    .login-brand-content h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #FFFFFF;
+        margin: 0 0 12px;
+        letter-spacing: -0.03em;
+    }
+    .login-brand-content .tagline {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.7);
+        margin: 0 0 40px;
+        font-weight: 400;
+    }
+    .brand-features {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        text-align: left;
+    }
+    .brand-feature {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 18px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .brand-feature-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(37,99,235,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .brand-feature-icon i {
+        width: 20px;
+        height: 20px;
+        color: #60A5FA;
+    }
+    .brand-feature-text {
+        font-size: 0.85rem;
+        color: rgba(255,255,255,0.85);
+        font-weight: 500;
+    }
+    .brand-footer {
+        position: absolute;
+        bottom: 32px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        z-index: 1;
+    }
+    .brand-footer p {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.4);
+        margin: 0;
+    }
+
+    .login-form-panel {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background: var(--bg-white);
+    }
+    .login-form-wrapper {
+        width: 100%;
+        max-width: 420px;
+    }
+    .login-form-header {
+        margin-bottom: 36px;
+    }
+    .login-form-header h2 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin: 0 0 8px;
+        letter-spacing: -0.02em;
+    }
+    .login-form-header p {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+    .login-form .form-group {
+        margin-bottom: 20px;
+    }
+    .login-form label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+    }
+    .input-icon-wrap {
+        position: relative;
+    }
+    .input-icon-wrap .input-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .input-icon-wrap .input-icon i {
+        width: 18px;
+        height: 18px;
+    }
+    .input-icon-wrap input {
+        padding-left: 44px;
+    }
+    .input-icon-wrap .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: color 150ms ease;
+    }
+    .input-icon-wrap .toggle-password:hover {
+        color: var(--text-primary);
+    }
+    .input-icon-wrap .toggle-password i {
+        width: 18px;
+        height: 18px;
+    }
+    .remember-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+    .remember-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .remember-check input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--color-primary);
+        border-radius: 4px;
+    }
+    .remember-check label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin: 0;
+        font-weight: 500;
+    }
+    .login-btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border-radius: 12px;
+        background: var(--color-primary);
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        transition: all 200ms ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .login-btn:hover {
+        background: var(--color-primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(37,99,235,.3);
+    }
+    .login-btn:active {
+        transform: translateY(0);
+    }
+    .login-btn i {
+        width: 20px;
+        height: 20px;
+    }
+    .login-form-footer {
+        text-align: center;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-light);
+    }
+    .login-form-footer p {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+    .flash-messages {
+        margin-bottom: 24px;
+    }
+
+    @media (max-width: 1024px) {
+        .login-brand-panel {
+            display: none;
+        }
+        .login-form-panel {
+            padding: 24px;
+        }
+    }
+    @media (max-width: 480px) {
+        .login-form-wrapper {
+            max-width: 100%;
+        }
+        .login-form-panel {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="login-split">
+    <div class="login-brand-panel">
+        <div class="login-brand-content">
+            <div class="login-brand-logo">
+                {{ gv_logo(alt="GV Powers") }}
+            </div>
+            <h1>GV Powers</h1>
+            <p class="tagline">Powering A Better Tomorrow</p>
+            <div class="brand-features">
+                <div class="brand-feature">
+                    <div class="brand-feature-icon"><i data-lucide="sun"></i></div>
+                    <span class="brand-feature-text">Solar Panels &amp; Complete Energy Solutions</span>
+                </div>
+                <div class="brand-feature">
+                    <div class="brand-feature-icon"><i data-lucide="zap"></i></div>
+                    <span class="brand-feature-text">Inverters, UPS &amp; Battery Systems</span>
+                </div>
+                <div class="brand-feature">
+                    <div class="brand-feature-icon"><i data-lucide="receipt"></i></div>
+                    <span class="brand-feature-text">GST-Compliant Invoicing &amp; Reports</span>
+                </div>
+                <div class="brand-feature">
+                    <div class="brand-feature-icon"><i data-lucide="bar-chart-3"></i></div>
+                    <span class="brand-feature-text">Real-Time Inventory &amp; Analytics</span>
+                </div>
+            </div>
+        </div>
+        <div class="brand-footer">
+            <p>&copy; 2026 GV Powers. All rights reserved.</p>
+        </div>
+    </div>
+
+    <div class="login-form-panel">
+        <div class="login-form-wrapper">
+            <div class="login-form-header">
+                <h2>Welcome back</h2>
+                <p>Sign in to your account to continue</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for cat, msg in messages %}
+                <div class="alert alert-{{ cat }} mb-8" style="border-radius:10px;">
+                    <i data-lucide="{% if cat == 'success' %}check-circle{% elif cat == 'danger' %}x-circle{% elif cat == 'warning' %}alert-triangle{% else %}info{% endif %}" style="width:18px;height:18px;flex-shrink:0;"></i>
+                    <span>{{ msg }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('login') }}" class="login-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-icon-wrap">
+                        <span class="input-icon"><i data-lucide="user"></i></span>
+                        <input type="text" class="form-control" id="username" name="username"
+                               placeholder="Enter your username" required autofocus autocomplete="username"
+                               style="padding-left:44px;padding-right:14px;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-icon-wrap">
+                        <span class="input-icon"><i data-lucide="lock"></i></span>
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Enter your password" required autocomplete="current-password"
+                               style="padding-left:44px;padding-right:44px;">
+                        <button type="button" class="toggle-password" onclick="togglePassword()" title="Show/hide password">
+                            <i data-lucide="eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="remember-row">
+                    <div class="remember-check">
+                        <input type="checkbox" id="remember" name="remember" value="1">
+                        <label for="remember">Remember me</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i data-lucide="log-in"></i>
+                    Sign In
+                </button>
+            </form>
+
+            <div class="login-form-footer">
+                <p>Enterprise Resource Planning System v1.0</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword() {
+    const pw = document.getElementById('password');
+    const icon = document.getElementById('eyeIcon');
+    if (pw.type === 'password') {
+        pw.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+    } else {
+        pw.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+    }
+    lucide.createIcons();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,276 @@
+{% from "partials/logo.html" import gv_logo with context %}
+{# ==========================================================================
+   GV POWERS QUOTATION
+   Uses the same canonical sheet, Bill To / details table, item table, HSN/GST
+   table, payment-style information table and summary table as the invoice.
+   Only the two permitted copies exist: OWNER COPY and CUSTOMER COPY.
+   ========================================================================== #}
+{% macro standard_quotation(quotation, company=None, amount_words='', logo_url=None,
+                            copy_type='customer', logo_disabled=False, fill_page=False) -%}
+{% set co = company or {} %}
+{% set brand_name = (co.name or 'GV POWERS')|upper %}
+{% set address_lines = gvp_address_lines(co.address or 'No. 10, Kadharkhan Street, Opp. Railway Junction, Salem - 636005, Tamil Nadu, India', co.city or 'Salem', co.pincode or '636005') %}
+{% set state_str = (quotation.customer_state or co.state or 'N/A') ~ ((' (' ~ quotation.customer_state_code ~ ')') if quotation.customer_state_code else '') %}
+{% set _copy_labels = {'owner': 'OWNER COPY', 'customer': 'CUSTOMER COPY'} %}
+{% set copy_type = copy_type if copy_type in _copy_labels else 'customer' %}
+{% set copy_label = _copy_labels[copy_type] %}
+<div class="gvp-sheet gvp-quotation-sheet{% if fill_page %} gvp-fill-page{% endif %}" data-copy-type="{{ copy_type }}">
+  <div class="gvp-main">
+
+    {# ===================== HEADER: logo + identity | doc title + copy label ==================== #}
+    <div class="gvp-head">
+        <div class="gvp-brand">
+            {% if not logo_disabled %}
+            <div class="gvp-logo">{{ gv_logo(alt=brand_name ~ ' Logo', src=logo_url) }}</div>
+            {% endif %}
+            <div class="gvp-brand-text">
+                <div class="gvp-brand-name">{{ brand_name }}</div>
+                <div class="gvp-brand-contact">
+                    {% for line in address_lines %}<span class="gvp-line">{{ line }}</span>{% endfor %}
+                    <span class="gvp-line">Phone: <span class="gvp-em">{{ co.phone or '+91 98940 79090' }}</span></span>
+                    <span class="gvp-line">Mobile: <span class="gvp-em">{{ co.mobile or '+91 98940 79095' }}</span></span>
+                    <span class="gvp-line">Email: <span class="gvp-em">{{ co.email or 'gvpowerssalem@gmail.com' }}</span></span>
+                    <span class="gvp-line gvp-line-navy">GSTIN: {{ co.gstin or '33AGEPV1534G2ZJ' }}</span>
+                    <span class="gvp-line gvp-line-navy">{{ co.website or 'https://gvpowers.in' }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="gvp-title-cell">
+            <div class="gvp-doc-title">Quotation</div>
+            <div class="gvp-copy-label">{{ copy_label }}</div>
+        </div>
+    </div>
+
+    {# ===================== BILL TO + QUOTATION DETAILS ==================== #}
+    <table class="gvp-party-table">
+        <colgroup>
+            <col class="gvp-party-col"><col class="gvp-party-col">
+        </colgroup>
+        <tbody>
+            <tr>
+                <td class="gvp-party-cell gvp-party-left">
+                    <div class="gvp-sec-head">Bill To</div>
+                    <table class="gvp-kv-table">
+                        <colgroup><col class="gvp-kv-col-k"><col></colgroup>
+                        <tbody>
+                            <tr><td colspan="2" class="gvp-cust-name">{{ quotation.customer_name or '—' }}</td></tr>
+                            {% if quotation.customer_address %}
+                            <tr><td class="k">Address</td><td class="v v-wrap">{{ quotation.customer_address }}</td></tr>
+                            {% endif %}
+                            {% if quotation.customer_mobile %}
+                            <tr><td class="k">Mobile</td><td class="v">{{ quotation.customer_mobile }}</td></tr>
+                            {% endif %}
+                            {% if quotation.customer_email %}
+                            <tr><td class="k">Email</td><td class="v v-wrap">{{ quotation.customer_email }}</td></tr>
+                            {% endif %}
+                            {% if quotation.customer_gstin %}
+                            <tr><td class="k">GSTIN</td><td class="v v-mono">{{ quotation.customer_gstin }}</td></tr>
+                            {% endif %}
+                            <tr><td class="k">State</td><td class="v">{{ state_str }}</td></tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td class="gvp-party-cell gvp-party-right">
+                    <div class="gvp-sec-head">Quotation Details</div>
+                    <table class="gvp-kv-table">
+                        <colgroup><col class="gvp-kv-col-k"><col></colgroup>
+                        <tbody>
+                            <tr><td class="k">Quotation No.</td><td class="v v-mono">{{ quotation.quotation_number }}</td></tr>
+                            {% if quotation.eway_bill_number %}
+                            <tr><td class="k">E-Way Bill No.</td><td class="v v-mono">{{ quotation.eway_bill_number }}</td></tr>
+                            {% endif %}
+                            <tr><td class="k">Quotation Date</td><td class="v">{{ quotation.quotation_date.strftime('%d-%m-%Y') if quotation.quotation_date else '—' }}</td></tr>
+                            <tr><td class="k">Place of Supply</td><td class="v">{{ state_str }}</td></tr>
+                            <tr><td class="k">Prepared By</td><td class="v">{{ quotation.creator.full_name if quotation.creator and quotation.creator.full_name else 'GV POWERS' }}</td></tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    {# ===================== ITEM TABLE (13 real columns) ==================== #}
+    <div class="gvp-items-wrap">
+        <table class="gvp-items">
+            <colgroup>
+                <col class="c-si"><col class="c-desc"><col class="c-hsn"><col class="c-qty">
+                <col class="c-unit"><col class="c-rate"><col class="c-disc"><col class="c-gst">
+                <col class="c-tax"><col class="c-cgst"><col class="c-sgst"><col class="c-igst"><col class="c-amt">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="c">SI. NO.</th>
+                    <th>Description of Goods and Services</th>
+                    <th class="c">HSN/SAC</th>
+                    <th class="c">QTY</th>
+                    <th class="c">UNIT</th>
+                    <th class="r">RATE</th>
+                    <th class="r">DISC. %</th>
+                    <th class="r">GST %</th>
+                    <th class="r">TAXABLE</th>
+                    <th class="r">CGST</th>
+                    <th class="r">SGST</th>
+                    <th class="r">IGST</th>
+                    <th class="r">AMOUNT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set ts = {'tax': 0, 'cgst': 0, 'sgst': 0, 'igst': 0, 'amt': 0} %}
+                {% for item in quotation.items %}
+                {% set _ = ts.update(tax=ts['tax'] + item.taxable_value, cgst=ts['cgst'] + item.cgst, sgst=ts['sgst'] + item.sgst, igst=ts['igst'] + item.igst, amt=ts['amt'] + item.total) %}
+                {% set item_desc = line_item_description(item) %}
+                <tr>
+                    <td class="c">{{ loop.index }}</td>
+                    <td class="gvp-desc"><span class="gvp-prod">{{ item.product_name }}</span>{% if item_desc %}<span class="gvp-item-desc">{{ item_desc }}</span>{% endif %}</td>
+                    <td class="c num">{{ item.hsn or '—' }}</td>
+                    <td class="c num">{{ item.qty }}</td>
+                    <td class="c">{{ item.unit or 'pcs' }}</td>
+                    <td class="r num">{{ format_currency(item.price, symbol=False) }}</td>
+                    <td class="r num">{{ '%.2f'|format(item.discount or 0) }}%</td>
+                    <td class="r num">{{ '%.2f'|format(item.gst_rate or 0) }}%</td>
+                    <td class="r num">{{ format_currency(item.taxable_value, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(item.cgst, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(item.sgst, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(item.igst, symbol=False) }}</td>
+                    <td class="r num gvp-amt">{{ format_currency(item.total, symbol=False) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="8" class="r gvp-total-label">Total</td>
+                    <td class="r num">{{ format_currency(ts['tax'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(ts['cgst'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(ts['sgst'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(ts['igst'], symbol=False) }}</td>
+                    <td class="r num gvp-amt">{{ format_currency(ts['amt'], symbol=False) }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="gvp-currency-note">All amounts are expressed in Indian Rupees (Rs.).</div>
+
+    {# ===================== HSN / GST SUMMARY ==================== #}
+    <div class="gvp-band-head">HSN / GST SUMMARY</div>
+    <div class="gvp-gst-wrap">
+        <table class="gvp-gst">
+            <colgroup>
+                <col class="g-hsn"><col class="g-tax"><col class="g-rate">
+                <col class="g-cgst"><col class="g-sgst"><col class="g-igst"><col class="g-total">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>HSN/SAC</th>
+                    <th>Taxable Value</th>
+                    <th>GST Rate</th>
+                    <th class="r">CGST</th>
+                    <th class="r">SGST</th>
+                    <th class="r">IGST</th>
+                    <th class="r">Total Tax</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set ns = namespace(hsn={}) %}
+                {% for item in quotation.items %}
+                    {% set h = item.hsn or 'N/A' %}
+                    {% if h not in ns.hsn %}
+                        {% set _ = ns.hsn.update({h: {'taxable': 0, 'cgst': 0, 'sgst': 0, 'igst': 0, 'rate': item.gst_rate or 0}}) %}
+                    {% endif %}
+                    {% set _ = ns.hsn[h].update({'taxable': ns.hsn[h]['taxable'] + item.taxable_value, 'cgst': ns.hsn[h]['cgst'] + item.cgst, 'sgst': ns.hsn[h]['sgst'] + item.sgst, 'igst': ns.hsn[h]['igst'] + item.igst}) %}
+                {% endfor %}
+                {% for h, d in ns.hsn.items() %}
+                <tr>
+                    <td class="v-mono">{{ h }}</td>
+                    <td class="r num">{{ format_currency(d['taxable'], symbol=False) }}</td>
+                    <td class="c num">{{ '%.0f'|format(d['rate']) }}%</td>
+                    <td class="r num">{{ format_currency(d['cgst'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(d['sgst'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(d['igst'], symbol=False) }}</td>
+                    <td class="r num gvp-amt">{{ format_currency(d['cgst'] + d['sgst'] + d['igst'], symbol=False) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Total</td>
+                    <td class="r num">{{ format_currency(quotation.total_taxable, symbol=False) }}</td>
+                    <td></td>
+                    <td class="r num">{{ format_currency(quotation.total_cgst, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(quotation.total_sgst, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(quotation.total_igst, symbol=False) }}</td>
+                    <td class="r num gvp-amt">{{ format_currency(quotation.total_cgst + quotation.total_sgst + quotation.total_igst, symbol=False) }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    {# ===================== QUOTATION INFORMATION + SUMMARY ==================== #}
+    <table class="bottom-sections-table">
+        <colgroup>
+            <col class="bottom-col-payment"><col class="bottom-col-summary">
+        </colgroup>
+        <tbody>
+            <tr>
+                <td class="payment-section">
+                    <div class="gvp-sec-head">Quotation Information</div>
+                    <table class="payment-info-table">
+                        <colgroup>
+                            <col class="payment-col-label"><col class="payment-col-value">
+                            <col class="payment-col-label"><col class="payment-col-value">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="payment-label">Status</td>
+                                <td class="payment-value">{{ quotation.status|upper if quotation.status else '—' }}</td>
+                                <td class="payment-label">Valid Until</td>
+                                <td class="payment-value">{{ quotation.valid_until.strftime('%d-%m-%Y') if quotation.valid_until else '—' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+
+                <td class="summary-section">
+                    <div class="gvp-sec-head">Quotation Summary</div>
+                    <table class="gvp-totals">
+                        <tr><td class="l">Subtotal</td><td class="v num">{{ format_currency(quotation.subtotal) }}</td></tr>
+                        {% if quotation.total_discount and quotation.total_discount > 0 %}
+                        <tr><td class="l">Discount</td><td class="v num v-credit">-{{ format_currency(quotation.total_discount) }}</td></tr>
+                        {% endif %}
+                        <tr><td class="l">Taxable Amount</td><td class="v num">{{ format_currency(quotation.total_taxable) }}</td></tr>
+                        <tr><td class="l">CGST</td><td class="v num">{{ format_currency(quotation.total_cgst) }}</td></tr>
+                        <tr><td class="l">SGST</td><td class="v num">{{ format_currency(quotation.total_sgst) }}</td></tr>
+                        <tr><td class="l">IGST</td><td class="v num">{{ format_currency(quotation.total_igst) }}</td></tr>
+                        {% if quotation.round_off and quotation.round_off != 0 %}
+                        <tr><td class="l">Round Off</td><td class="v num">{{ format_currency(quotation.round_off) }}</td></tr>
+                        {% endif %}
+                        <tr class="gvp-grand">
+                            <td class="l gvp-grand-label">Grand Total</td>
+                            <td class="v num gvp-grand-value">{{ format_currency(quotation.grand_total) }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    {# ===================== AMOUNT IN WORDS ==================== #}
+    <div class="gvp-words">
+        <span class="gvp-words-head">Amount in Words</span>
+        <span class="gvp-words-value">{{ amount_words if amount_words else 'Rupees Zero Only' }}</span>
+    </div>
+
+    {% if quotation.terms %}
+    <div class="gvp-terms">
+        <div class="gvp-sec-head">Terms &amp; Conditions</div>
+        <div class="gvp-sec-body">{{ quotation.terms }}</div>
+    </div>
+    {% endif %}
+  </div><!-- /.gvp-main -->
+
+  <div class="gvp-filler"></div>
+
+  <div class="gvp-bottom gvp-quotation-bottom">
+    <div class="gvp-foot">This is a computer-generated quotation.</div>
+  </div>
+</div>
+{%- endmacro %}

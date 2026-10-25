@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Quotation {{ quotation.quotation_number }} - GV Powers ERP{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/invoice.css') }}?v=2.2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/quotation.css') }}?v=1.2">
+{% endblock %}
+{% block body %}
+{% set copy_type = copy_type|default('customer') %}
+<div class="page-shell">
+  <div class="page-header">
+    <a href="{{ url_for('quotations_list') }}" class="back-button">
+      <i data-lucide="arrow-left" class="icon-left"></i><span>Back to Quotations</span>
+    </a>
+
+    <div class="header-accent"></div>
+
+    <div class="page-title">
+      <span>QUOTATION</span>
+      <span class="quotation-number">{{ quotation.quotation_number }}</span>
+    </div>
+
+    <div class="action-buttons">
+      <button class="print-btn" type="button" onclick="window.print(); return false;">
+        <i data-lucide="printer" class="icon-print"></i><span>Print</span>
+      </button>
+      <a class="download-btn" href="{{ url_for('download_quotation_pdf', qid=quotation.id, copy=copy_type) }}" type="button" download>
+        <i data-lucide="download" class="icon-download"></i><span>Download PDF</span>
+      </a>
+      {% if quotation.status == 'accepted' and not quotation.converted_invoices %}
+      <form method="POST" action="{{ url_for('convert_quotation_to_invoice', qid=quotation.id) }}" style="display:inline">
+        <button class="btn btn-success" type="submit">Convert to Invoice</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="quotation-copy-toolbar">
+    <div class="quotation-copy-tabs" role="tablist" aria-label="Quotation copies">
+      <a class="quotation-copy-tab{% if copy_type == 'owner' %} active{% endif %}"
+         href="{{ url_for('view_quotation', qid=quotation.id, copy='owner') }}"
+         role="tab" aria-selected="{{ 'true' if copy_type == 'owner' else 'false' }}">Owner Copy</a>
+      <a class="quotation-copy-tab{% if copy_type == 'customer' %} active{% endif %}"
+         href="{{ url_for('view_quotation', qid=quotation.id, copy='customer') }}"
+         role="tab" aria-selected="{{ 'true' if copy_type == 'customer' else 'false' }}">Customer Copy</a>
+    </div>
+    <div class="quotation-bulk-actions">
+      <a href="{{ url_for('print_all_quotation_copies', qid=quotation.id) }}" target="_blank" rel="noopener">
+        <i data-lucide="printer"></i><span>Print Both Copies</span>
+      </a>
+      <a href="{{ url_for('download_all_quotation_pdfs', qid=quotation.id) }}">
+        <i data-lucide="download"></i><span>Download Both Copies</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="preview-stage">
+    {% from 'quotations/standard_quotation.html' import standard_quotation with context %}
+    {{ standard_quotation(quotation, company, amount_words, copy_type=copy_type) }}
+  </div>
+</div>
+{% endblock %}

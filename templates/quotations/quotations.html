@@ -1,0 +1,233 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Quotations{% endblock %}
+{% block back_link %}<a href="{{ url_for('dashboard') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Dashboard</a>{% endblock %}
+{% block content %}
+
+<style>
+  .q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:16px}
+  .q-header-left h1{font-size:2rem;font-weight:800;color:var(--text-primary);letter-spacing:-0.03em;margin:0}
+  .q-header-left p{font-size:0.85rem;color:var(--text-muted);margin-top:4px}
+  .q-header-actions{display:flex;align-items:center;gap:12px}
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+  .kpi-card{background:var(--bg-white);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;display:flex;align-items:center;gap:14px;transition:box-shadow 0.2s,border-color 0.2s}
+  .kpi-card:hover{box-shadow:var(--shadow-md);border-color:var(--color-primary-light)}
+  .kpi-icon{width:44px;height:44px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .kpi-icon svg{width:20px;height:20px}
+  .kpi-icon.blue{background:rgba(59,130,246,0.1);color:#3b82f6}
+  .kpi-icon.green{background:rgba(34,197,94,0.1);color:#22c55e}
+  .kpi-icon.amber{background:rgba(245,158,11,0.1);color:#f59e0b}
+  .kpi-icon.purple{background:rgba(139,92,246,0.1);color:#8b5cf6}
+  .kpi-info .kpi-value{font-size:2rem;font-weight:800;color:var(--text-primary);letter-spacing:-0.02em}
+  .kpi-info .kpi-label{font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-top:2px}
+  .table-card{background:var(--bg-white);border:1px solid var(--border-color);border-radius:var(--radius-lg);overflow:hidden}
+  .table-card-header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--border-color);background:var(--bg-gray)}
+  .table-card-header h4{font-size:0.9rem;font-weight:700;color:var(--text-primary);margin:0;display:flex;align-items:center;gap:8px}
+  .table-card-header h4 svg{width:18px;height:18px;color:var(--color-primary)}
+  .table-card-header .table-search{position:relative}
+  .table-card-header .table-search input{padding:8px 12px 8px 34px;border:1px solid var(--border-color);border-radius:var(--radius-md);font-size:0.82rem;background:var(--bg-white);color:var(--text-primary);width:220px;transition:border-color 0.15s}
+  .table-card-header .table-search input:focus{border-color:var(--color-primary);outline:none}
+  .table-card-header .table-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--text-muted)}
+  .enterprise-table{width:100%;border-collapse:collapse}
+  .enterprise-table thead th{padding:12px 16px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);background:var(--bg-gray);border-bottom:2px solid var(--border-color);white-space:nowrap;text-align:left}
+  .enterprise-table thead th.text-right{text-align:right}
+  .enterprise-table thead th.text-center{text-align:center}
+  .enterprise-table tbody tr{transition:background 0.12s;border-bottom:1px solid var(--border-light)}
+  .enterprise-table tbody tr:hover{background:rgba(59,130,246,0.03)}
+  .enterprise-table tbody tr:last-child{border-bottom:none}
+  .enterprise-table tbody td{padding:14px 16px;font-size:0.9rem;color:var(--text-primary);vertical-align:middle}
+  .enterprise-table tbody td.text-right{text-align:right}
+  .enterprise-table tbody td.text-center{text-align:center}
+  .enterprise-table .q-num{font-weight:700;color:var(--color-primary);text-decoration:none;transition:color 0.15s}
+  .enterprise-table .q-num:hover{color:var(--color-primary);text-decoration:underline}
+  .enterprise-table .q-customer{display:flex;align-items:center;gap:10px}
+  .enterprise-table .q-cust-avatar{width:32px;height:32px;border-radius:var(--radius-md);background:var(--color-primary-light);display:flex;align-items:center;justify-content:center;color:var(--color-primary);font-weight:700;font-size:0.75rem;flex-shrink:0}
+  .enterprise-table .q-cust-name{font-weight:600;font-size:0.9rem}
+  .enterprise-table .q-cust-sub{font-size:0.72rem;color:var(--text-muted)}
+  .enterprise-table .q-amount{font-weight:700;font-size:0.95rem;color:var(--text-primary)}
+  .enterprise-table .q-date{font-size:0.85rem;color:var(--text-secondary)}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;line-height:1}
+  .badge-draft{background:rgba(245,158,11,0.1);color:#d97706}
+  .badge-sent{background:rgba(59,130,246,0.1);color:#2563eb}
+  .badge-accepted{background:rgba(34,197,94,0.1);color:#16a34a}
+  .badge-rejected{background:rgba(239,68,68,0.1);color:#dc2626}
+  .badge-expired{background:var(--bg-gray);color:var(--text-muted)}
+  .action-btns{display:flex;gap:6px;justify-content:flex-end}
+  .action-btns .btn-icon{width:32px;height:32px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-white);color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s}
+  .action-btns .btn-icon svg{width:15px;height:15px}
+  .action-btns .btn-icon:hover{border-color:var(--color-primary);color:var(--color-primary);background:rgba(59,130,246,0.05)}
+  .action-btns .btn-icon.convert:hover{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,0.05)}
+  .empty-state{padding:60px 20px;text-align:center}
+  .empty-state-icon{width:64px;height:64px;border-radius:50%;background:rgba(59,130,246,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+  .empty-state-icon svg{width:28px;height:28px;color:var(--color-primary)}
+  .empty-state h3{font-size:1rem;font-weight:700;color:var(--text-primary);margin:0 0 6px}
+  .empty-state p{font-size:0.82rem;color:var(--text-muted);margin:0 0 20px}
+  .empty-state .btn{margin-top:8px}
+  @media(max-width:768px){.kpi-row{grid-template-columns:1fr 1fr}.q-header{flex-direction:column;align-items:flex-start}.table-card-header{flex-direction:column;gap:12px;align-items:flex-start}.table-card-header .table-search input{width:100%}}
+</style>
+
+<div class="q-header">
+  <div class="q-header-left">
+    <h1>Quotations</h1>
+    <p>Manage and track all your quotations in one place</p>
+  </div>
+  <div class="q-header-actions">
+    <a href="{{ url_for('new_quotation') }}" class="btn btn-primary">
+      <i data-lucide="plus"></i> New Quotation
+    </a>
+  </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for cat, msg in messages %}
+      <div class="alert alert-{{ 'success' if cat == 'success' else 'danger' if cat == 'danger' else 'info' }} mb-24" role="alert">
+        <i data-lucide="{{ 'check-circle' if cat == 'success' else 'alert-circle' }}"></i>
+        {{ msg }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="kpi-row">
+  <div class="kpi-card">
+    <div class="kpi-icon blue"><i data-lucide="file-check"></i></div>
+    <div class="kpi-info">
+      <div class="kpi-value">{{ quotations|length }}</div>
+      <div class="kpi-label">Total Quotations</div>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon green"><i data-lucide="check-circle"></i></div>
+    <div class="kpi-info">
+      <div class="kpi-value">{{ quotations|selectattr('status','equalto','accepted')|list|length }}</div>
+      <div class="kpi-label">Accepted</div>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon amber"><i data-lucide="clock"></i></div>
+    <div class="kpi-info">
+      <div class="kpi-value">{{ quotations|selectattr('status','equalto','draft')|list|length }}</div>
+      <div class="kpi-label">Draft</div>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon purple"><i data-lucide="send"></i></div>
+    <div class="kpi-info">
+      <div class="kpi-value">{{ quotations|selectattr('status','equalto','sent')|list|length }}</div>
+      <div class="kpi-label">Sent</div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card">
+  <div class="table-card-header">
+    <h4><i data-lucide="file-check"></i> All Quotations</h4>
+    <div class="table-search">
+      <i data-lucide="search"></i>
+      <input type="text" id="quotationSearch" placeholder="Search quotations..." autocomplete="off">
+    </div>
+  </div>
+  <table class="enterprise-table">
+    <thead>
+      <tr>
+        <th>Quotation #</th>
+        <th>Customer</th>
+        <th>Date</th>
+        <th class="text-center">Status</th>
+        <th class="text-right">Total</th>
+        <th class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for q in quotations %}
+      <tr>
+        <td>
+          <a href="{{ url_for('quotation_preview', qid=q.id) }}" class="q-num">{{ q.quotation_number }}</a>
+        </td>
+        <td>
+          <div class="q-customer">
+            <div class="q-cust-avatar">{{ q.customer_name[0] if q.customer_name else '?' }}</div>
+            <div>
+              <div class="q-cust-name">{{ q.customer_name }}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="q-date">{{ q.quotation_date }}</span></td>
+        <td class="text-center">
+          {% set sc = 'draft' %}
+          {% if q.status == 'sent' %}{% set sc = 'sent' %}
+          {% elif q.status == 'accepted' %}{% set sc = 'accepted' %}
+          {% elif q.status == 'rejected' %}{% set sc = 'rejected' %}
+          {% elif q.status == 'expired' %}{% set sc = 'expired' %}
+          {% endif %}
+          {% if sc == 'draft' %}<span class="badge badge-draft">{{ q.status|upper }}</span>
+          {% elif sc == 'sent' %}<span class="badge badge-sent">{{ q.status|upper }}</span>
+          {% elif sc == 'accepted' %}<span class="badge badge-accepted">{{ q.status|upper }}</span>
+          {% elif sc == 'rejected' %}<span class="badge badge-rejected">{{ q.status|upper }}</span>
+          {% else %}<span class="badge badge-expired">{{ q.status|upper }}</span>
+          {% endif %}
+        </td>
+        <td class="text-right"><span class="q-amount">{{ format_currency(q.grand_total) }}</span></td>
+        <td class="text-right">
+          <div class="erp-menu" data-erp-menu>
+            <button class="erp-menu__trigger" data-erp-trigger aria-label="Actions" aria-haspopup="true" title="Actions">
+              <i data-lucide="ellipsis-vertical"></i>
+            </button>
+            <div class="erp-menu__panel" role="menu">
+              <a class="erp-menu__item" href="{{ url_for('quotation_preview', qid=q.id) }}" role="menuitem">
+                <i data-lucide="eye"></i><span class="erp-menu__label">Preview</span>
+              </a>
+              <a class="erp-menu__item" href="{{ url_for('print_quotation', qid=q.id) }}" role="menuitem">
+                <i data-lucide="printer"></i><span class="erp-menu__label">Print</span>
+              </a>
+              <a class="erp-menu__item" href="{{ url_for('download_quotation_pdf', qid=q.id) }}" role="menuitem">
+                <i data-lucide="download"></i><span class="erp-menu__label">Download PDF</span>
+              </a>
+              {% if q.status == 'accepted' and not q.converted_invoices %}
+              <form method="POST" action="{{ url_for('convert_quotation_to_invoice', qid=q.id) }}" style="margin:0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="erp-menu__item" role="menuitem" onclick="return confirm('Convert this quotation to an invoice?')">
+                  <i data-lucide="file-plus"></i><span class="erp-menu__label">Convert to Invoice</span>
+                </button>
+              </form>
+              {% elif q.converted_invoices %}
+              <a class="erp-menu__item" href="{{ url_for('view_invoice', iid=q.converted_invoices[0].id) }}" role="menuitem">
+                <i data-lucide="file-text"></i><span class="erp-menu__label">View Invoice</span>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6">
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i data-lucide="file-check"></i>
+            </div>
+            <h3>No quotations yet</h3>
+            <p>Create your first quotation to get started</p>
+            <a href="{{ url_for('new_quotation') }}" class="btn btn-primary">
+              <i data-lucide="plus"></i> New Quotation
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.getElementById('quotationSearch').addEventListener('input', function() {
+  var q = this.value.toLowerCase();
+  var rows = document.querySelectorAll('.enterprise-table tbody tr');
+  rows.forEach(function(row) {
+    if (row.querySelector('.empty-state')) return;
+    var text = row.textContent.toLowerCase();
+    row.style.display = text.indexOf(q) > -1 ? '' : 'none';
+  });
+});
+</script>
+{% endblock %}

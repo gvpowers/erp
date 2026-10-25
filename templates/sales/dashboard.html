@@ -1,0 +1,146 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Sales Dashboard{% endblock %}
+
+{% block content %}
+<div class="sales-dash">
+    <div class="sd-hero">
+        <div>
+            <h4>Quick Billing, {{ current_user.full_name or current_user.username }}</h4>
+            <p>{{ now_date }} &middot; Let's get some invoices out.</p>
+        </div>
+        <a href="{{ url_for('new_invoice') }}" class="sd-new-btn">
+            <i data-lucide="file-plus"></i> New Invoice
+        </a>
+    </div>
+
+    <div class="sd-stats">
+        <div class="sd-stat">
+            <div class="sd-stat-icon blue"><i data-lucide="shopping-cart"></i></div>
+            <div class="sd-stat-value">{{ today_invoices }}</div>
+            <div class="sd-stat-label">Invoices Today</div>
+        </div>
+        <div class="sd-stat">
+            <div class="sd-stat-icon green"><i data-lucide="indian-rupee"></i></div>
+            <div class="sd-stat-value">{{ format_currency(today_amount or 0) }}</div>
+            <div class="sd-stat-label">Billed Today</div>
+        </div>
+        <div class="sd-stat">
+            <div class="sd-stat-icon purple"><i data-lucide="users"></i></div>
+            <div class="sd-stat-value">{{ recent_customers|length }}</div>
+            <div class="sd-stat-label">Recent Customers</div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="sd-card">
+                <div class="sd-card-head">
+                    <span class="sd-card-title"><i data-lucide="file-text"></i> Your Recent Invoices</span>
+                    <a href="{{ url_for('invoice_history') }}" class="sd-link">View All</a>
+                </div>
+                <div class="sd-table-wrap">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-3">Invoice #</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th class="text-end">Amount</th>
+                                <th class="text-end pe-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inv in recent_invoices %}
+                            <tr>
+                                <td class="ps-3"><a href="{{ url_for('view_invoice', iid=inv.id) }}" class="sd-inv-num">{{ inv.invoice_number }}</a></td>
+                                <td class="sd-cust">{{ inv.customer_name or 'Walk-in' }}</td>
+                                <td class="text-secondary">{{ inv.invoice_date.strftime('%d %b %Y') if inv.invoice_date else '' }}</td>
+                                <td class="text-end fw-600">{{ format_currency(inv.grand_total or 0, symbol=False) }}</td>
+                                <td class="text-end pe-3">
+                                    {% set status = inv.status or 'draft' %}
+                                    <span class="badge {% if status in ('paid','confirmed') %}badge-success{% elif status == 'cancelled' %}badge-danger{% else %}badge-secondary{% endif %}">
+                                        {{ status|capitalize }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="sd-empty">
+                                    <i data-lucide="file-text"></i>
+                                    <p class="mb-0">No invoices yet. Create your first one!</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sd-card">
+                <div class="sd-card-head">
+                    <span class="sd-card-title"><i data-lucide="users"></i> Recent Customers</span>
+                </div>
+                <ul class="sd-cust-list">
+                    {% for c in recent_customers %}
+                    <li>
+                        <div class="sd-cust-av">{{ (c.name or '?')[0]|upper }}</div>
+                        <div>
+                            <div class="sd-cust-name">{{ c.name }}</div>
+                            <div class="sd-cust-sub">{{ c.mobile or 'No mobile' }}</div>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="sd-empty"><p class="mb-0">No customers yet.</p></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .sales-dash{max-width:1200px;margin:0 auto}
+    .sd-hero{padding:1.5rem 2rem;border-radius:16px;background:linear-gradient(135deg,rgba(37,99,235,.07),rgba(16,185,129,.05));border:1px solid var(--border);margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+    .sd-hero h4{font-weight:800;font-size:1.5rem;margin:0 0 .25rem;color:var(--erp-text)}
+    .sd-hero p{margin:0;color:var(--erp-text-muted);font-size:.85rem}
+    .sd-new-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;border-radius:10px;font-size:.85rem;font-weight:700;background:var(--erp-primary);color:#fff;text-decoration:none;box-shadow:0 2px 10px rgba(37,99,235,.3);transition:all .2s}
+    .sd-new-btn:hover{color:#fff;transform:translateY(-1px)}
+    .sd-new-btn i{width:17px;height:17px}
+    .sd-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
+    .sd-stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem}
+    .sd-stat-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:.6rem}
+    .sd-stat-icon i{width:20px;height:20px}
+    .sd-stat-icon.blue{background:rgba(59,130,246,.1);color:#3b82f6}
+    .sd-stat-icon.green{background:rgba(16,185,129,.1);color:#10b981}
+    .sd-stat-icon.purple{background:var(--color-primary-light);color:var(--color-primary)}
+    .sd-stat-value{font-size:1.6rem;font-weight:800;color:var(--erp-text);letter-spacing:-.02em}
+    .sd-stat-label{font-size:.75rem;color:var(--erp-text-muted);margin-top:.2rem;font-weight:500}
+    .sd-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+    .sd-table-wrap{overflow-x:auto}
+    .sd-card-head{padding:.9rem 1.4rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+    .sd-card-title{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.95rem;color:var(--erp-text)}
+    .sd-card-title i{width:17px;height:17px;color:var(--erp-primary)}
+    .sd-link{font-size:.8rem;color:var(--erp-primary);text-decoration:none;font-weight:600}
+    .sd-table-wrap thead th{background:var(--erp-surface-2);color:var(--erp-text-muted);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.65rem .8rem;border-bottom:1px solid var(--border)}
+    .sd-table-wrap tbody td{padding:.6rem .8rem;border-bottom:1px solid var(--border);font-size:.83rem;color:var(--erp-text);white-space:nowrap}
+    .sd-inv-num{font-weight:700;color:var(--erp-primary);text-decoration:none}
+    .sd-cust{font-weight:600}
+    .sd-empty{text-align:center;color:var(--erp-text-muted)}
+    .sd-empty i{width:34px;height:34px;color:var(--border-color);margin-bottom:8px}
+    .sd-cust-list{list-style:none;margin:0;padding:.6rem 1rem}
+    .sd-cust-list li{display:flex;align-items:center;gap:.75rem;padding:.55rem .25rem;border-bottom:1px solid var(--border)}
+    .sd-cust-list li:last-child{border-bottom:none}
+    .sd-cust-av{width:36px;height:36px;border-radius:50%;background:var(--color-primary-light);color:var(--color-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem}
+    .sd-cust-name{font-weight:600;font-size:.85rem;color:var(--erp-text)}
+    .sd-cust-sub{font-size:.72rem;color:var(--erp-text-muted)}
+    @media (max-width:576px){
+        .sd-hero{flex-direction:column;align-items:flex-start;padding:1.25rem}
+        .sd-new-btn{width:100%;justify-content:center}
+        .sd-stats{grid-template-columns:1fr}
+        .sd-stat-value{font-size:1.35rem}
+        .sd-card-head{padding:.75rem 1rem}
+    }
+</style>
+{% endblock %}

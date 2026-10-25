@@ -1,0 +1,578 @@
+/* ================================================================
+   GV POWERS ERP — Settings Module
+   Two-column enterprise settings (Zoho/Tally/Marg style)
+   ================================================================ */
+
+.settings-app {
+    --set-primary: #2563EB;
+    --set-primary-dark: #1D4ED8;
+    --set-primary-light: #EFF4FF;
+    --set-success: #16A34A;
+    --set-danger: #DC2626;
+    --set-warning: #F59E0B;
+    --set-text: #0F172A;
+    --set-muted: #64748B;
+    --set-border: #E2E8F0;
+    --set-surface: #FFFFFF;
+    --set-bg: #F5F7FB;
+    --set-radius: 18px;
+    --set-radius-sm: 12px;
+    --set-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 8px 24px rgba(15, 23, 42, .05);
+    --set-input-h: 48px;
+    font-family: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Full-width shell */
+.settings-app .gv-shell {
+    width: 95%;
+    max-width: 1500px;
+    margin: 22px auto 0;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+/* ── LEFT NAV (280px) ─────────────────────────────────────── */
+.settings-app .gv-nav {
+    width: 280px;
+    flex: 0 0 280px;
+    background: var(--set-surface);
+    border: 1px solid var(--set-border);
+    border-radius: var(--set-radius);
+    box-shadow: var(--set-shadow);
+    padding: 16px 12px;
+    position: sticky;
+    top: 20px;
+}
+.settings-app .gv-nav-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--set-muted);
+    padding: 6px 12px 14px;
+}
+.settings-app .gv-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 11px 14px;
+    margin-bottom: 2px;
+    border: none;
+    border-radius: 11px;
+    background: transparent;
+    color: var(--set-text);
+    font-size: 14.5px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+    font-family: inherit;
+}
+.settings-app .gv-nav-item .gv-nav-ico {
+    width: 20px;
+    height: 20px;
+    color: var(--set-muted);
+    flex: 0 0 20px;
+    transition: color .15s ease;
+}
+.settings-app .gv-nav-item:hover {
+    background: #F1F5FF;
+}
+.settings-app .gv-nav-item.is-active {
+    background: var(--set-primary-light);
+    color: var(--set-primary-dark);
+    font-weight: 600;
+}
+.settings-app .gv-nav-item.is-active .gv-nav-ico {
+    color: var(--set-primary);
+}
+
+/* ── RIGHT PANEL ──────────────────────────────────────────── */
+.settings-app .gv-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.settings-app .gv-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+.settings-app .gv-head h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--set-text);
+    margin: 0;
+    letter-spacing: -.02em;
+}
+.settings-app .gv-head .gv-sub {
+    color: var(--set-muted);
+    font-size: 14px;
+    margin-top: 4px;
+}
+.settings-app .gv-publish {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--set-border);
+    background: var(--set-surface);
+    color: var(--set-muted);
+    white-space: nowrap;
+}
+.settings-app .gv-publish.is-dirty {
+    color: var(--set-warning);
+    border-color: var(--set-warning);
+    background: #FFFBEB;
+}
+.settings-app .gv-publish.is-saving {
+    color: #3B82F6;
+    border-color: #3B82F6;
+    background: #EFF6FF;
+}
+.settings-app .gv-publish.is-saved {
+    color: var(--set-success);
+    border-color: var(--set-success);
+    background: #ECFDF5;
+}
+.settings-app .gv-publish-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: 0 0 7px;
+}
+
+/* Module wrapper (only active visible) */
+.settings-app .gv-modules {
+    position: relative;
+}
+.settings-app .gv-module {
+    display: none;
+    animation: gvFadeIn .22s ease;
+}
+.settings-app .gv-module.is-show { display: block; }
+@keyframes gvFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ── CARDS ─────────────────────────────────────────────────── */
+.settings-app .gv-card {
+    background: var(--set-surface);
+    border: 1px solid var(--set-border);
+    border-radius: var(--set-radius);
+    box-shadow: var(--set-shadow);
+    padding: 30px;
+    margin-bottom: 24px;
+}
+.settings-app .gv-card + .gv-card { margin-top: 0; }
+.settings-app .gv-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--set-text);
+    margin: 0 0 6px;
+}
+.settings-app .gv-card-title .gv-card-ico { color: var(--set-primary); flex: 0 0 20px; }
+.settings-app .gv-card-desc {
+    font-size: 14px;
+    color: var(--set-muted);
+    margin: 0 0 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--set-border);
+}
+
+/* Fixed identity badge (company module) */
+.settings-app .gv-fixed-badge {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--set-muted);
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--set-border);
+    background: var(--set-surface);
+    white-space: nowrap;
+}
+.settings-app .gv-fixed-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--set-success);
+    flex: 0 0 7px;
+}
+
+/* ── GRID ──────────────────────────────────────────────────── */
+.settings-app .gv-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+.settings-app .gv-field { min-width: 0; }
+.settings-app .gv-field--full { grid-column: 1 / -1; }
+.settings-app .gv-label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--set-text);
+    margin-bottom: 8px;
+}
+.settings-app .gv-label .req { color: var(--set-danger); }
+.settings-app .gv-hint { font-size: 12.5px; color: var(--set-muted); margin-top: 6px; }
+
+.settings-app .gv-input,
+.settings-app .gv-select,
+.settings-app .gv-textarea {
+    width: 100%;
+    height: var(--set-input-h);
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--set-text);
+    background: var(--set-surface);
+    border: 1px solid var(--set-border);
+    border-radius: 10px;
+    padding: 0 14px;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.settings-app .gv-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+}
+.settings-app .gv-textarea {
+    height: auto;
+    min-height: 110px;
+    padding: 13px 14px;
+    resize: vertical;
+    line-height: 1.5;
+}
+.settings-app .gv-input:focus,
+.settings-app .gv-select:focus,
+.settings-app .gv-textarea:focus {
+    border-color: var(--set-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+}
+.settings-app .gv-input.is-invalid,
+.settings-app .gv-select.is-invalid,
+.settings-app .gv-textarea.is-invalid {
+    border-color: var(--set-danger);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, .1);
+}
+.settings-app .gv-error {
+    font-size: 12.5px;
+    color: var(--set-danger);
+    margin-top: 6px;
+    display: none;
+}
+.settings-app .gv-field.is-error .gv-error { display: block; }
+
+/* ── BUTTONS ───────────────────────────────────────────────── */
+.settings-app .gv-btn {
+    height: var(--set-input-h);
+    padding: 0 22px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.settings-app .gv-btn-ico { width: 18px; height: 18px; }
+.settings-app .gv-btn--primary {
+    background: var(--set-primary);
+    color: #fff;
+}
+.settings-app .gv-btn--primary:hover { background: var(--set-primary-dark); }
+.settings-app .gv-btn--soft {
+    background: var(--set-primary-light);
+    color: var(--set-primary-dark);
+}
+.settings-app .gv-btn--soft:hover { background: #D3E2FF; }
+.settings-app .gv-btn--ghost {
+    background: var(--set-surface);
+    color: var(--set-text);
+    border-color: var(--set-border);
+}
+.settings-app .gv-btn--ghost:hover { background: var(--set-bg); }
+.settings-app .gv-btn--link {
+    background: transparent;
+    color: var(--set-primary-dark);
+}
+.settings-app .gv-btn--link:hover { text-decoration: underline; }
+.settings-app .gv-btn--sm {
+    height: 34px;
+    padding: 0 14px;
+    font-size: 13px;
+    border-radius: 8px;
+}
+.settings-app .gv-btn--sm .gv-btn-ico { width: 15px; height: 15px; }
+
+/* ── STICKY ACTION BAR ─────────────────────────────────────── */
+.settings-app .gv-actions {
+    position: sticky;
+    bottom: 16px;
+    z-index: 40;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    align-items: center;
+    background: var(--set-surface);
+    border: 1px solid var(--set-border);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+    padding: 14px 18px;
+    margin-top: 8px;
+}
+.settings-app .gv-actions.gv-actions--hidden { display: none; }
+.settings-app .gv-actions-sep { flex: 1 1 auto; }
+
+/* ── COMPANY PROFILE (read-only) ───────────────────────────── */
+.settings-app .gv-company-profile {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    padding: 22px;
+    border: 1px solid var(--set-border);
+    border-radius: var(--set-radius-sm);
+    background: var(--set-bg);
+}
+.settings-app .gv-logo-box {
+    width: 180px;
+    height: 120px;
+    flex: 0 0 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--set-surface);
+    border: 1px solid var(--set-border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+.settings-app .gv-logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 14px;
+    display: block;
+}
+.settings-app .gv-logo-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+}
+.settings-app .gv-logo-title { font-size: 16px; font-weight: 700; color: var(--set-text); }
+.settings-app .gv-logo-sub { font-size: 14px; color: var(--set-muted); margin-bottom: 8px; }
+
+/* ── COMPANY DETAILS GRID (read-only) ──────────────────────── */
+.settings-app .gv-section-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 28px 0 16px;
+}
+.settings-app .gv-section-head::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--set-border);
+}
+.settings-app .gv-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--set-text);
+    white-space: nowrap;
+}
+.settings-app .gv-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+.settings-app .gv-detail {
+    background: var(--set-bg);
+    border: 1px solid var(--set-border);
+    border-radius: var(--set-radius-sm);
+    padding: 16px 18px;
+    min-width: 0;
+}
+.settings-app .gv-detail--full { grid-column: 1 / -1; }
+.settings-app .gv-detail-key {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--set-muted);
+    margin-bottom: 8px;
+}
+.settings-app .gv-detail-val {
+    display: block;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--set-text);
+    line-height: 1.55;
+    word-break: break-word;
+}
+.settings-app .gv-detail-link { color: var(--set-primary); text-decoration: none; }
+.settings-app .gv-detail-link:hover { text-decoration: underline; }
+
+/* ── LOGO PREVIEW LIGHTBOX ─────────────────────────────────── */
+.settings-app .gv-logo-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.settings-app .gv-logo-modal[hidden] { display: none; }
+.settings-app .gv-logo-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 28, 58, .55);
+}
+.settings-app .gv-logo-modal-body {
+    position: relative;
+    background: var(--set-surface);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 24px 60px rgba(8, 28, 58, .3);
+    max-width: 420px;
+    width: 100%;
+}
+.settings-app .gv-logo-modal-body img {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: contain;
+    display: block;
+}
+.settings-app .gv-logo-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 8px;
+    background: var(--set-bg);
+    color: var(--set-muted);
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.settings-app .gv-logo-modal-close:hover { background: #E5E9F2; color: var(--set-text); }
+
+/* misc helper */
+.settings-app .gv-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    border: 1px solid transparent;
+}
+.settings-app .gv-banner--ok {
+    color: #166534;
+    background: #ECFDF5;
+    border-color: #A7F3D0;
+}
+.settings-app .gv-banner--warn {
+    color: #991B1B;
+    background: #FEF2F2;
+    border-color: #FECACA;
+}
+.settings-app .gv-banner-ico {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #fff;
+    flex: 0 0 22px;
+}
+.settings-app .gv-banner--ok .gv-banner-ico { background: #16A34A; }
+.settings-app .gv-banner--warn .gv-banner-ico { background: #DC2626; }
+.settings-app .gv-muted { color: var(--set-muted); }
+.settings-app .gv-row-grid { display: grid; grid-template-columns: 220px 1fr; gap: 10px 18px; }
+.settings-app .gv-kv { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--set-border); font-size: 14px; }
+.settings-app .gv-kv:last-child { border-bottom: none; }
+.settings-app .gv-kv .k { color: var(--set-muted); }
+.settings-app .gv-kv .v { font-weight: 600; color: var(--set-text); text-align: right; }
+.settings-app .gv-toast {
+    position: fixed;
+    right: 26px;
+    bottom: 26px;
+    z-index: 100;
+    background: var(--set-text);
+    color: #fff;
+    padding: 13px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+}
+.settings-app .gv-toast.is-show { opacity: 1; transform: none; }
+.settings-app .gv-toast--ok { background: var(--set-success); }
+.settings-app .gv-toast--err { background: var(--set-danger); }
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 1199px) {
+    .settings-app .gv-nav { width: 240px; flex-basis: 240px; }
+}
+@media (max-width: 991px) {
+    .settings-app .gv-shell { flex-direction: column; }
+    .settings-app .gv-nav {
+        width: 100%;
+        flex: none;
+        position: static;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 12px;
+    }
+    .settings-app .gv-nav-title { display: none; }
+    .settings-app .gv-nav-item { width: auto; padding: 10px 14px; margin: 0; }
+    .settings-app .gv-company-profile { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 767px) {
+    .settings-app .gv-grid { grid-template-columns: 1fr; }
+    .settings-app .gv-details-grid { grid-template-columns: 1fr; }
+    .settings-app .gv-card { padding: 22px; }
+    .settings-app .gv-actions { flex-wrap: wrap; justify-content: stretch; }
+    .settings-app .gv-btn { flex: 1 1 auto; justify-content: center; }
+}

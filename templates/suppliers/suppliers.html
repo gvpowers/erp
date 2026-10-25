@@ -1,0 +1,276 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Suppliers{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('dashboard') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h1><i data-lucide="truck" class="me-2"></i>Suppliers</h1>
+        <p>Manage your suppliers and vendors</p>
+    </div>
+    <div class="page-header-actions">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSupplierModal">
+            <i data-lucide="plus"></i> Add Supplier
+        </button>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="card mb-24">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('suppliers_list') }}">
+            <div class="d-flex gap-8 align-items-center">
+                <div class="flex-1 position-relative">
+                    <i data-lucide="search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-muted);"></i>
+                    <input type="text" class="form-control" name="q" placeholder="Search by name, contact, GSTIN..." value="{{ search or '' }}" style="padding-left:42px;">
+                </div>
+                {% if search %}
+                    <a href="{{ url_for('suppliers_list') }}" class="btn btn-outline-secondary" title="Clear search"><i data-lucide="x"></i></a>
+                {% endif %}
+                <button type="submit" class="btn btn-primary"><i data-lucide="search"></i> Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Supplier</th>
+                    <th>Contact Person</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>City</th>
+                    <th>GSTIN</th>
+                    <th class="text-center">Products</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if suppliers %}
+                    {% for supplier in suppliers %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="kpi-icon blue" style="width:38px;height:38px;">
+                                    <i data-lucide="truck"></i>
+                                </div>
+                                <a href="{{ url_for('supplier_profile', sid=supplier.id) }}" class="fw-600 text-decoration-none" style="font-size:0.95rem;color:var(--text-primary);">{{ supplier.name }}</a>
+                            </div>
+                        </td>
+                        <td class="text-secondary">{{ supplier.contact_person or '-' }}</td>
+                        <td class="text-secondary">{{ supplier.mobile or '-' }}</td>
+                        <td class="text-secondary">{{ supplier.email or '-' }}</td>
+                        <td class="text-secondary">{{ supplier.city or '-' }}</td>
+                        <td><code class="text-13 text-muted">{{ supplier.gstin or '-' }}</code></td>
+                        <td class="text-center"><span class="badge badge-secondary">{{ supplier.products|length }}</span></td>
+                        <td class="text-center">
+                            <div class="erp-menu" data-erp-menu>
+                                <button class="erp-menu__trigger" data-erp-trigger aria-label="Actions" aria-haspopup="true" title="Actions">
+                                    <i data-lucide="ellipsis-vertical"></i>
+                                </button>
+                                <div class="erp-menu__panel" role="menu">
+                                    <a class="erp-menu__item" href="{{ url_for('supplier_profile', sid=supplier.id) }}" role="menuitem">
+                                        <i data-lucide="eye"></i><span class="erp-menu__label">View Profile</span>
+                                    </a>
+                                    {% if current_user.is_admin %}
+                                    <div class="erp-menu__divider"></div>
+                                    <button type="button" class="erp-menu__item" data-bs-toggle="modal" data-bs-target="#editSupplierModal{{ supplier.id }}" role="menuitem">
+                                        <i data-lucide="pencil"></i><span class="erp-menu__label">Edit</span>
+                                    </button>
+                                    <button type="button" class="erp-menu__item danger" data-bs-toggle="modal" data-bs-target="#deleteSupplierModal{{ supplier.id }}" role="menuitem">
+                                        <i data-lucide="trash-2"></i><span class="erp-menu__label">Delete</span>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% if current_user.is_admin %}
+                    <div class="modal fade" id="editSupplierModal{{ supplier.id }}" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <form method="POST" action="{{ url_for('edit_supplier', sid=supplier.id) }}">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title fw-600"><i data-lucide="pencil" class="me-2"></i>Edit Supplier</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="text-12 fw-600 text-uppercase text-muted mb-12">Company Information</div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label class="form-label">Company Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="name" value="{{ supplier.name }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Contact Person</label>
+                                                <input type="text" class="form-control" name="contact_person" value="{{ supplier.contact_person or '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label class="form-label">Mobile</label>
+                                                <input type="text" class="form-control" name="mobile" value="{{ supplier.mobile or '' }}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Email</label>
+                                                <input type="email" class="form-control" name="email" value="{{ supplier.email or '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Address</label>
+                                            <textarea class="form-control" name="address" rows="2">{{ supplier.address or '' }}</textarea>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label class="form-label">City</label>
+                                                <input type="text" class="form-control" name="city" value="{{ supplier.city or '' }}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">State</label>
+                                                <input type="text" class="form-control" name="state" value="{{ supplier.state or '' }}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">State Code</label>
+                                                <input type="number" class="form-control" name="state_code" value="{{ supplier.state_code or 29 }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">GSTIN</label>
+                                            <input type="text" class="form-control" name="gstin" value="{{ supplier.gstin or '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> Update Supplier</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="modal fade" id="deleteSupplierModal{{ supplier.id }}" tabindex="-1">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-danger fw-600">Delete Supplier</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <div class="empty-state-icon mb-16">
+                                        <i data-lucide="alert-triangle"></i>
+                                    </div>
+                                    <p class="fw-600 mb-4">Are you sure you want to delete <strong>{{ supplier.name }}</strong>?</p>
+                                    <p class="text-muted text-13">This action cannot be undone. All associated data will be removed.</p>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form method="POST" action="{{ url_for('delete_supplier', sid=supplier.id) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-danger"><i data-lucide="trash-2"></i> Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i data-lucide="truck"></i>
+                                </div>
+                                <h3>No suppliers found</h3>
+                                <p>{% if search %}No suppliers match your search criteria. Try a different search term.{% else %}Start by adding your first supplier to manage purchases.{% endif %}</p>
+                                {% if not search %}
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSupplierModal">
+                                    <i data-lucide="plus"></i> Add First Supplier
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="createSupplierModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('create_supplier') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-600"><i data-lucide="plus-circle" class="me-2"></i>Add New Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-12 fw-600 text-uppercase text-muted mb-12">Company Information</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Company Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" required placeholder="Enter supplier/company name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contact Person</label>
+                            <input type="text" class="form-control" name="contact_person" placeholder="Contact person name">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Mobile</label>
+                            <input type="text" class="form-control" name="mobile" placeholder="Mobile number">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" placeholder="Email address">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" name="address" rows="2" placeholder="Full address"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-control" name="city" placeholder="City">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State</label>
+                            <input type="text" class="form-control" name="state" placeholder="State">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State Code</label>
+                            <input type="number" class="form-control" name="state_code" value="29" placeholder="State Code">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">GSTIN</label>
+                        <input type="text" class="form-control" name="gstin" placeholder="GSTIN Number">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i data-lucide="check"></i> Create Supplier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

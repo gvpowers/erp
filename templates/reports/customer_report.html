@@ -1,0 +1,131 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Customer Report{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('reports_page') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Reports</a>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="rpt-page">
+  <div class="rpt-hero">
+    <div>
+      <div class="rpt-crumb">Analytics / Customers</div>
+      <h4>Customer Report</h4>
+      <p>Customer purchase value, frequency and activity analysis for the period.</p>
+    </div>
+    <div class="rpt-actions">
+      <button class="rpt-btn print" onclick="RP.printPage()"><i data-lucide="printer"></i> Print</button>
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='customers', **filters) }}"><i data-lucide="file-down"></i> PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='customers', **filters) }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='customers', **filters) }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+  </div>
+
+  <form method="GET" class="rpt-filters">
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Period</label>
+      <select class="rpt-select" name="period">
+        {% for k, v in [('year','This Year'),('month','This Month'),('week','This Week'),('all','All Time')] %}
+        <option value="{{ k }}" {{ 'selected' if request.args.get('period')==k }}>{{ v }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup"><label class="rpt-flabel">From</label><input type="date" class="rpt-input" name="start_date" value="{{ request.args.get('start_date') or '' }}"></div>
+    <div class="rpt-fgroup"><label class="rpt-flabel">To</label><input type="date" class="rpt-input" name="end_date" value="{{ request.args.get('end_date') or '' }}"></div>
+    <div class="rpt-fgroup"><button type="submit" class="rpt-btn rpt-btn-filter"><i data-lucide="filter"></i> Apply</button></div>
+    <div class="rpt-fgroup"><a href="{{ url_for('customer_report') }}" class="rpt-btn rpt-btn-reset"><i data-lucide="rotate-ccw"></i> Reset</a></div>
+  </form>
+
+  <div class="rpt-stats">
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="users"></i></span></div><div class="rpt-stat-value">{{ total_customers }}</div><div class="rpt-stat-label">Active Customers</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="indian-rupee"></i></span></div><div class="rpt-stat-value">{{ format_currency(total_purchase) }}</div><div class="rpt-stat-label">Total Purchases</div></div>
+    <div class="rpt-stat purple"><div class="rpt-stat-row"><span class="rpt-stat-ico purple"><i data-lucide="trophy"></i></span></div><div class="rpt-stat-value">{{ top_customer.customer.name if top_customer else '—' }}</div><div class="rpt-stat-label">Top Customer</div></div>
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="star"></i></span></div><div class="rpt-stat-value">{{ format_currency(top_customer.total if top_customer else 0, symbol=False) }}</div><div class="rpt-stat-label">Top Customer Value</div></div>
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="crown"></i></span></div><div class="rpt-stat-value">{{ high_value|length }}</div><div class="rpt-stat-label">High Value (≥ Rs. 10k)</div></div>
+    <div class="rpt-stat red"><div class="rpt-stat-row"><span class="rpt-stat-ico red"><i data-lucide="moon"></i></span></div><div class="rpt-stat-value">{{ inactive|length }}</div><div class="rpt-stat-label">Inactive (90+ days)</div></div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="chart-bar"></i> Top 10 Customers</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="topChart"></canvas></div></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="credit-card"></i> Payment Methods</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="payChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="trophy"></i> Top Performers</h3></div>
+      <div class="rpt-scroll no-h"><table class="rpt-table">
+        <thead><tr><th>Rank</th><th>Customer</th><th class="tar">Orders</th><th class="tar">Total</th></tr></thead>
+        <tbody>
+        {% for c in top10 %}<tr><td class="rpt-strong">{{ c.rank }}</td><td>{{ c.customer.name }}</td><td class="tar">{{ c.count }}</td><td class="tar">{{ format_currency(c.total) }}</td></tr>
+        {% else %}<tr class="empty-row"><td colspan="4">No data</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="moon-star"></i> Inactive Customers</h3></div>
+      <div class="rpt-scroll no-h"><table class="rpt-table">
+        <thead><tr><th>Customer</th><th>Last Purchase</th><th class="tar">Total</th></tr></thead>
+        <tbody>
+        {% for c in inactive %}<tr><td>{{ c.customer.name }}</td><td class="rpt-muted">{{ c.last_purchase }}</td><td class="tar">{{ format_currency(c.total) }}</td></tr>
+        {% else %}<tr class="empty-row"><td colspan="3">No inactive customers</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div>
+  </div>
+
+  <div class="rpt-card" data-report-table>
+    <div class="rpt-card-head"><h3><i data-lucide="users"></i> Customer Details</h3><span class="rpt-count"></span></div>
+    <div class="rpt-toolbar">
+      <div class="rpt-search"><i data-lucide="search"></i><input type="text" placeholder="Search customers..."></div>
+      <div class="rpt-perpage">Show <select><option>25</option><option>50</option><option>100</option></select> rows</div>
+    </div>
+    <div class="rpt-scroll">
+      <table class="rpt-table">
+        <thead><tr><th>Rank</th><th>Customer</th><th>Mobile</th><th>GSTIN</th><th class="tar">Orders</th><th class="tar">Total</th><th class="tar">Avg</th><th class="tar">Balance</th><th>Last Purchase</th><th>Favourite</th></tr></thead>
+        <tbody>
+        {% for c in customer_data %}
+        <tr>
+          <td class="rpt-strong">{{ c.rank }}</td>
+          <td>{{ c.customer.name }}</td>
+          <td class="rpt-muted">{{ c.customer.mobile or '—' }}</td>
+          <td class="rpt-muted">{{ c.customer.gstin or '—' }}</td>
+          <td class="tar">{{ c.count }}</td>
+          <td class="tar"><b>{{ format_currency(c.total) }}</b></td>
+          <td class="tar">{{ format_currency(c.average) }}</td>
+          <td class="tar {{ 'rpt-pos' if c.outstanding<=0 else 'rpt-neg' }}">{{ format_currency(c.outstanding) }}</td>
+          <td class="rpt-muted">{{ c.last_purchase }}</td>
+          <td class="rpt-muted">{{ c.favourite_product or '—' }}</td>
+        </tr>
+        {% else %}<tr class="empty-row"><td colspan="10">No customers in this period.</td></tr>{% endfor %}
+        </tbody>
+      </table></div>
+    <div class="rpt-pager"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/reports.js') }}?v=2"></script>
+<script>
+  var topData = {{ top10 | tojson }};
+  var payData = {{ payment_methods | tojson }};
+  var pal = RP.PALETTE;
+  if (topData.length) {
+    var tp = topData.slice().reverse();
+    RP.drawChart({ el: document.getElementById('topChart'), type:'bar', money:true, legend:false, categoryPercent:true,
+      labels: tp.map(function(c){return c.customer.name;}), datasets:[{ data: tp.map(function(c){return c.total;}),
+        backgroundColor: tp.map(function(_,i){return pal[i%pal.length]+'99';}), borderRadius:5 }]});
+  }
+  var keys = Object.keys(payData);
+  if (keys.length) RP.drawChart({ el: document.getElementById('payChart'), type:'doughnut', money:false, legend:true,
+    labels: keys, datasets:[{ data: keys.map(function(k){return payData[k];}),
+      backgroundColor: keys.map(function(_,i){return pal[i%pal.length]+'CC';}), borderColor:'#fff', borderWidth:2 }]});
+</script>
+{% endblock %}

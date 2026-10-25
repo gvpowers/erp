@@ -1,0 +1,378 @@
+{% extends "layouts/admin_layout.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h1>Welcome back, {{ current_user.full_name or current_user.username }}</h1>
+        <p>Here's what's happening with your business today</p>
+    </div>
+    <div class="page-header-actions d-flex align-items-center gap-2">
+        <span class="text-muted me-1 d-none d-md-inline" style="font-size:0.8rem;">{{ from_date.strftime('%d %b %Y') }} – {{ to_date.strftime('%d %b %Y') }}</span>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Range">
+            <a href="{{ url_for('dashboard', range='7d') }}" class="btn {{ 'btn-primary' if selected_range == '7d' else 'btn-outline-secondary' }}">7D</a>
+            <a href="{{ url_for('dashboard', range='30d') }}" class="btn {{ 'btn-primary' if selected_range == '30d' else 'btn-outline-secondary' }}">30D</a>
+            <a href="{{ url_for('dashboard', range='month') }}" class="btn {{ 'btn-primary' if selected_range == 'month' else 'btn-outline-secondary' }}">Month</a>
+            <a href="{{ url_for('dashboard', range='fy') }}" class="btn {{ 'btn-primary' if selected_range == 'fy' else 'btn-outline-secondary' }}">FY</a>
+        </div>
+        <span class="badge badge-secondary d-none d-sm-inline-flex align-items-center gap-1">
+            <i data-lucide="calendar" style="width:13px;height:13px;"></i>
+            {{ now_date if now_date else '' }}
+        </span>
+    </div>
+</div>
+
+<div class="card mb-24">
+    <div class="card-body d-flex flex-wrap gap-2 align-items-center" style="padding:14px 20px;">
+        <span class="fw-600 me-1" style="font-size:0.85rem;color:var(--text-muted);">Quick Actions</span>
+        <a href="{{ url_for('new_invoice') }}" class="btn btn-sm btn-primary"><i data-lucide="file-plus" style="width:14px;height:14px;"></i> New Invoice</a>
+        <a href="{{ url_for('new_quotation') }}" class="btn btn-sm btn-outline-primary"><i data-lucide="file-text" style="width:14px;height:14px;"></i> New Quotation</a>
+        <a href="{{ url_for('create_purchase_order') }}" class="btn btn-sm btn-outline-primary"><i data-lucide="shopping-bag" style="width:14px;height:14px;"></i> Purchase Order</a>
+        <a href="{{ url_for('products_list') }}" class="btn btn-sm btn-outline-secondary"><i data-lucide="package-plus" style="width:14px;height:14px;"></i> Add Product</a>
+        <a href="{{ url_for('customers_list') }}" class="btn btn-sm btn-outline-secondary"><i data-lucide="user-plus" style="width:14px;height:14px;"></i> Add Customer</a>
+        <a href="{{ url_for('invoice_history') }}" class="btn btn-sm btn-outline-secondary"><i data-lucide="hand-coins" style="width:14px;height:14px;"></i> Record Payment</a>
+    </div>
+</div>
+
+<div class="kpi-grid-6 mb-24">
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon blue"><i data-lucide="shopping-cart"></i></div>
+            <span class="kpi-trend up">{{ range_label }}</span>
+        </div>
+        <div class="kpi-value">{{ format_currency(range_sales or 0) }}</div>
+        <div class="kpi-label">Sales in Period</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon green"><i data-lucide="hand-coins"></i></div>
+            <span class="kpi-trend up">{{ range_label }}</span>
+        </div>
+        <div class="kpi-value">{{ format_currency(range_collections or 0) }}</div>
+        <div class="kpi-label">Collections in Period</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon yellow"><i data-lucide="scale"></i></div>
+        </div>
+        <div class="kpi-value">{{ format_currency(opening_balance or 0) }}</div>
+        <div class="kpi-label">Opening Balance (as of {{ from_date.strftime('%d %b') }})</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon blue"><i data-lucide="users"></i></div>
+        </div>
+        <div class="kpi-value">{{ total_customers or 0 }}</div>
+        <div class="kpi-label">Total Customers</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon yellow"><i data-lucide="package"></i></div>
+        </div>
+        <div class="kpi-value">{{ total_products or 0 }}</div>
+        <div class="kpi-label">Total Products</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon red"><i data-lucide="alert-triangle"></i></div>
+            {% if low_stock_alerts and low_stock_alerts > 0 %}
+            <span class="kpi-trend down">Alert</span>
+            {% endif %}
+        </div>
+        <div class="kpi-value">{{ low_stock_alerts or 0 }}</div>
+        <div class="kpi-label">Low Stock Alerts</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon green"><i data-lucide="wallet"></i></div>
+        </div>
+        <div class="kpi-value">{{ format_currency(total_revenue or 0) }}</div>
+        <div class="kpi-label">Total Revenue (All Time)</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon red"><i data-lucide="circle-dollar-sign"></i></div>
+        </div>
+        <div class="kpi-value">{{ format_currency(outstanding_amount or 0) }}</div>
+        <div class="kpi-label">Outstanding (Due)</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon yellow"><i data-lucide="clock"></i></div>
+        </div>
+        <div class="kpi-value">{{ pending_invoices or 0 }}</div>
+        <div class="kpi-label">Pending Payments</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon blue"><i data-lucide="check-circle"></i></div>
+        </div>
+        <div class="kpi-value">{{ paid_invoices or 0 }}</div>
+        <div class="kpi-label">Fully Paid Invoices</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon blue"><i data-lucide="file-text"></i></div>
+            <span class="kpi-trend up">{{ range_label }}</span>
+        </div>
+        <div class="kpi-value">{{ range_invoices_count or 0 }}</div>
+        <div class="kpi-label">Invoices in Period</div>
+    </div>
+    <div class="kpi-card">
+        <div class="d-flex justify-content-between align-items-start mb-12">
+            <div class="kpi-icon green"><i data-lucide="activity"></i></div>
+        </div>
+        <div class="kpi-value">{{ activity|length }}</div>
+        <div class="kpi-label">Recent Activities</div>
+    </div>
+</div>
+
+<div class="row mb-24">
+    <div class="col-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="d-flex align-items-center gap-2">
+                    <i data-lucide="line-chart" style="width:18px;height:18px;color:var(--color-primary);"></i>
+                    <span class="text-16 fw-600">Revenue Overview</span>
+                </span>
+            </div>
+            <div class="card-body" style="height:360px;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i data-lucide="trophy" style="width:18px;height:18px;color:var(--color-primary);"></i>
+                <span class="text-16 fw-600">Top Selling Products</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-3">#</th>
+                                <th>Product</th>
+                                <th class="pe-3 text-end">Qty Sold</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in top_products or [] %}
+                            <tr>
+                                <td class="ps-3 text-muted">{{ loop.index }}</td>
+                                <td class="fw-600">{{ product[0] }}</td>
+                                <td class="pe-3 text-end">
+                                    <span class="badge badge-secondary">{{ product[1] }}</span>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="empty-state py-4">
+                                    <i data-lucide="package" style="width:32px;height:32px;color:var(--border-color);margin-bottom:8px;"></i>
+                                    <p class="text-muted mb-0">No sales data yet</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-24 mb-24">
+    <div class="col-6">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i data-lucide="circle-dollar-sign" style="width:18px;height:18px;color:var(--color-danger);"></i>
+                <span class="text-16 fw-600">Outstanding Customers</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-3">Customer</th>
+                                <th class="pe-3 text-end">Due Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in outstanding_customers or [] %}
+                            <tr>
+                                <td class="ps-3 fw-600"><a href="{{ url_for('customer_profile', cid=row[0]) }}" style="color:var(--text-primary);text-decoration:none;">{{ row[1] }}</a></td>
+                                <td class="pe-3 text-end fw-600 text-danger">{{ format_currency(row[2] or 0) }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="2" class="empty-state py-4">
+                                    <i data-lucide="circle-check" style="width:32px;height:32px;color:var(--border-color);margin-bottom:8px;"></i>
+                                    <p class="text-muted mb-0">No outstanding dues</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i data-lucide="activity" style="width:18px;height:18px;color:var(--color-primary);"></i>
+                <span class="text-16 fw-600">Recent Activity</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for a in activity or [] %}
+                    <a href="{{ a.link }}" class="list-group-item list-group-item-action d-flex align-items-center gap-3" style="padding:12px 20px;">
+                        <span class="badge {{ 'badge-danger' if a.type == 'invoice' else 'badge-info' if a.type == 'quotation' else 'badge-success' }}" style="border-radius:8px;padding:6px 8px;">
+                            <i data-lucide="{{ 'receipt' if a.type == 'invoice' else 'file-text' if a.type == 'quotation' else 'hand-coins' }}" style="width:14px;height:14px;"></i>
+                        </span>
+                        <div class="flex-grow-1">
+                            <div class="fw-600" style="font-size:0.88rem;">{{ a.title }}</div>
+                            <small class="text-muted font-monospace">{{ a.ref }}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-600" style="font-size:0.88rem;">{{ format_currency(a.amount or 0) }}</div>
+                            <small class="text-muted">{{ a.date.strftime('%d %b %H:%M') }}</small>
+                        </div>
+                    </a>
+                    {% else %}
+                    <div class="empty-state py-4">
+                        <p class="text-muted mb-0">No recent activity</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="d-flex align-items-center gap-2">
+            <i data-lucide="file-text" style="width:18px;height:18px;color:var(--color-primary);"></i>
+            <span class="text-16 fw-600">Recent Invoices</span>
+        </span>
+        <a href="{{ url_for('invoice_history') }}" class="btn btn-sm btn-outline-primary">
+            View All <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-3">Invoice #</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th class="text-end">Amount</th>
+                        <th class="text-end pe-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inv in recent_invoices or [] %}
+                    <tr>
+                        <td class="ps-3 fw-600">{{ inv.invoice_number }}</td>
+                        <td class="text-secondary">{{ inv.customer_name or 'Walk-in' }}</td>
+                        <td class="text-secondary">{{ inv.invoice_date.strftime('%d %b %Y') if inv.invoice_date else '' }}</td>
+                        <td class="text-end fw-600">{{ format_currency(inv.grand_total or 0) }}</td>
+                        <td class="text-end pe-3">
+                            {% set status = inv.status or 'draft' %}
+                            <span class="badge {% if status == 'paid' %}badge-success{% elif status == 'confirmed' %}badge-info{% elif status == 'cancelled' %}badge-danger{% else %}badge-secondary{% endif %}">
+                                {{ status|capitalize }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="empty-state py-4">
+                            <i data-lucide="file-text" style="width:32px;height:32px;color:var(--border-color);margin-bottom:8px;"></i>
+                            <p class="text-muted mb-0">No recent invoices</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .kpi-grid-6 {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 16px;
+    }
+    @media (max-width: 1200px) {
+        .kpi-grid-6 { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+        .kpi-grid-6 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+        .kpi-grid-6 { grid-template-columns: 1fr; }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const chartData = {{ chart_data | tojson | safe if chart_data else '[]' }};
+    const labels = chartData.map(d => d.label);
+    const values = chartData.map(d => d.value);
+    const ctx = document.getElementById('revenueChart');
+    if (ctx) {
+        new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: labels.length ? labels : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: values.length ? values : [0,0,0,0,0,0,0,0,0,0,0,0],
+                    borderColor: '#2563EB',
+                    backgroundColor: 'rgba(37,99,235,0.06)',
+                    borderWidth: 2.5,
+                    pointBackgroundColor: '#2563EB',
+                    pointBorderColor: '#2563EB',
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#111827',
+                        titleColor: '#fff',
+                        bodyColor: '#D1D5DB',
+                        borderColor: '#374151',
+                        borderWidth: 1,
+                        padding: 14,
+                        cornerRadius: 10,
+                        displayColors: false,
+                        titleFont: { weight: '600' }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(0,0,0,0.04)' },
+                        ticks: { color: '#94A3B8', font: { size: 12, family: 'Inter' } }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.04)' },
+                        ticks: { color: '#94A3B8', font: { size: 12, family: 'Inter' } }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

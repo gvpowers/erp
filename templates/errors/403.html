@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}403 Access Denied - GV Powers ERP{% endblock %}
+
+{% block body %}
+<style>
+    .error-page { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; background:var(--bg-body, #F9FAFB); }
+    .error-card { text-align:center; max-width:480px; width:100%; background:var(--bg-white); border:1px solid var(--border-color); border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04); padding:48px 32px; }
+    .error-icon-wrap { width:96px; height:96px; border-radius:16px; background:var(--color-danger-light); display:inline-flex; align-items:center; justify-content:center; margin-bottom:24px; }
+    .error-code { font-size:4rem; font-weight:800; color:var(--text-primary); margin:0; line-height:1; letter-spacing:-2px; }
+    .error-title { font-size:24px; font-weight:700; color:var(--text-primary); margin:16px 0 8px; }
+    .error-desc { font-size:15px; color:var(--text-muted); margin:0 0 32px; line-height:1.6; }
+    .error-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .error-actions .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 24px; font-size:14px; font-weight:600; border-radius:10px; text-decoration:none; transition:all .2s ease; cursor:pointer; border:1px solid transparent; }
+    .error-actions .btn-primary { background:var(--color-primary); color:#fff; border-color:var(--color-primary); }
+    .error-actions .btn-primary:hover { background:var(--color-primary-hover); border-color:var(--color-primary-hover); }
+    .error-actions .btn-outline { background:transparent; color:var(--text-muted); border-color:var(--border-color); }
+    .error-actions .btn-outline:hover { background:var(--bg-body, #F9FAFB); color:var(--text-primary); }
+</style>
+
+<div class="error-page">
+    <div class="error-card">
+        <div class="error-icon-wrap">
+            <i data-lucide="shield-x" style="width:48px;height:48px;color:var(--color-danger);"></i>
+        </div>
+        <p class="error-code">403</p>
+        <h1 class="error-title">Access Denied</h1>
+        <p class="error-desc">You don't have permission to access this page. Please contact your administrator if you believe this is a mistake.</p>
+        <div class="error-actions">
+            <a href="{{ url_for('dashboard') if current_user.is_authenticated else url_for('index') }}" class="btn btn-primary">
+                <i data-lucide="home" style="width:18px;height:18px;"></i> Go Home
+            </a>
+            <button onclick="history.back()" class="btn btn-outline">
+                <i data-lucide="arrow-left" style="width:18px;height:18px;"></i> Go Back
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Low Stock Report{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('reports_page') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Reports</a>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}?v=2">
+<script src="{{ url_for('static', filename='js/reports.js') }}?v=2"></script>
+{% endblock %}
+
+{% block content %}
+<div class="rpt-page">
+  <div class="rpt-hero">
+    <div>
+      <div class="rpt-crumb">Analytics / Inventory</div>
+      <h4>Low Stock Report</h4>
+      <p>Products at or below their minimum stock level, with suggested reorder quantities.</p>
+    </div>
+    <div class="rpt-actions">
+      <button class="rpt-btn print" onclick="RP.printPage()"><i data-lucide="printer"></i> Print</button>
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='low_stock') }}"><i data-lucide="file-down"></i> PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='low_stock') }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='low_stock') }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+  </div>
+
+  <div class="rpt-section-label"><i data-lucide="layout-dashboard"></i> Summary</div>
+  <div class="rpt-stats">
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="alert-triangle"></i></span></div><div class="rpt-stat-value">{{ products|length }}</div><div class="rpt-stat-label">Low Stock Items</div></div>
+    <div class="rpt-stat red"><div class="rpt-stat-row"><span class="rpt-stat-ico red"><i data-lucide="indian-rupee"></i></span></div><div class="rpt-stat-value">{{ format_currency(total_value) }}</div><div class="rpt-stat-label">Current Stock Value</div></div>
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="shopping-cart"></i></span></div><div class="rpt-stat-value">{{ products|sum(attribute='suggested') }}</div><div class="rpt-stat-label">Suggested Reorder Qty</div></div>
+  </div>
+
+  <div class="rpt-section-label"><i data-lucide="list"></i> Products Below Minimum Stock</div>
+  <div class="rpt-card">
+    <div class="rpt-scroll no-h"><table class="rpt-table">
+      <thead><tr><th>Product</th><th>SKU</th><th>Brand</th><th>Category</th><th class="tar">Current</th><th class="tar">Min</th><th class="tar">Max</th><th class="tar">Suggested</th><th class="tar">Stock Value</th><th>Action</th></tr></thead>
+      <tbody>
+      {% for p in products %}
+      <tr>
+        <td><a href="{{ url_for('product_profile', pid=p.id) }}" class="rpt-strong" style="color:var(--erp-primary);text-decoration:none">{{ p.name }}</a></td>
+        <td class="rpt-mono">{{ p.sku or '—' }}</td>
+        <td>{{ p.brand or '—' }}</td>
+        <td>{{ p.category or '—' }}</td>
+        <td class="tar"><span class="rpt-badge {{ 'red' if p.stock == 0 else 'amber' }}">{{ p.stock }}</span></td>
+        <td class="tar">{{ p.min_stock }}</td>
+        <td class="tar">{{ p.max_stock }}</td>
+        <td class="tar"><b>{{ p.suggested }}</b></td>
+        <td class="tar">{{ format_currency(p.stock_value) }}</td>
+        <td><a href="{{ url_for('create_purchase_order', product_id=p.id, suggested_qty=p.suggested) }}" class="rpt-btn blue" style="padding:4px 10px;font-size:12px"><i data-lucide="shopping-cart"></i> Create PO</a></td>
+      </tr>
+      {% else %}<tr class="empty-row"><td colspan="10">No low stock items — inventory is healthy.</td></tr>{% endfor %}
+      </tbody></table></div>
+  </div>
+</div>
+{% endblock %}

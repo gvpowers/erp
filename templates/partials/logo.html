@@ -1,0 +1,27 @@
+{# Centralized GV Powers official logo component.
+   The single official logo source is the uploaded file img.png at the project
+   root (served by the /logo route; it is NOT renamed, duplicated or moved).
+   This macro is the ONLY place the visible company logo is rendered, so every
+   page/panel/print template shares the same current logo automatically.
+   Usage: {% from "partials/logo.html" import gv_logo %}
+           {{ gv_logo(alt='GV Powers', class='brand-logo') }}
+
+   `src` overrides the image source. The invoice PDF renderer passes an
+   absolute file:// URI here so WeasyPrint can embed the logo without any
+   network access; the browser always receives the normal Flask /logo URL.
+   The cache-busting version query is appended ONLY to the Flask /logo URL --
+   a caller-supplied absolute URI is already exact and must stay untouched.
+#}
+{% macro gv_logo(alt='GV Powers', class='', style='', src=None) -%}
+{%- if src -%}
+<img src="{{ src }}"
+     alt="{{ alt }}"
+     {% if class %}class="{{ class }}"{% endif %}
+     {% if style %}style="{{ style }}"{% endif %}>
+{%- else -%}
+<img src="{{ url_for('logo_image') }}?v={{ config.get('OFFICIAL_LOGO_VERSION', '20260928') }}"
+     alt="{{ alt }}"
+     {% if class %}class="{{ class }}"{% endif %}
+     {% if style %}style="{{ style }}"{% endif %}>
+{%- endif -%}
+{%- endmacro %}

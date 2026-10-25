@@ -1,0 +1,702 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Invoice History{% endblock %}
+{% block back_link %}<a href="{{ url_for('dashboard') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Dashboard</a>{% endblock %}
+
+{% block content %}
+<style>
+  .inv-wrapper{max-width:1400px;margin:0 auto}
+  .inv-page-header{position:relative;padding:1.5rem 2rem;border-radius:16px;background:linear-gradient(135deg,rgba(37,99,235,.06) 0%,rgba(59,130,246,.04) 50%,rgba(30,64,175,.06) 100%);border:1px solid var(--border);margin-bottom:1.75rem;overflow:hidden;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem}
+  .inv-page-header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--erp-primary),var(--color-primary),var(--erp-info))}
+  .inv-page-header h4{font-weight:800;font-size:2rem;color:var(--erp-text);margin:0 0 .25rem;letter-spacing:-.02em}
+  .inv-page-header p{color:var(--erp-text-muted);font-size:.85rem;margin:0}
+  .inv-header-btn{padding:.6rem 1.25rem;border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;border:none;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;background:var(--erp-primary);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+  .inv-header-btn:hover{background:var(--erp-primary-hover);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.35);color:#fff}
+  .inv-header-btn i{width:16px;height:16px}
+  .inv-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.75rem}
+  .inv-stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;position:relative;overflow:hidden;transition:all .2s}
+  .inv-stat:hover{border-color:var(--erp-primary);transform:translateY(-1px)}
+  .inv-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .inv-stat.c-blue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+  .inv-stat.c-green::before{background:linear-gradient(90deg,#10b981,#34d399)}
+  .inv-stat.c-amber::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+  .inv-stat.c-purple::before{background:linear-gradient(90deg,var(--color-primary),#818cf8)}
+  .inv-stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+  .inv-stat-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center}
+  .inv-stat-icon i{width:20px;height:20px}
+  .inv-stat-icon.blue{background:rgba(59,130,246,.1);color:#3b82f6}
+  .inv-stat-icon.green{background:rgba(16,185,129,.1);color:var(--erp-success)}
+  .inv-stat-icon.amber{background:rgba(245,158,11,.1);color:var(--erp-warning)}
+  .inv-stat-icon.purple{background:var(--color-primary-light);color:var(--color-primary)}
+  .inv-stat-value{font-size:2rem;font-weight:800;color:var(--erp-text);letter-spacing:-.02em}
+  .inv-stat-label{font-size:.75rem;color:var(--erp-text-muted);margin-top:.2rem;font-weight:500}
+  .inv-filter{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.5rem}
+  .inv-filter-top{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.85rem}
+  .inv-search{position:relative;flex:1;min-width:250px}
+  .inv-search i{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--erp-text-muted)}
+  .inv-search input{width:100%;background:var(--erp-surface-2);border:1px solid var(--erp-border);color:var(--erp-text);border-radius:10px;padding:.6rem .85rem .6rem 2.4rem;font-size:.84rem;transition:all .2s}
+  .inv-search input:focus{border-color:var(--erp-primary);box-shadow:0 0 0 3px rgba(37,99,235,.12);outline:none}
+  .inv-filter-sel,.inv-date{background:var(--erp-surface-2);border:1px solid var(--erp-border);color:var(--erp-text);border-radius:10px;padding:.6rem .85rem;font-size:.82rem;transition:all .2s}
+  .inv-filter-sel:focus,.inv-date:focus{border-color:var(--erp-primary);box-shadow:0 0 0 3px rgba(37,99,235,.12);outline:none}
+  .inv-filter-sel option{background:var(--erp-surface-2);color:var(--erp-text)}
+  .inv-btn{padding:.55rem 1.15rem;border-radius:10px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;border:none;display:inline-flex;align-items:center;gap:.4rem}
+  .inv-btn i{width:14px;height:14px}
+  .inv-btn-primary{background:var(--erp-primary);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+  .inv-btn-primary:hover{background:var(--erp-primary-hover);transform:translateY(-1px)}
+  .inv-btn-outline{background:transparent;color:var(--erp-text-muted);border:1px solid var(--erp-border)}
+  .inv-btn-outline:hover{border-color:var(--erp-primary);color:var(--erp-text)}
+  .inv-quick{display:flex;gap:.4rem;flex-wrap:wrap}
+  .inv-quick-btn{padding:.4rem .85rem;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;background:var(--erp-surface-2);color:var(--erp-text-muted);border:1px solid transparent;display:inline-flex;align-items:center;gap:.3rem}
+  .inv-quick-btn i{width:13px;height:13px}
+  .inv-quick-btn:hover{border-color:var(--erp-primary);color:var(--erp-primary);background:rgba(37,99,235,.05)}
+  .inv-quick-btn.active{background:var(--erp-primary);color:#fff;border-color:var(--erp-primary)}
+  .inv-table-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .inv-toolbar{padding:.85rem 1.35rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+  .inv-bulk{display:flex;align-items:center;gap:.75rem;opacity:0;pointer-events:none;transition:all .2s}
+  .inv-bulk.show{opacity:1;pointer-events:auto}
+  .inv-bulk span{font-size:.8rem;color:var(--erp-text-muted);font-weight:600}
+  .inv-bulk-count{background:var(--erp-primary);color:#fff;padding:.15rem .55rem;border-radius:6px;font-size:.72rem;font-weight:700}
+  .inv-bulk-btn{padding:.35rem .75rem;border-radius:7px;font-size:.73rem;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid var(--erp-border);background:transparent;color:var(--erp-text-muted);display:inline-flex;align-items:center;gap:.3rem}
+  .inv-bulk-btn i{width:13px;height:13px}
+  .inv-bulk-btn:hover{border-color:var(--erp-primary);color:var(--erp-primary)}
+  .inv-showing{font-size:.78rem;color:var(--erp-text-muted)}
+  .inv-scroll{overflow-x:auto}
+  .inv-table{width:100%;border-collapse:separate;border-spacing:0}
+  .inv-table thead th{background:var(--erp-surface-2);color:var(--erp-text-muted);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.65rem .8rem;border-bottom:1px solid var(--erp-border);white-space:nowrap;position:sticky;top:0;z-index:5}
+  .inv-table thead th:first-child{border-radius:8px 0 0 0}
+  .inv-table thead th:last-child{border-radius:0 8px 0 0}
+  .inv-table tbody td{padding:.6rem .8rem;border-bottom:1px solid var(--erp-border);font-size:.83rem;color:var(--erp-text);white-space:nowrap}
+  .inv-table tbody tr{transition:background .15s}
+  .inv-table tbody tr:hover{background:rgba(37,99,235,.04)}
+  .inv-table tbody tr.selected{background:rgba(37,99,235,.08)}
+  .inv-table tbody tr:last-child td{border-bottom:none}
+  .inv-chk{width:16px;height:16px;accent-color:var(--erp-primary);cursor:pointer}
+  .inv-num{font-weight:700;color:var(--erp-primary);text-decoration:none;transition:color .2s}
+  .inv-num:hover{color:var(--erp-primary-hover)}
+  .inv-cust{font-weight:600;color:var(--erp-text)}
+  .inv-cust-sub{font-size:.7rem;color:var(--erp-text-muted)}
+  .inv-amt{font-weight:600;font-variant-numeric:tabular-nums}
+  .inv-amt.paid{color:var(--erp-success)}
+  .inv-amt.pending{color:var(--erp-text-muted)}
+  .inv-amt.balance-due{color:var(--erp-danger)}
+  .inv-badge{padding:.3rem .65rem;border-radius:7px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;display:inline-flex;align-items:center;gap:.25rem;white-space:nowrap}
+  .inv-badge i{width:13px;height:13px}
+  .inv-badge.paid{background:rgba(16,185,129,.1);color:var(--erp-success)}
+  .inv-badge.completed{background:rgba(16,185,129,.1);color:var(--erp-success)}
+  .inv-badge.pending{background:rgba(245,158,11,.1);color:var(--erp-warning)}
+  .inv-badge.partial{background:var(--color-primary-light);color:var(--color-primary)}
+  .inv-badge.overdue{background:rgba(239,68,68,.1);color:var(--erp-danger)}
+  .inv-badge.confirmed{background:rgba(59,130,246,.1);color:#3b82f6}
+  .inv-badge.draft{background:var(--erp-surface-2);color:var(--erp-text-muted)}
+  .inv-badge.cancelled{background:rgba(239,68,68,.06);color:var(--erp-danger)}
+  .inv-empty{text-align:center;padding:3rem 1rem;color:var(--erp-text-muted)}
+  .inv-empty i{width:48px;height:48px;margin-bottom:1rem;opacity:.4}
+  .inv-empty h3{font-size:1rem;font-weight:600;color:var(--erp-text);margin-bottom:.4rem}
+  .inv-empty p{font-size:.82rem}
+  .inv-pagination{padding:1rem 1.35rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+  .inv-pagination-info{font-size:.78rem;color:var(--erp-text-muted)}
+  .inv-pagination .pagination{margin:0}
+  .inv-pagination .page-link{background:var(--erp-surface-2);border:1px solid var(--erp-border);color:var(--erp-text-muted);font-size:.78rem;padding:.35rem .65rem;transition:all .15s}
+  .inv-pagination .page-link:hover{background:rgba(37,99,235,.08);border-color:var(--erp-primary);color:var(--erp-primary)}
+  .inv-pagination .page-item.active .page-link{background:var(--erp-primary);border-color:var(--erp-primary);color:#fff}
+  .inv-pagination .page-item.disabled .page-link{opacity:.4}
+  .flash-container{position:fixed;top:1rem;right:1rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem}
+  .flash-toast{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;box-shadow:0 8px 32px rgba(0,0,0,.2);animation:flashIn .3s ease}
+  .flash-success{border-left:3px solid var(--erp-success)}
+  .flash-danger{border-left:3px solid var(--erp-danger)}
+  .flash-info{border-left:3px solid var(--erp-info)}
+  .flash-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .flash-icon i{width:16px;height:16px}
+  .flash-msg{font-size:.82rem;color:var(--erp-text);font-weight:500}
+  .flash-close{background:none;border:none;color:var(--erp-text-muted);cursor:pointer;padding:2px}
+  .flash-close i{width:14px;height:14px}
+  @keyframes flashIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:var(--erp-surface)}
+  ::-webkit-scrollbar-thumb{background:var(--erp-border);border-radius:3px}
+  .share-options{display:grid;grid-template-columns:1fr;gap:8px}
+  .share-option{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--erp-border);border-radius:12px;background:#fff;text-align:left;cursor:pointer;transition:border-color .15s,background .15s;width:100%}
+  .share-option:hover{border-color:var(--color-primary);background:var(--erp-surface-hover,#F8FAFF)}
+  .share-option>i{width:18px;height:18px;color:var(--color-primary);flex-shrink:0}
+  .share-option>span{display:flex;flex-direction:column;gap:2px}
+  .share-option b{font-size:.82rem;color:var(--erp-text,var(--text-primary))}
+  .share-option small{font-size:.72rem;color:var(--erp-text-muted)}
+  .erp-menu__item.is-disabled{opacity:.5;cursor:not-allowed}
+</style>
+
+<div class="inv-wrapper">
+  <div class="inv-page-header">
+    <div>
+      <h4><i data-lucide="file-text" style="width:22px;height:22px;vertical-align:middle;margin-right:.3rem;color:var(--erp-primary)"></i> Invoice History</h4>
+      <p>Manage, track and export all invoices</p>
+    </div>
+    <a href="{{ url_for('new_invoice') }}" class="inv-header-btn">
+      <i data-lucide="plus"></i> New Invoice
+    </a>
+  </div>
+
+  <div class="inv-stats">
+    <div class="inv-stat c-blue">
+      <div class="inv-stat-top"><div class="inv-stat-icon blue"><i data-lucide="file-text"></i></div></div>
+      <div class="inv-stat-value">{{ stats.total }}</div>
+      <div class="inv-stat-label">Total Invoices</div>
+    </div>
+    <div class="inv-stat c-green">
+      <div class="inv-stat-top"><div class="inv-stat-icon green"><i data-lucide="indian-rupee"></i></div></div>
+      <div class="inv-stat-value">{{ format_currency(stats.revenue, symbol=False) }}</div>
+      <div class="inv-stat-label">Total Revenue</div>
+    </div>
+    <div class="inv-stat c-amber">
+      <div class="inv-stat-top"><div class="inv-stat-icon amber"><i data-lucide="clock"></i></div></div>
+      <div class="inv-stat-value">{{ format_currency(stats.pending, symbol=False) }}</div>
+      <div class="inv-stat-label">Pending Amount</div>
+    </div>
+    <div class="inv-stat c-purple">
+      <div class="inv-stat-top"><div class="inv-stat-icon purple"><i data-lucide="check-circle"></i></div></div>
+      <div class="inv-stat-value">{{ stats.paid_count }}</div>
+      <div class="inv-stat-label">Paid Invoices</div>
+    </div>
+  </div>
+
+  <div class="inv-filter">
+    <form method="GET" action="{{ url_for('invoice_history') }}" id="ihFilterForm">
+      <div class="inv-filter-top">
+        <div class="inv-search">
+          <i data-lucide="search"></i>
+          <input type="text" name="q" placeholder="Search invoice, customer, mobile, GSTIN..." value="{{ search }}" autocomplete="off" id="ihSearchInput">
+        </div>
+        <select class="inv-filter-sel" name="status" onchange="this.form.submit()">
+          <option value="">All Status</option>
+          <option value="draft" {{ 'selected' if status == 'draft' }}>Draft</option>
+          <option value="confirmed" {{ 'selected' if status == 'confirmed' }}>Confirmed</option>
+          <option value="paid" {{ 'selected' if status == 'paid' }}>Paid</option>
+          <option value="cancelled" {{ 'selected' if status == 'cancelled' }}>Cancelled</option>
+        </select>
+        <select class="inv-filter-sel" name="payment_status" onchange="this.form.submit()">
+          <option value="">All Payments</option>
+          <option value="paid" {{ 'selected' if payment_status == 'paid' }}>Paid</option>
+          <option value="pending" {{ 'selected' if payment_status == 'pending' }}>Pending</option>
+          <option value="partial" {{ 'selected' if payment_status == 'partial' }}>Partial</option>
+        </select>
+        <input type="date" class="inv-date" name="date_from" value="{{ date_from }}" placeholder="From" onchange="this.form.submit()">
+        <input type="date" class="inv-date" name="date_to" value="{{ date_to }}" placeholder="To" onchange="this.form.submit()">
+        {% if current_user.is_admin %}
+        <select class="inv-filter-sel" name="sales_person" onchange="this.form.submit()">
+          <option value="">All Sales Person</option>
+          {% for u in sales_users %}
+          <option value="{{ u.id }}" {{ 'selected' if sales_person_id == u.id|string }}>{{ u.full_name }}</option>
+          {% endfor %}
+        </select>
+        {% endif %}
+        <button type="submit" class="inv-btn inv-btn-primary"><i data-lucide="filter"></i> Apply</button>
+        {% if search or status or payment_status or date_from or date_to or sales_person_id %}
+        <a href="{{ url_for('invoice_history') }}" class="inv-btn inv-btn-outline"><i data-lucide="x"></i> Clear</a>
+        {% endif %}
+      </div>
+      <div class="inv-quick">
+        <a href="{{ url_for('invoice_history') }}" class="inv-quick-btn {{ 'active' if not status and not payment_status }}">All</a>
+        <a href="{{ url_for('invoice_history', status='paid') }}" class="inv-quick-btn {{ 'active' if status == 'paid' }}">
+          <i data-lucide="check-circle"></i> Paid
+        </a>
+        <a href="{{ url_for('invoice_history', payment_status='pending') }}" class="inv-quick-btn {{ 'active' if payment_status == 'pending' }}">
+          <i data-lucide="clock"></i> Pending
+        </a>
+        <a href="{{ url_for('invoice_history', payment_status='partial') }}" class="inv-quick-btn {{ 'active' if payment_status == 'partial' }}">
+          <i data-lucide="percent"></i> Partial
+        </a>
+        <a href="{{ url_for('invoice_history', status='draft') }}" class="inv-quick-btn {{ 'active' if status == 'draft' }}">
+          <i data-lucide="file-edit"></i> Draft
+        </a>
+        <a href="{{ url_for('invoice_history', status='confirmed') }}" class="inv-quick-btn {{ 'active' if status == 'confirmed' }}">
+          <i data-lucide="clock"></i> Confirmed
+        </a>
+        <a href="{{ url_for('invoice_history', status='cancelled') }}" class="inv-quick-btn {{ 'active' if status == 'cancelled' }}">
+          <i data-lucide="x-circle"></i> Cancelled
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div class="inv-table-card">
+    <div class="inv-toolbar">
+      <div>
+        <div class="inv-bulk" id="ihBulkBar">
+          <span><span class="inv-bulk-count" id="ihBulkCount">0</span> selected</span>
+          <button class="inv-bulk-btn" onclick="bulkAction('download')"><i data-lucide="download"></i> Download PDF</button>
+        </div>
+      </div>
+      <div class="inv-showing">
+        Showing {{ invoices.items|length }} of {{ stats.total }} invoices
+      </div>
+    </div>
+
+    <div class="inv-scroll">
+      <table class="inv-table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" class="inv-chk" id="ihSelectAll" onclick="toggleSelectAll(this)"></th>
+            <th>Invoice No</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th class="text-end">Grand Total</th>
+            <th class="text-end">Paid</th>
+            <th class="text-end">Balance</th>
+            <th class="text-center">Payment</th>
+            <th class="text-center">Status</th>
+            <th>Sales Person</th>
+            <th class="text-center"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if invoices and invoices.items %}
+            {% for inv in invoices.items %}
+            {% set balance = (inv.grand_total or 0) - (inv.amount_paid or 0) %}
+            {% set pay_status = 'cancelled' if inv.status == 'cancelled' else ('paid' if balance <= 0.01 else ('pending' if (inv.amount_paid or 0) < 0.01 else 'partial')) %}
+            {% set overdue = pay_status in ('pending','partial') and inv.due_date and inv.due_date < today %}
+            <tr data-id="{{ inv.id }}">
+              <td><input type="checkbox" class="inv-chk ih-row-chk" value="{{ inv.id }}" onchange="onRowCheck()"></td>
+              <td>
+                <a href="{{ url_for('invoice_preview', iid=inv.id) }}" class="inv-num">{{ inv.invoice_number }}</a>
+              </td>
+              <td>{{ inv.invoice_date.strftime('%d %b %Y') if inv.invoice_date else '-' }}</td>
+              <td>
+                <div class="inv-cust">{{ inv.customer_name or (inv.customer.name if inv.customer else '-') }}</div>
+                <div class="inv-cust-sub">{{ inv.customer_mobile or (inv.customer.mobile if inv.customer else '') }}</div>
+              </td>
+              <td class="text-center"><span class="inv-badge draft">{{ inv.items|length }}</span></td>
+              <td class="text-end inv-amt pending">{{ format_currency(inv.grand_total or 0) }}</td>
+              <td class="text-end inv-amt {{ 'paid' if (inv.amount_paid or 0) > 0 else 'pending' }}">{{ format_currency(inv.amount_paid or 0, symbol=False) }}</td>
+              <td class="text-end inv-amt {{ 'balance-due' if balance > 0.01 else 'paid' }}">{{ format_currency(balance, symbol=False) }}</td>
+              <td class="text-center">
+                {% if overdue %}
+                  <span class="inv-badge overdue"><i data-lucide="alert-triangle"></i> Overdue</span>
+                {% else %}
+                  <span class="inv-badge {{ pay_status }}">
+                    {% if pay_status == 'paid' %}<i data-lucide="check-circle"></i>{% elif pay_status == 'pending' %}<i data-lucide="clock"></i>{% elif pay_status == 'partial' %}<i data-lucide="percent"></i>{% endif %}
+                    {{ pay_status|capitalize }}
+                  </span>
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {% if inv.status == 'cancelled' %}
+                  <span class="inv-badge cancelled"><i data-lucide="x-circle"></i> Cancelled</span>
+                {% elif inv.status == 'paid' %}
+                  <span class="inv-badge completed"><i data-lucide="check-circle"></i> Paid</span>
+                {% elif inv.status == 'confirmed' %}
+                  <span class="inv-badge confirmed"><i data-lucide="clock"></i> Confirmed</span>
+                {% elif inv.status == 'draft' %}
+                  <span class="inv-badge draft"><i data-lucide="file-edit"></i> Draft</span>
+                {% else %}
+                  <span class="inv-badge draft">{{ inv.status|capitalize }}</span>
+                {% endif %}
+              </td>
+              <td class="inv-cust-sub">{{ inv.creator.full_name if inv.creator else '-' }}</td>
+              <td class="text-center">
+                <div class="erp-menu" data-erp-menu>
+                  <button class="erp-menu__trigger" data-erp-trigger aria-label="Actions" aria-haspopup="true" title="Actions">
+                    <i data-lucide="ellipsis-vertical"></i>
+                  </button>
+                  <div class="erp-menu__panel" role="menu">
+                    <a class="erp-menu__item" href="{{ url_for('invoice_preview', iid=inv.id) }}" role="menuitem">
+                      <i data-lucide="eye"></i><span class="erp-menu__label">View Invoice</span>
+                    </a>
+
+                    <div class="erp-menu__divider"></div>
+
+                    <a class="erp-menu__item" href="{{ url_for('download_invoice_pdf', inv_id=inv.id, copy_type='customer') }}" title="Download customer-copy PDF" role="menuitem">
+                      <i data-lucide="download"></i><span class="erp-menu__label">Download PDF</span>
+                    </a>
+
+                    <a class="erp-menu__item" href="{{ url_for('print_invoice_pdf', inv_id=inv.id, copy_type='customer') }}" target="_blank" rel="noopener" title="Open print-ready invoice" role="menuitem">
+                      <i data-lucide="printer"></i><span class="erp-menu__label">Print</span>
+                    </a>
+
+                    <button class="erp-menu__item" onclick="event.stopPropagation(); shareInvoice({{ inv.id }}, '{{ inv.invoice_number|e }}', '{{ inv.customer_mobile|e }}')" role="menuitem">
+                      <i data-lucide="share-2"></i><span class="erp-menu__label">Share Invoice</span>
+                    </button>
+
+                    {% set editable = inv.status != 'cancelled' and (inv.status == 'draft' or inv.payment_status == 'pending') %}
+                    {% set owns = current_user.is_admin or (inv.created_by is not none and inv.created_by == current_user.id) %}
+                    {% set can_edit = inv.status != 'cancelled' and (current_user.is_admin or inv.status == 'draft' or inv.payment_status in ('pending', 'due')) %}
+
+                    {% if inv.status != 'cancelled' and owns %}
+                    <div class="erp-menu__divider"></div>
+                    {% if can_edit %}
+                    <a class="erp-menu__item" href="{{ url_for('edit_invoice', iid=inv.id) }}" title="Edit this invoice" role="menuitem">
+                      <i data-lucide="pencil"></i><span class="erp-menu__label">Edit Invoice</span>
+                    </a>
+                    {% else %}
+                    <button class="erp-menu__item is-disabled" disabled title="This invoice cannot be edited because it has already been finalized." role="menuitem">
+                      <i data-lucide="pencil"></i><span class="erp-menu__label">Edit Invoice</span>
+                    </button>
+                    {% endif %}
+
+                    <button class="erp-menu__item {{ 'danger' if editable else '' }}" {% if inv.status == 'cancelled' %}disabled{% endif %} onclick="event.stopPropagation(); showCancelModal({{ inv.id }}, '{{ inv.invoice_number|e }}')" role="menuitem">
+                      <i data-lucide="x-circle"></i><span class="erp-menu__label">Cancel Invoice</span>
+                    </button>
+                    {% endif %}
+
+                    {% if current_user.is_admin and inv.status != 'cancelled' %}
+                    <button class="erp-menu__item danger" onclick="event.stopPropagation(); deleteInvoice({{ inv.id }}, '{{ inv.invoice_number|e }}')" role="menuitem">
+                      <i data-lucide="trash-2"></i><span class="erp-menu__label">Delete Invoice</span>
+                    </button>
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="12">
+              <div class="inv-empty">
+                <i data-lucide="file-text"></i>
+                <h3>No invoices found</h3>
+                <p>{% if search or status or payment_status or date_from or date_to %}Try adjusting your filters{% else %}Create your first invoice to get started{% endif %}</p>
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if invoices.pages > 1 %}
+    <div class="inv-pagination">
+      <div class="inv-pagination-info">
+        Page {{ invoices.page }} of {{ invoices.pages }} ({{ invoices.total }} invoices)
+      </div>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          {% if invoices.has_prev %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('invoice_history', page=invoices.prev_num, q=search, status=status, payment_status=payment_status, date_from=date_from, date_to=date_to, sales_person=sales_person_id) }}">
+                <i data-lucide="chevron-left" style="width:14px;height:14px"></i>
+              </a>
+            </li>
+          {% endif %}
+          {% for p in invoices.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if p %}
+              <li class="page-item {{ 'active' if p == invoices.page }}">
+                <a class="page-link" href="{{ url_for('invoice_history', page=p, q=search, status=status, payment_status=payment_status, date_from=date_from, date_to=date_to, sales_person=sales_person_id) }}">{{ p }}</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+            {% endif %}
+          {% endfor %}
+          {% if invoices.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('invoice_history', page=invoices.next_num, q=search, status=status, payment_status=payment_status, date_from=date_from, date_to=date_to, sales_person=sales_person_id, symbol=False) }}">
+                <i data-lucide="chevron-right" style="width:14px;height:14px"></i>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="modal fade" id="cancelModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger"><i data-lucide="alert-triangle" class="me-2"></i>Cancel Invoice</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>Are you sure you want to cancel <strong id="cancelInvNum"></strong>?</p>
+        <p class="text-muted text-13">This will reverse stock changes and clear payments.</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">No, Keep It</button>
+          <div class="d-flex align-items-center gap-2">
+            <input type="text" class="form-control form-control-sm" id="cancelReason" placeholder="Reason (optional)" style="width:180px">
+            <button type="button" class="btn btn-danger btn-sm" id="cancelConfirmBtn" onclick="confirmCancel()">
+              <i data-lucide="x-circle" class="me-1"></i>Yes, Cancel
+            </button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger"><i data-lucide="trash-2" class="me-2"></i>Delete Invoice</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>Are you sure you want to permanently delete <strong id="deleteInvNum"></strong>?</p>
+        <p class="text-danger text-13">This will permanently delete the invoice, reverse stock changes and remove payments. This action cannot be undone.</p>
+        <div class="input-group input-group-sm mt-3 mx-auto" style="max-width:280px">
+          <span class="input-group-text" style="font-size:0.72rem">Password</span>
+          <input type="password" class="form-control" id="deletePassword" placeholder="Admin password" autocomplete="off">
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">No, Keep It</button>
+        <button type="button" class="btn btn-danger btn-sm" id="deleteConfirmBtn" onclick="confirmDelete()">
+          <i data-lucide="trash-2" class="me-1"></i>Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="shareModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i data-lucide="share-2" class="me-2"></i>Share Invoice <span class="text-muted text-13" id="shareInvNum"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label text-13">Customer Mobile</label>
+          <input type="text" class="form-control form-control-sm" id="shareMobile" placeholder="WhatsApp / SMS number">
+        </div>
+        <div class="share-options">
+          <button class="share-option" onclick="doShareWhatsApp()">
+            <i data-lucide="message-circle"></i><span><b>WhatsApp PDF</b><small>Open WhatsApp share link</small></span>
+          </button>
+          <button class="share-option" onclick="doCopyLink()">
+            <i data-lucide="link"></i><span><b>Copy Invoice Link</b><small>Copy a direct view link</small></span>
+          </button>
+          <button class="share-option" onclick="doShareDownload()">
+            <i data-lucide="download"></i><span><b>Download PDF</b><small>Download the customer copy</small></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  'use strict';
+
+  const today = new Date().toISOString().split('T')[0];
+
+  function closeAnyMenu() {
+    if (window.ERP_MENU) window.ERP_MENU.closeAll();
+  }
+
+  let pendingCancelId = null;
+  let pendingDeleteId = null;
+  let shareId = null;
+
+  function refreshInvoiceHistory() {
+    window.location.reload();
+  }
+
+  function setBtnLoading(btn, loading, labelHtml) {
+    if (!btn) return;
+    if (loading) {
+      btn.dataset.label = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Working...';
+      btn.disabled = true;
+    } else {
+      btn.innerHTML = btn.dataset.label || labelHtml;
+      btn.disabled = false;
+    }
+  }
+
+  window.showCancelModal = function(invId, invNum) {
+    pendingCancelId = invId;
+    document.getElementById('cancelInvNum').textContent = invNum;
+    document.getElementById('cancelReason').value = '';
+    closeAnyMenu();
+    new bootstrap.Modal(document.getElementById('cancelModal')).show();
+  };
+
+  window.confirmCancel = function() {
+    if (!pendingCancelId) return;
+    const btn = document.getElementById('cancelConfirmBtn');
+    setBtnLoading(btn, true);
+    const reason = document.getElementById('cancelReason').value.trim();
+    fetch('/api/invoices/' + pendingCancelId + '/cancel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken(),
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({ reason: reason })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      setBtnLoading(btn, false);
+      if (data.success) {
+        showToast(data.message || 'Invoice cancelled.', 'success');
+        bootstrap.Modal.getInstance(document.getElementById('cancelModal')).hide();
+        refreshInvoiceHistory();
+      } else {
+        showToast(data.error || 'Failed to cancel invoice.', 'danger');
+      }
+    })
+    .catch(function() { setBtnLoading(btn, false); showToast('Failed to cancel invoice.', 'danger'); });
+  };
+
+  window.deleteInvoice = function(invId, invNum) {
+    pendingDeleteId = invId;
+    document.getElementById('deleteInvNum').textContent = invNum;
+    document.getElementById('deletePassword').value = '';
+    closeAnyMenu();
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+  };
+
+  window.confirmDelete = function() {
+    if (!pendingDeleteId) return;
+    const pw = document.getElementById('deletePassword').value;
+    if (!pw) { showToast('Please enter your administrator password.', 'danger'); return; }
+    const btn = document.getElementById('deleteConfirmBtn');
+    setBtnLoading(btn, true);
+    fetch('/invoices/' + pendingDeleteId + '/delete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken(),
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({ password: pw })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      setBtnLoading(btn, false);
+      if (data.success) {
+        showToast(data.message || 'Invoice deleted.', 'success');
+        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+        refreshInvoiceHistory();
+      } else {
+        showToast(data.error || 'Failed to delete invoice.', 'danger');
+      }
+    })
+    .catch(function() { setBtnLoading(btn, false); showToast('Failed to delete invoice.', 'danger'); });
+  };
+
+  window.shareInvoice = function(invId, invNum, mobile) {
+    shareId = invId;
+    document.getElementById('shareInvNum').textContent = '— ' + invNum;
+    document.getElementById('shareMobile').value = mobile || '';
+    closeAnyMenu();
+    new bootstrap.Modal(document.getElementById('shareModal')).show();
+  };
+
+  window.doShareWhatsApp = function() {
+    const mobile = document.getElementById('shareMobile').value.trim().replace(/\D/g, '');
+    const link = window.location.origin + '/invoices/' + shareId;
+    const text = 'Invoice #' + (document.getElementById('shareInvNum').textContent || '').replace('— ', '') + ' — View here: ' + link;
+    const url = 'https://wa.me/' + (mobile ? '91' + mobile : '') + '?text=' + encodeURIComponent(text);
+    if (!mobile) { showToast('WhatsApp share needs a mobile number.', 'danger'); return; }
+    window.open(url, '_blank');
+    showToast('Opening WhatsApp...', 'info');
+  };
+
+  window.doCopyLink = function() {
+    const link = window.location.origin + '/invoices/' + shareId;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(function() {
+        showToast('Invoice link copied to clipboard.', 'success');
+      }).catch(function() { fallbackCopy(link); });
+    } else { fallbackCopy(link); }
+  };
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); showToast('Invoice link copied to clipboard.', 'success'); }
+    catch (e) { showToast('Could not copy link.', 'danger'); }
+    document.body.removeChild(ta);
+  }
+
+  window.doShareDownload = function() {
+    window.open('/invoices/' + shareId + '/pdf/customer', '_blank');
+    showToast('Downloading customer PDF...', 'info');
+  };
+
+  window.toggleSelectAll = function(el) {
+    const boxes = document.querySelectorAll('.ih-row-chk');
+    boxes.forEach(function(cb) { cb.checked = el.checked; });
+    onRowCheck();
+  };
+
+  window.onRowCheck = function() {
+    const boxes = document.querySelectorAll('.ih-row-chk');
+    const checked = document.querySelectorAll('.ih-row-chk:checked');
+    const bar = document.getElementById('ihBulkBar');
+    const count = document.getElementById('ihBulkCount');
+    const selectAll = document.getElementById('ihSelectAll');
+
+    count.textContent = checked.length;
+    if (checked.length > 0) {
+      bar.classList.add('show');
+    } else {
+      bar.classList.remove('show');
+    }
+    selectAll.checked = boxes.length > 0 && checked.length === boxes.length;
+    selectAll.indeterminate = checked.length > 0 && checked.length < boxes.length;
+
+    boxes.forEach(function(cb) {
+      cb.closest('tr').classList.toggle('selected', cb.checked);
+    });
+  };
+
+  window.bulkAction = function(action) {
+    const checked = document.querySelectorAll('.ih-row-chk:checked');
+    const ids = [];
+    checked.forEach(function(cb) { ids.push(cb.value); });
+    if (!ids.length) return;
+    if (action !== 'download') return;
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("bulk_download_pdfs") }}';
+    const csrf = document.createElement('input');
+    csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = getCsrfToken();
+    form.appendChild(csrf);
+    ids.forEach(function(id) {
+      const input = document.createElement('input');
+      input.type = 'hidden'; input.name = 'ids'; input.value = id;
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(function() { form.remove(); }, 2000);
+    showToast('Preparing combined PDF with ' + ids.length + ' invoice' + (ids.length > 1 ? 's' : '') + '...', 'info');
+  };
+
+  function showToast(msg, type) {
+    const container = document.querySelector('.flash-container') || createFlashContainer();
+    const icons = { success: 'check-circle', danger: 'x-circle', warning: 'alert-triangle', info: 'info' };
+    const toast = document.createElement('div');
+    toast.className = 'flash-toast flash-' + (type || 'info');
+    toast.innerHTML = '<div class="flash-icon"><i data-lucide="' + (icons[type] || 'info') + '"></i></div>'
+      + '<div class="flash-msg">' + msg + '</div>'
+      + '<button class="flash-close" onclick="this.parentElement.remove()"><i data-lucide="x"></i></button>';
+    container.appendChild(toast);
+    lucide.createIcons({ nodes: [toast] });
+    setTimeout(function() { toast.remove(); }, 5000);
+  }
+
+  function createFlashContainer() {
+    const c = document.createElement('div');
+    c.className = 'flash-container';
+    document.body.appendChild(c);
+    return c;
+  }
+
+  document.getElementById('ihSearchInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.getElementById('ihFilterForm').submit();
+    }
+  });
+
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/png" href="{{ url_for('logo_image') }}?v={{ config.get('OFFICIAL_LOGO_VERSION', '20260928') }}">
+    <title>{% block title %}GV Powers ERP{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}?v=10.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v=8.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/billing.css') }}?v=8.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sales.css') }}?v=8.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}?v=9.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}?v=8.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/erp-menu.css') }}?v=1.0">
+    {# Page-specific stylesheets. The canonical invoice preview overrides this
+       to load static/css/invoice.css, the one invoice stylesheet in the ERP. #}
+    {% block page_css %}{% endblock %}
+    {% block head %}{% endblock %}
+    <script>
+        (function () {
+            // Purge stale Service Workers / caches that can inject stale assets.
+            // A worker registered by another app on this shared localhost origin
+            // could serve cached images after the first page load. Reloading once
+            // per tab/session escapes its control deterministically.
+            var reloadFlag = 'gv_sw_reloaded';
+
+            function flushCaches() {
+                if ('caches' in window) {
+                    caches.keys().then(function (keys) {
+                        keys.forEach(function (k) { caches.delete(k); });
+                    }).catch(function () {});
+                }
+            }
+
+            flushCaches();
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function (regs) {
+                    var any = regs.length > 0;
+                    regs.forEach(function (r) { r.unregister(); });
+                    if (any) {
+                        navigator.serviceWorker.register('/sw.js').catch(function () {});
+                        try {
+                            if (!sessionStorage.getItem(reloadFlag)) {
+                                sessionStorage.setItem(reloadFlag, '1');
+                                window.location.reload();
+                            }
+                        } catch (e) { /* sessionStorage unavailable - skip reload */ }
+                    }
+                }).catch(function () {});
+            }
+        })();
+    </script>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container" id="flashContainer">
+        {% for cat, msg in messages %}
+        <div class="flash-toast flash-{{ cat }}">
+            <div class="flash-icon">
+                {% if cat == 'success' %}<i data-lucide="check-circle"></i>
+                {% elif cat == 'danger' %}<i data-lucide="x-circle"></i>
+                {% elif cat == 'warning' %}<i data-lucide="alert-triangle"></i>
+                {% else %}<i data-lucide="info"></i>{% endif %}
+            </div>
+            <div class="flash-msg">{{ msg }}</div>
+            <button class="flash-close" onclick="this.parentElement.remove()"><i data-lucide="x"></i></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block body %}{% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=2.0"></script>
+    <script src="{{ url_for('static', filename='js/erp-menu.js') }}?v=1.1"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });
+        function getCsrfToken() {
+            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        }
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (form.method && form.method.toLowerCase() === 'post' && !form.querySelector('input[name="csrf_token"]')) {
+                const input = document.createElement('input');
+                input.type = 'hidden'; input.name = 'csrf_token'; input.value = getCsrfToken();
+                form.appendChild(input);
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

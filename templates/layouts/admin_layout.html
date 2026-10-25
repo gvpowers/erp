@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% from "partials/logo.html" import gv_logo %}
+{% block title %}{% block page_title %}Dashboard{% endblock %} - GV Powers ERP{% endblock %}
+
+{% block body %}
+<div class="app-wrapper">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <a href="{{ url_for('dashboard') }}" class="brand-icon-link">
+                {{ gv_logo(alt="GV Powers", class="brand-logo") }}
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            {% if current_user.is_admin %}
+            <div class="sidebar-section-title">Main</div>
+            <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" data-tooltip="Dashboard">
+                <i data-lucide="layout-dashboard"></i><span class="nav-text">Dashboard</span>
+            </a>
+
+            <div class="sidebar-section-title">Billing</div>
+            <a href="{{ url_for('new_invoice') }}" class="nav-link {% if request.endpoint == 'new_invoice' %}active{% endif %}" data-tooltip="New Invoice">
+                <i data-lucide="file-plus"></i><span class="nav-text">New Invoice</span>
+            </a>
+            <a href="{{ url_for('invoice_history') }}" class="nav-link {% if request.endpoint in ('invoice_history', 'edit_invoice') %}active{% endif %}" data-tooltip="Invoice History">
+                <i data-lucide="file-text"></i><span class="nav-text">Invoice History</span>
+            </a>
+            <a href="{{ url_for('quotations_list') }}" class="nav-link {% if request.endpoint in ('quotations_list', 'new_quotation', 'view_quotation', 'quotation_preview', 'download_quotation_pdf', 'print_quotation', 'convert_quotation_to_invoice', 'update_quotation_status') %}active{% endif %}" data-tooltip="Quotations">
+                <i data-lucide="file-check"></i><span class="nav-text">Quotations</span>
+            </a>
+
+            <div class="sidebar-section-title">Products &amp; Stock</div>
+            <a href="{{ url_for('customers_list') }}" class="nav-link {% if request.endpoint in ('customers_list', 'customer_profile', 'customer_ledger') %}active{% endif %}" data-tooltip="Customers">
+                <i data-lucide="users"></i><span class="nav-text">Customers</span>
+            </a>
+            <a href="{{ url_for('products_list') }}" class="nav-link {% if request.endpoint in ('products_list', 'product_profile', 'create_product', 'edit_product', 'add_stock', 'remove_stock', 'delete_stock') %}active{% endif %}" data-tooltip="Products">
+                <i data-lucide="package"></i><span class="nav-text">Products</span>
+            </a>
+            <a href="{{ url_for('suppliers_list') }}" class="nav-link {% if request.endpoint == 'suppliers_list' %}active{% endif %}" data-tooltip="Suppliers">
+                <i data-lucide="truck"></i><span class="nav-text">Suppliers</span>
+            </a>
+            <a href="{{ url_for('purchases_list') }}" class="nav-link {% if request.endpoint in ('purchases_list', 'purchase_orders') %}active{% endif %}" data-tooltip="Purchases">
+                <i data-lucide="shopping-cart"></i><span class="nav-text">Purchases</span>
+            </a>
+
+            <div class="sidebar-section-title">Analytics</div>
+            {% set report_endpoints = ('reports_page', 'sales_report', 'payments_report', 'outstanding_report', 'gst_report', 'inventory_report', 'profit_report', 'customer_report', 'report_export') %}
+            <a href="{{ url_for('reports_page') }}" class="nav-link {% if request.endpoint in report_endpoints %}active{% endif %}" data-tooltip="Reports">
+                <i data-lucide="bar-chart-3"></i><span class="nav-text">Reports</span>
+            </a>
+            <a href="{{ url_for('low_stock_report') }}" class="nav-link {% if request.endpoint == 'low_stock_report' %}active{% endif %}" data-tooltip="Low Stock">
+                <i data-lucide="alert-triangle"></i><span class="nav-text">Low Stock</span>
+            </a>
+
+            <div class="sidebar-section-title">System</div>
+            <a href="{{ url_for('users_list') }}" class="nav-link {% if request.endpoint in ('users_list', 'profile') %}active{% endif %}" data-tooltip="Users">
+                <i data-lucide="user-cog"></i><span class="nav-text">Users</span>
+            </a>
+            <a href="{{ url_for('settings_page') }}" class="nav-link {% if request.endpoint == 'settings_page' %}active{% endif %}" data-tooltip="Settings">
+                <i data-lucide="settings"></i><span class="nav-text">Settings</span>
+            </a>
+            <a href="{{ url_for('audit_logs') }}" class="nav-link {% if request.endpoint == 'audit_logs' %}active{% endif %}" data-tooltip="Audit Logs">
+                <i data-lucide="scroll-text"></i><span class="nav-text">Audit Logs</span>
+            </a>
+            <a href="{{ url_for('backup_page') }}" class="nav-link {% if request.endpoint == 'backup_page' %}active{% endif %}" data-tooltip="Backup">
+                <i data-lucide="database"></i><span class="nav-text">Backup</span>
+            </a>
+
+            {% elif current_user.role == 'sales' %}
+            <div class="sidebar-section-title">Billing</div>
+            <a href="{{ url_for('new_invoice') }}" class="nav-link {% if request.endpoint == 'new_invoice' %}active{% endif %}" data-tooltip="New Invoice">
+                <i data-lucide="file-plus"></i><span class="nav-text">New Invoice</span>
+            </a>
+            <a href="{{ url_for('invoice_history') }}" class="nav-link {% if request.endpoint in ('invoice_history', 'view_invoice', 'invoice_preview') %}active{% endif %}" data-tooltip="Invoice History">
+                <i data-lucide="file-text"></i><span class="nav-text">Invoice History</span>
+            </a>
+
+            <div class="sidebar-section-title">Products &amp; Stock</div>
+            <a href="{{ url_for('products_list') }}" class="nav-link {% if request.endpoint in ('products_list', 'product_profile') %}active{% endif %}" data-tooltip="Products">
+                <i data-lucide="package"></i><span class="nav-text">Products</span>
+            </a>
+
+            {% else %}
+            <div class="sidebar-section-title">Products &amp; Stock</div>
+            <a href="{{ url_for('products_list') }}" class="nav-link {% if request.endpoint in ('products_list', 'product_profile') %}active{% endif %}" data-tooltip="Products">
+                <i data-lucide="package"></i><span class="nav-text">Products</span>
+            </a>
+            {% endif %}
+        </nav>
+        <div class="sidebar-footer">
+            <form action="{{ url_for('logout') }}" method="POST" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="nav-link btn btn-link text-start w-100" data-tooltip="Logout">
+                    <i data-lucide="log-out"></i><span class="nav-text">Logout</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <header class="top-navbar">
+            <button class="sidebar-toggle" onclick="toggleMobileSidebar()" title="Menu">
+                <i data-lucide="menu" style="width:20px;height:20px;"></i>
+            </button>
+
+            {% if current_user.is_admin or current_user.role == 'sales' %}
+            <button class="search-trigger" onclick="openSearch()" type="button">
+                <i data-lucide="search" style="width:16px;height:16px;"></i>
+                <span class="search-label">Search anything...</span>
+                <kbd>Ctrl+K</kbd>
+            </button>
+            {% endif %}
+
+            <div class="navbar-spacer"></div>
+
+            <div class="navbar-date">
+                <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+                <span id="navDateDisplay"></span>
+            </div>
+
+            <div class="dropdown erp-menu" id="notificationBell" data-erp-menu>
+                <button class="btn btn-link text-decoration-none position-relative p-1 erp-menu__trigger" data-erp-trigger aria-expanded="false" style="height:34px;width:34px;border-radius:10px;">
+                    <i data-lucide="bell" style="width:20px;height:20px;color:var(--text-muted);"></i>
+                    <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;font-size:0.6rem;"></span>
+                </button>
+                <div class="erp-menu__panel p-1" id="notificationDropdown" style="width:320px;max-width:min(320px, calc(100vw - 24px));">
+                    <div class="px-2 py-2 border-bottom erp-menu__header">
+                        Notifications
+                    </div>
+                    <div id="notificationList" class="list-group list-group-flush">
+                        <div class="text-center py-3" style="color:var(--text-muted);font-size:0.8rem;">No notifications</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropdown erp-menu" data-erp-menu>
+                <button class="user-dropdown erp-menu__trigger" data-erp-trigger aria-expanded="false" style="gap:.5rem;height:auto;width:auto;border-radius:12px;padding:.35rem .5rem;border:1px solid transparent;">
+                    <div class="user-avatar">{{ current_user.full_name[0] }}</div>
+                    <div class="user-info d-none d-sm-block" style="text-align:left;">
+                        <div class="user-name">{{ current_user.full_name }}</div>
+                        <div class="user-role">{{ current_user.role }}</div>
+                    </div>
+                    <i data-lucide="chevron-down" style="width:16px;height:16px;color:var(--text-muted);"></i>
+                </button>
+                <div class="erp-menu__panel" style="min-width:220px;" role="menu">
+                    <div class="erp-menu__header">
+                        <i data-lucide="user" style="width:13px;height:13px;"></i> {{ current_user.username }}
+                    </div>
+                    <div class="erp-menu__divider"></div>
+                    <a class="erp-menu__item" href="{{ url_for('profile') }}" role="menuitem"><i data-lucide="user"></i><span class="erp-menu__label">Profile</span></a>
+                    {% if current_user.is_admin %}
+                    <a class="erp-menu__item" href="{{ url_for('settings_page') }}" role="menuitem"><i data-lucide="settings"></i><span class="erp-menu__label">Settings</span></a>
+                    {% endif %}
+                    <div class="erp-menu__divider"></div>
+                    <form action="{{ url_for('logout') }}" method="POST" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="erp-menu__item danger" role="menuitem"><i data-lucide="log-out"></i><span class="erp-menu__label">Logout</span></button>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            {% block back_link %}{% endblock %}
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+<div class="search-modal-overlay" id="searchOverlay" onclick="closeSearch(event)">
+    <div class="search-modal" onclick="event.stopPropagation()">
+        <div class="search-input-wrap">
+            <i data-lucide="search" style="width:20px;height:20px;color:var(--text-muted);"></i>
+            <input type="text" id="searchInput" placeholder="Search customers, products, invoices..." autocomplete="off">
+            <button onclick="closeSearch()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;">
+                <kbd style="font-size:0.7rem;padding:2px 6px;border-radius:4px;background:var(--bg-gray);border:1px solid var(--border-color);color:var(--text-muted);font-family:inherit;">Esc</kbd>
+            </button>
+        </div>
+        <div class="search-results" id="searchResults">
+            <div class="search-empty">Type to search across customers, products, invoices, suppliers...</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleMobileSidebar() {
+        document.getElementById('sidebar').classList.toggle('mobile-open');
+        document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+
+    const now = new Date();
+    const dateEl = document.getElementById('navDateDisplay');
+    if (dateEl) {
+        dateEl.textContent = now.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    let searchDebounce = null;
+    function openSearch() {
+        document.getElementById('searchOverlay').classList.add('active');
+        const input = document.getElementById('searchInput');
+        input.value = '';
+        input.focus();
+        document.getElementById('searchResults').innerHTML = '<div class="search-empty">Type to search across customers, products, invoices, suppliers...</div>';
+    }
+    function closeSearch(e) {
+        if (e && e.target !== e.currentTarget) return;
+        document.getElementById('searchOverlay').classList.remove('active');
+    }
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+        if (e.key === 'Escape') closeSearch();
+    });
+    const searchInputEl = document.getElementById('searchInput');
+    if (searchInputEl) {
+        searchInputEl.addEventListener('input', function() {
+            clearTimeout(searchDebounce);
+            const q = this.value.trim();
+            if (q.length < 2) {
+                document.getElementById('searchResults').innerHTML = '<div class="search-empty">Type to search across customers, products, invoices, suppliers...</div>';
+                return;
+            }
+            searchDebounce = setTimeout(function() {
+                fetch('/api/search?q=' + encodeURIComponent(q))
+                    .then(function(r) { return r.json(); })
+                    .then(function(results) {
+                        const container = document.getElementById('searchResults');
+                        if (!results.length) {
+                            container.innerHTML = '<div class="search-empty">No results found for "' + escHtml(q) + '"</div>';
+                            return;
+                        }
+                        let html = '';
+                        const icons = { customer: 'user', product: 'package', invoice: 'file-text', supplier: 'truck', quotation: 'file-check' };
+                        results.forEach(function(r) {
+                            html += '<a href="' + r.url + '" class="search-result-item">' +
+                                '<div class="search-result-icon"><i data-lucide="' + (icons[r.type] || 'search') + '" style="width:18px;height:18px;"></i></div>' +
+                                '<div class="search-result-text"><div class="search-result-title">' + escHtml(r.title) + '</div>' +
+                                '<div class="search-result-subtitle">' + escHtml(r.subtitle) + '</div></div></a>';
+                        });
+                        container.innerHTML = html;
+                        lucide.createIcons();
+                    })
+                    .catch(function() {
+                        document.getElementById('searchResults').innerHTML = '<div class="search-empty">Search failed. Try again.</div>';
+                    });
+            }, 300);
+        });
+    }
+    function escHtml(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+</script>
+{% endblock %}

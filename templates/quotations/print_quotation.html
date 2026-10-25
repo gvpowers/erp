@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title></title>
+<link rel="stylesheet" href="{{ invoice_css_url if invoice_css_url else url_for('static', filename='css/invoice.css') }}?v=2.2">
+<link rel="stylesheet" href="{{ quotation_css_url if quotation_css_url else url_for('static', filename='css/quotation.css') }}?v=1.2">
+</head>
+<body class="gvp-print-doc gvp-page">
+{% from 'quotations/standard_quotation.html' import standard_quotation with context %}
+{% set _copies = copies if copies is defined and copies else [copy_type|default('customer')] %}
+
+<div class="gvp-toolbar no-print">
+    <div class="gvp-toolbar-row">
+        {% if _copies|length > 1 %}
+        <a class="gvp-btn pdf" href="{{ url_for('download_all_quotation_pdfs', qid=quotation.id) }}">&#128196;&nbsp; Download Both Copies</a>
+        <button class="gvp-btn" onclick="window.print()">&#128438;&nbsp; Print Both Copies</button>
+        {% else %}
+        <a class="gvp-btn pdf" href="{{ url_for('download_quotation_pdf', qid=quotation.id, copy=_copies[0]) }}">&#128196;&nbsp; Download {{ _copies[0]|title }} Copy</a>
+        <button class="gvp-btn" onclick="window.print()">&#128438;&nbsp; Print Quotation</button>
+        {% endif %}
+        <button class="gvp-btn close" onclick="window.close()">&times;&nbsp; Close Tab</button>
+    </div>
+</div>
+
+<div class="gvp-copies">
+{% for copy in _copies %}
+{{ standard_quotation(quotation, company, amount_words, logo_url=logo_url,
+                      copy_type=copy,
+                      fill_page=fill_page if fill_page is defined else false) }}
+{% endfor %}
+</div>
+
+<script>
+    (function () {
+        function markFillPages() {
+            var available = (294 - 10 - 14) * 96 / 25.4;
+            document.querySelectorAll('.gvp-sheet').forEach(function (sheet) {
+                var main = sheet.querySelector('.gvp-main');
+                var bottom = sheet.querySelector('.gvp-bottom');
+                if (!main || !bottom) return;
+                var needed = main.getBoundingClientRect().height +
+                             bottom.getBoundingClientRect().height;
+                if (needed <= available - 3) sheet.classList.add('gvp-fill-page');
+            });
+        }
+        function doPrint() {
+            markFillPages();
+            try { window.print(); } catch (e) {}
+        }
+        if (document.readyState === 'complete') {
+            setTimeout(doPrint, 500);
+        } else {
+            window.addEventListener('load', function () {
+                setTimeout(doPrint, 500);
+            });
+        }
+    })();
+</script>
+</body>
+</html>

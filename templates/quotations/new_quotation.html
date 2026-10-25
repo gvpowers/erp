@@ -1,0 +1,666 @@
+﻿{% extends "layouts/admin_layout.html" %}
+{% block page_title %}New Quotation{% endblock %}
+{% block back_link %}<a href="{{ url_for('quotations_list') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Quotations</a>{% endblock %}
+{% block content %}
+
+<style>
+  .nq-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:16px}
+  .nq-header-left h1{font-size:1.65rem;font-weight:800;color:var(--text-primary);letter-spacing:-0.03em;margin:0}
+  .nq-header-left p{font-size:0.85rem;color:var(--text-muted);margin-top:4px}
+  .nq-header-right{display:flex;align-items:center;gap:12px}
+  .nq-header-right .q-num{font-size:1.1rem;font-weight:800;color:var(--color-primary)}
+  .form-card{background:var(--bg-white);border:1px solid var(--border-color);border-radius:var(--radius-lg);margin-bottom:20px;overflow:visible;position:relative}
+  .form-card-header{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--border-color);background:var(--bg-gray)}
+  .form-card-header svg{width:18px;height:18px;color:var(--color-primary)}
+  .form-card-header h4{font-size:0.85rem;font-weight:700;color:var(--text-primary);margin:0}
+  .form-card-body{padding:20px}
+  .meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+  .form-group{margin-bottom:0}
+  .form-label{display:block;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:6px}
+  .form-control,.form-select{width:100%;padding:10px 12px;border:1px solid var(--border-color);border-radius:var(--radius-md);font-size:0.85rem;color:var(--text-primary);background:var(--bg-white);transition:border-color 0.15s,box-shadow 0.15s;box-sizing:border-box}
+  .form-control:focus,.form-select:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(59,130,246,0.1);outline:none}
+  .form-control[readonly]{background:var(--bg-gray);color:var(--text-muted);cursor:default}
+  .autocomplete-wrap{position:relative}
+  .autocomplete-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--bg-white);border:1px solid var(--border-color);border-radius:0 0 var(--radius-md) var(--radius-md);max-height:420px;overflow-y:auto;overflow-x:hidden;z-index:99999;display:none;box-shadow:0 20px 50px rgba(0,0,0,.18);margin-top:4px}
+  .autocomplete-dropdown.show{display:block}
+  .autocomplete-item{padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border-light);transition:background 0.12s}
+  .autocomplete-item:last-child{border-bottom:none}
+  .autocomplete-item:hover{background:rgba(59,130,246,0.04)}
+.product-search-bar .autocomplete-item:hover,.product-search-bar .autocomplete-item.ac-active{background:#2563EB;color:#fff;cursor:pointer}
+.product-search-bar .autocomplete-item:hover .ac-name,.product-search-bar .autocomplete-item:hover .ac-sub,.product-search-bar .autocomplete-item.ac-active .ac-name,.product-search-bar .autocomplete-item.ac-active .ac-sub{color:#fff !important}
+.product-search-bar .autocomplete-item:hover .ac-avatar,.product-search-bar .autocomplete-item.ac-active .ac-avatar{background:rgba(255,255,255,.22);color:#fff}
+  .ac-name{font-weight:600;font-size:0.85rem;color:var(--text-primary)}
+  .ac-sub{font-size:0.75rem;color:var(--text-muted)}
+  .ac-avatar{width:36px;height:36px;border-radius:var(--radius-md);background:var(--color-primary-light);display:flex;align-items:center;justify-content:center;color:var(--color-primary);font-weight:700;font-size:0.8rem;flex-shrink:0}
+  .search-input-wrap{position:relative}
+  .search-input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-muted);pointer-events:none}
+  .search-input-wrap input{padding-left:44px !important}
+  .product-search-bar{position:relative}
+  .product-search-bar input{width:100%;padding:12px 16px 12px 44px;background:var(--bg-gray);border:2px dashed var(--border-color);color:var(--text-primary);border-radius:var(--radius-xl);font-size:0.9rem;transition:border-color 0.15s;box-sizing:border-box}
+  .product-search-bar input:focus{border-color:var(--color-primary);border-style:solid;outline:none}
+  .product-search-bar i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);width:18px;height:18px}
+  .items-card{background:var(--bg-white);border:1px solid var(--border-color);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
+  .items-card-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border-color);background:var(--bg-gray)}
+  .items-card-header h4{font-size:0.85rem;font-weight:700;color:var(--text-primary);margin:0;display:flex;align-items:center;gap:8px}
+  .items-card-header h4 i{width:18px;height:18px;color:var(--color-primary)}
+  .items-table-wrap{overflow-x:auto}
+  .items-edit-table{width:100%;border-collapse:separate;border-spacing:0;min-width:900px}
+  .items-edit-table thead th{background:var(--bg-gray);color:var(--text-muted);font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;padding:10px 8px;border-bottom:1px solid var(--border-color);white-space:nowrap;position:sticky;top:0;z-index:5}
+  .items-edit-table tbody tr{transition:background 0.1s}
+  .items-edit-table tbody tr:hover{background:rgba(59,130,246,0.02)}
+  .items-edit-table tbody td{padding:6px 8px;border-bottom:1px solid var(--border-light);vertical-align:middle;font-size:0.82rem}
+  .item-input{background:transparent;border:1px solid transparent;color:var(--text-primary);border-radius:var(--radius-sm);padding:4px 6px;width:100%;font-size:0.82rem;transition:border-color 0.15s}
+  .item-input:focus{border-color:var(--color-primary);background:var(--bg-gray);outline:none}
+  .item-input[readonly]{color:var(--text-muted);cursor:default}
+  .item-select{background:transparent;border:1px solid transparent;color:var(--text-primary);border-radius:var(--radius-sm);padding:4px 6px;font-size:0.82rem;transition:border-color 0.15s}
+  .item-select:focus{border-color:var(--color-primary);background:var(--bg-gray);outline:none}
+  .item-select option{background:var(--bg-gray);color:var(--text-primary)}
+  .btn-delete-row{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;border-radius:var(--radius-sm);transition:color 0.15s,background 0.15s;display:flex;align-items:center;justify-content:center}
+  .btn-delete-row:hover{color:#dc2626;background:rgba(239,68,68,0.08)}
+  .item-product-cell{display:flex;align-items:center;gap:10px;min-width:200px}
+  .item-img{width:40px;height:40px;border-radius:var(--radius-md);background:var(--color-primary-light);display:flex;align-items:center;justify-content:center;color:var(--color-primary);font-weight:700;font-size:0.7rem;flex-shrink:0}
+  .item-product-info{display:flex;flex-direction:column;min-width:0}
+  .item-product-name{font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;font-size:0.82rem}
+  .item-product-sku{font-size:0.68rem;color:var(--text-muted)}
+  .totals-grid{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+  .totals-box{background:var(--bg-white);border-radius:var(--radius-lg);padding:24px;border:1px solid var(--border-color)}
+  .totals-box-title{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:16px;display:flex;align-items:center;gap:6px}
+  .totals-box-title i{width:16px;height:16px;color:var(--color-primary)}
+  .totals-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:0.84rem}
+  .totals-row.subtotal{border-bottom:1px solid var(--border-color);padding-bottom:10px;margin-bottom:4px}
+  .totals-row .label{color:var(--text-muted)}
+  .totals-row .value{font-weight:600;color:var(--text-primary)}
+  .totals-row.grand{border-top:2px solid var(--color-primary);margin-top:10px;padding-top:14px}
+  .totals-row.grand .label{font-size:0.95rem;font-weight:700;color:var(--text-primary)}
+  .totals-row.grand .value{font-size:1.4rem;font-weight:800;color:var(--color-primary)}
+  .tax-summary{background:var(--bg-gray);border-radius:var(--radius-md);padding:14px;border:1px solid var(--border-color);margin-top:12px}
+  .tax-row{display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem}
+  .tax-row .tlabel{color:var(--text-muted)}
+  .tax-row .tvalue{font-weight:600;color:var(--text-primary)}
+  .action-row{display:flex;gap:12px;justify-content:flex-end;margin-top:16px}
+  .toast-msg{position:fixed;top:24px;right:24px;z-index:9999;padding:14px 20px;border-radius:var(--radius-xl);font-size:0.85rem;font-weight:500;color:#fff;opacity:0;transform:translateY(-10px);transition:all 0.3s;pointer-events:none}
+  .toast-msg.show{opacity:1;transform:translateY(0);pointer-events:auto}
+  .toast-success{background:#22c55e}
+  .toast-error{background:#ef4444}
+  .loading-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:#fff;animation:spin 0.6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .empty-state{padding:48px 20px;text-align:center}
+  .empty-state-icon{width:56px;height:56px;border-radius:50%;background:rgba(59,130,246,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+  .empty-state-icon i{width:24px;height:24px;color:var(--color-primary)}
+  .empty-state h3{font-size:0.95rem;font-weight:700;color:var(--text-primary);margin:0 0 4px}
+  .empty-state p{font-size:0.8rem;color:var(--text-muted);margin:0}
+  @media(max-width:900px){.totals-grid{grid-template-columns:1fr}.meta-grid{grid-template-columns:1fr}}
+</style>
+
+<div id="toastMsg" class="toast-msg"></div>
+
+<div class="nq-header">
+  <div class="nq-header-left">
+    <h1>New Quotation</h1>
+    <p>Create a professional quotation for your customer</p>
+  </div>
+  <div class="nq-header-right">
+    <span class="badge badge-warning">DRAFT</span>
+    <span class="q-num">{{ quotation_number }}</span>
+  </div>
+</div>
+
+<div class="form-card">
+  <div class="form-card-header">
+    <i data-lucide="file-check"></i>
+    <h4>Quotation Details</h4>
+  </div>
+  <div class="form-card-body">
+    <div class="meta-grid">
+      <div class="form-group">
+        <label class="form-label">Quotation Number</label>
+        <input type="text" class="form-control" value="{{ quotation_number }}" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-control" id="qDate" value="{{ today }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Valid Until</label>
+        <input type="date" class="form-control" id="validUntil">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="form-card">
+  <div class="form-card-header">
+    <i data-lucide="user"></i>
+    <h4>Customer</h4>
+  </div>
+  <div class="form-card-body">
+    <div class="form-group" style="margin-bottom:16px">
+      <label class="form-label">Search Customer</label>
+      <div class="autocomplete-wrap">
+        <div class="search-input-wrap">
+          <i data-lucide="search"></i>
+          <input type="text" class="form-control" id="customerSearch" placeholder="Search by name, mobile, or GSTIN..." autocomplete="off" style="padding-left:40px">
+        </div>
+        <div class="autocomplete-dropdown" id="customerDropdown"></div>
+      </div>
+    </div>
+    <div class="meta-grid" id="customerFields">
+      <div class="form-group">
+        <label class="form-label">Customer Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="custName" placeholder="Enter customer name" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mobile</label>
+        <input type="text" class="form-control" id="custMobile" placeholder="10-digit mobile">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" id="custEmail" placeholder="customer@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">GSTIN</label>
+        <input type="text" class="form-control" id="custGstin" placeholder="22AAAAA0000A1Z5" maxlength="15" style="text-transform:uppercase">
+      </div>
+      <div class="form-group">
+        <label class="form-label">State <span class="text-danger">*</span></label>
+        <select class="form-select" id="custState">
+          <option value="">Select State</option>
+          <option value="01">01 - Jammu &amp; Kashmir</option>
+          <option value="02">02 - Himachal Pradesh</option>
+          <option value="03">03 - Punjab</option>
+          <option value="04">04 - Chandigarh</option>
+          <option value="05">05 - Uttarakhand</option>
+          <option value="06">06 - Haryana</option>
+          <option value="07">07 - Delhi</option>
+          <option value="08">08 - Rajasthan</option>
+          <option value="09">09 - Uttar Pradesh</option>
+          <option value="10">10 - Bihar</option>
+          <option value="11">11 - Sikkim</option>
+          <option value="12">12 - Arunachal Pradesh</option>
+          <option value="13">13 - Nagaland</option>
+          <option value="14">14 - Manipur</option>
+          <option value="15">15 - Mizoram</option>
+          <option value="16">16 - Tripura</option>
+          <option value="17">17 - Meghalaya</option>
+          <option value="18">18 - Assam</option>
+          <option value="19">19 - West Bengal</option>
+          <option value="20">20 - Jharkhand</option>
+          <option value="21">21 - Odisha</option>
+          <option value="22">22 - Chhattisgarh</option>
+          <option value="23">23 - Madhya Pradesh</option>
+          <option value="24">24 - Gujarat</option>
+          <option value="26">26 - Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+          <option value="27">27 - Maharashtra</option>
+          <option value="29">29 - Karnataka</option>
+          <option value="30">30 - Goa</option>
+          <option value="31">31 - Lakshadweep</option>
+          <option value="32">32 - Kerala</option>
+          <option value="33">33 - Tamil Nadu</option>
+          <option value="34">34 - Puducherry</option>
+          <option value="35">35 - Andaman &amp; Nicobar Islands</option>
+          <option value="36">36 - Telangana</option>
+          <option value="37">37 - Andhra Pradesh</option>
+          <option value="38">38 - Ladakh</option>
+          <option value="97">97 - Other Territory</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="form-card">
+  <div class="form-card-header">
+    <i data-lucide="package"></i>
+    <h4>Add Items</h4>
+  </div>
+  <div class="form-card-body">
+    <div class="product-search-bar autocomplete-wrap">
+      <i data-lucide="search"></i>
+      <input type="text" id="productSearch" placeholder="Search products by name, SKU, barcode, HSN, or brand..." autocomplete="off">
+      <div class="autocomplete-dropdown" id="productDropdown"></div>
+    </div>
+  </div>
+</div>
+
+<div class="items-card">
+  <div class="items-card-header">
+    <h4><i data-lucide="list"></i> Line Items</h4>
+  </div>
+  <div class="items-table-wrap">
+    <table class="items-edit-table" id="itemsTable">
+      <thead>
+        <tr>
+          <th style="width:40px">#</th>
+          <th style="min-width:220px">Product</th>
+          <th style="width:90px">HSN</th>
+          <th style="width:70px">Qty</th>
+          <th style="width:60px">Unit</th>
+          <th style="width:100px">Price</th>
+          <th style="width:80px">Disc %</th>
+          <th style="width:75px">GST %</th>
+          <th style="width:100px">Taxable</th>
+          <th style="width:80px">CGST</th>
+          <th style="width:80px">SGST</th>
+          <th style="width:80px">IGST</th>
+          <th style="width:100px">Total</th>
+          <th style="width:40px"></th>
+        </tr>
+      </thead>
+      <tbody id="itemsBody">
+      </tbody>
+    </table>
+  </div>
+  <div class="empty-state" id="emptyState">
+    <div class="empty-state-icon">
+      <i data-lucide="package-open"></i>
+    </div>
+    <h3>No items added yet</h3>
+    <p>Search for products above to add them to this quotation</p>
+  </div>
+</div>
+
+<div class="totals-grid">
+  <div class="form-card order-2">
+    <div class="form-card-header">
+      <i data-lucide="sticky-note"></i>
+      <h4>Notes &amp; Terms</h4>
+    </div>
+    <div class="form-card-body">
+      <div class="form-group" style="margin-bottom:16px">
+        <label class="form-label">Notes</label>
+        <textarea class="form-control" id="qNotes" rows="3" placeholder="Internal notes for this quotation..."></textarea>
+      </div>
+      <div class="form-group mb-0">
+        <label class="form-label">Terms &amp; Conditions</label>
+        <textarea class="form-control" id="qTerms" rows="4" placeholder="Terms and conditions...">This quotation is valid for 15 days from the date of issue. Prices are inclusive of applicable taxes. Delivery timeline will be confirmed after order placement.</textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="order-1">
+    <div class="totals-box">
+      <div class="totals-box-title"><i data-lucide="calculator"></i> Quotation Summary</div>
+      <div class="totals-row subtotal">
+        <span class="label">Subtotal</span>
+        <span class="value" id="totSubtotal">Rs. 0.00</span>
+      </div>
+      <div class="totals-row">
+        <span class="label">Discount</span>
+        <span class="value text-success" id="totDiscount">-Rs. 0.00</span>
+      </div>
+      <div class="totals-row">
+        <span class="label">Taxable Amount</span>
+        <span class="value" id="totTaxable">Rs. 0.00</span>
+      </div>
+      <div class="tax-summary">
+        <div class="tax-row">
+          <span class="tlabel">CGST</span>
+          <span class="tvalue" id="totCgst">Rs. 0.00</span>
+        </div>
+        <div class="tax-row">
+          <span class="tlabel">SGST</span>
+          <span class="tvalue" id="totSgst">Rs. 0.00</span>
+        </div>
+        <div class="tax-row">
+          <span class="tlabel">IGST</span>
+          <span class="tvalue" id="totIgst">Rs. 0.00</span>
+        </div>
+      </div>
+      <div class="totals-row grand">
+        <span class="label">Grand Total</span>
+        <span class="value" id="totGrand">Rs. 0.00</span>
+      </div>
+      <div class="totals-row">
+        <span class="label" style="font-size:11px;">Amount in Words</span>
+        <span class="value" id="totWords" style="font-size:11px;text-align:right;">Rupees Zero Only</span>
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-outline-secondary" onclick="resetForm()"><i data-lucide="rotate-ccw"></i> Reset</button>
+      <button class="btn btn-primary" id="btnGenerate" onclick="submitQuotation()"><i data-lucide="check-circle"></i> Create Quotation</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var companyStateCode = "{{ company.state_code }}";
+  var items = [];
+  var itemIdCounter = 0;
+  var selectedCustomerId = null;
+var customerSearchTimeout;
+  var productSearchTimeout;
+  var prodCursor = -1;
+
+  function showToast(msg, type) {
+    var t = document.getElementById('toastMsg');
+    t.textContent = msg;
+    t.className = 'toast-msg toast-' + type + ' show';
+    setTimeout(function() { t.className = 'toast-msg'; }, 3000);
+  }
+
+  var cs = document.getElementById('customerSearch');
+  cs.addEventListener('input', function() {
+    clearTimeout(customerSearchTimeout);
+    var q = this.value.trim();
+    if (q.length < 2) { hideDropdown('customerDropdown'); return; }
+    customerSearchTimeout = setTimeout(function() {
+      fetch('/api/customers/search?q=' + encodeURIComponent(q))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var dd = document.getElementById('customerDropdown');
+          if (!data.length) { dd.classList.remove('show'); return; }
+          dd.innerHTML = data.map(function(c, i) {
+            return '<div class="autocomplete-item" onclick="selectCustomer(' + i + ')">' +
+              '<div class="ac-avatar">' + (c.name||'?')[0].toUpperCase() + '</div>' +
+              '<div><div class="ac-name">' + esc(c.name) + '</div>' +
+              '<div class="ac-sub">' + esc(c.mobile||'') + (c.gstin ? ' &middot; ' + esc(c.gstin) : '') + '</div></div></div>';
+          }).join('');
+          dd.classList.add('show');
+          window._custData = data;
+        }).catch(function() {});
+    }, 250);
+  });
+
+  window.selectCustomer = function(idx) {
+    var c = window._custData[idx];
+    selectedCustomerId = c.id;
+    document.getElementById('custName').value = c.name || '';
+    document.getElementById('custMobile').value = c.mobile || '';
+    document.getElementById('custEmail').value = c.email || '';
+    document.getElementById('custGstin').value = c.gstin || '';
+    if (c.state_code) document.getElementById('custState').value = c.state_code;
+    cs.value = c.name;
+    hideDropdown('customerDropdown');
+    showToast('Customer selected: ' + c.name, 'success');
+  };
+
+  var ps = document.getElementById('productSearch');
+  ps.addEventListener('input', function() {
+    clearTimeout(productSearchTimeout);
+    var q = this.value.trim();
+    if (q.length < 1) { hideDropdown('productDropdown'); return; }
+    productSearchTimeout = setTimeout(function() {
+      fetch('/api/products/search?q=' + encodeURIComponent(q))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var dd = document.getElementById('productDropdown');
+          if (!data.length) { dd.innerHTML = '<div class="autocomplete-item"><div class="ac-sub">No products found</div></div>'; dd.classList.add('show'); prodCursor = -1; return; }
+          dd.innerHTML = data.map(function(p, i) {
+            return '<div class="autocomplete-item" onclick="addProduct(' + i + ')">' +
+              '<div class="ac-avatar" style="font-size:.65rem">' + (p.name||'?')[0].toUpperCase() + '</div>' +
+              '<div><div class="ac-name">' + esc(p.name) + '</div>' +
+              '<div class="ac-sub">' + esc(p.hsn||'') + (p.sku ? ' &middot; SKU: ' + esc(p.sku) : '') + (p.brand ? ' &middot; ' + esc(p.brand) : '') + ' &middot; Rs. ' + (p.selling_price||p.price||0) + '</div></div></div>';
+          }).join('');
+dd.classList.add('show');
+          window._prodData = data;
+          prodCursor = -1;
+        }).catch(function() {});
+    }, 200);
+  });
+
+  window.addProduct = function(idx) {
+    var p = window._prodData[idx];
+    var custState = document.getElementById('custState').value;
+    var isInterState = custState && custState !== companyStateCode && custState !== '';
+    items.push({
+      id: ++itemIdCounter,
+      product_id: p.id || null,
+      product_name: p.name || '',
+      description: p.description || '',
+      hsn: p.hsn || '',
+      qty: 1,
+      unit: p.unit || 'pcs',
+      price: parseFloat(p.selling_price || p.price) || 0,
+      discount: 0,
+      gst_rate: parseFloat(p.gst_rate) || 18,
+      is_inter_state: isInterState
+    });
+    renderItems();
+    recalcTotals();
+    ps.value = '';
+    hideDropdown('productDropdown');
+    showToast('Added: ' + p.name, 'success');
+  };
+
+  function renderItems() {
+    var body = document.getElementById('itemsBody');
+    var empty = document.getElementById('emptyState');
+    if (!items.length) { body.innerHTML = ''; empty.style.display = ''; return; }
+    empty.style.display = 'none';
+    body.innerHTML = items.map(function(item, i) {
+      var cgst_rate = item.is_inter_state ? 0 : item.gst_rate / 2;
+      var sgst_rate = item.is_inter_state ? 0 : item.gst_rate / 2;
+      var igst_rate = item.is_inter_state ? item.gst_rate : 0;
+      var lineDisc = item.price * item.qty * (item.discount / 100);
+      var taxable = item.price * item.qty - lineDisc;
+      var cgst = taxable * cgst_rate / 100;
+      var sgst = taxable * sgst_rate / 100;
+      var igst = taxable * igst_rate / 100;
+      var total = taxable + cgst + sgst + igst;
+      return '<tr data-id="' + item.id + '">' +
+        '<td class="text-muted" style="font-size:0.75rem">' + (i+1) + '</td>' +
+        '<td><div class="item-product-cell"><div class="item-img">' + item.product_name[0].toUpperCase() + '</div><div class="item-product-info"><span class="item-product-name">' + esc(item.product_name) + '</span><span class="item-product-sku">ID: ' + (item.product_id || '\u2014') + '</span></div></div></td>' +
+        '<td><input class="item-input" value="' + esc(item.hsn) + '" onchange="updateItem(' + item.id + ',\'hsn\',this.value)" placeholder="HSN"></td>' +
+        '<td><input class="item-input" type="number" value="' + item.qty + '" min="0.01" step="0.01" onchange="updateItem(' + item.id + ',\'qty\',this.value)" style="width:60px"></td>' +
+        '<td><input class="item-input" value="' + esc(item.unit) + '" onchange="updateItem(' + item.id + ',\'unit\',this.value)" style="width:50px"></td>' +
+        '<td><input class="item-input" type="number" value="' + item.price + '" min="0" step="0.01" onchange="updateItem(' + item.id + ',\'price\',this.value)" style="width:90px"></td>' +
+        '<td><input class="item-input" type="number" value="' + item.discount + '" min="0" max="100" step="0.01" onchange="updateItem(' + item.id + ',\'discount\',this.value)" style="width:70px"></td>' +
+        '<td><select class="item-select" onchange="updateItem(' + item.id + ',\'gst_rate\',this.value)">' +
+        [0,5,12,18,28].map(function(r) { return '<option value="' + r + '" ' + (r==item.gst_rate?'selected':'') + '>' + r + '%</option>'; }).join('') +
+        '</select></td>' +
+        '<td class="text-right" style="font-weight:500">Rs. ' + formatNum(taxable) + '</td>' +
+        '<td class="text-right text-muted">Rs. ' + formatNum(cgst) + '</td>' +
+        '<td class="text-right text-muted">Rs. ' + formatNum(sgst) + '</td>' +
+        '<td class="text-right text-muted">Rs. ' + formatNum(igst) + '</td>' +
+        '<td class="text-right" style="font-weight:600;color:var(--color-primary)">Rs. ' + formatNum(total) + '</td>' +
+        '<td><button class="btn-delete-row" onclick="removeItem(' + item.id + ')" title="Remove"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button></td></tr>';
+    }).join('');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  window.updateItem = function(id, field, val) {
+    var item = items.find(function(x) { return x.id === id; });
+    if (!item) return;
+    if (['qty','price','discount','gst_rate'].indexOf(field) > -1) item[field] = parseFloat(val) || 0;
+    else item[field] = val;
+    recalcTotals();
+  };
+
+  window.removeItem = function(id) {
+    items = items.filter(function(x) { return x.id !== id; });
+    renderItems();
+    recalcTotals();
+  };
+
+  function recalcTotals() {
+    var subtotal = 0, totalDiscount = 0, totalTaxable = 0, totalCgst = 0, totalSgst = 0, totalIgst = 0;
+    items.forEach(function(item) {
+      var lineTotal = item.price * item.qty;
+      var disc = lineTotal * (item.discount / 100);
+      var taxable = lineTotal - disc;
+      var cgst = item.is_inter_state ? 0 : taxable * (item.gst_rate / 2) / 100;
+      var sgst = item.is_inter_state ? 0 : taxable * (item.gst_rate / 2) / 100;
+      var igst = item.is_inter_state ? taxable * item.gst_rate / 100 : 0;
+      subtotal += lineTotal;
+      totalDiscount += disc;
+      totalTaxable += taxable;
+      totalCgst += cgst;
+      totalSgst += sgst;
+      totalIgst += igst;
+    });
+    var grandTotal = totalTaxable + totalCgst + totalSgst + totalIgst;
+    document.getElementById('totSubtotal').textContent = 'Rs. ' + formatNum(subtotal);
+    document.getElementById('totDiscount').textContent = '-Rs. ' + formatNum(totalDiscount);
+    document.getElementById('totTaxable').textContent = 'Rs. ' + formatNum(totalTaxable);
+    document.getElementById('totCgst').textContent = 'Rs. ' + formatNum(totalCgst);
+    document.getElementById('totSgst').textContent = 'Rs. ' + formatNum(totalSgst);
+    document.getElementById('totIgst').textContent = 'Rs. ' + formatNum(totalIgst);
+    document.getElementById('totGrand').textContent = 'Rs. ' + formatNum(grandTotal);
+    document.getElementById('totWords').textContent = inrWords(grandTotal);
+  }
+
+  var WORDS_ONES = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+    "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+  var WORDS_TENS = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+  function chunkWords(n) {
+    if (n === 0) return "";
+    if (n < 20) return WORDS_ONES[n];
+    if (n < 100) return (WORDS_TENS[Math.floor(n / 10)] + " " + WORDS_ONES[n % 10]).trim();
+    return WORDS_ONES[Math.floor(n / 100)] + " Hundred " + chunkWords(n % 100);
+  }
+  function rupeesWords(n) {
+    var words = "";
+    if (n >= 10000000) { words += chunkWords(Math.floor(n / 10000000)) + " Crore "; n %= 10000000; }
+    if (n >= 100000) { words += chunkWords(Math.floor(n / 100000)) + " Lakh "; n %= 100000; }
+    if (n >= 1000) { words += chunkWords(Math.floor(n / 1000)) + " Thousand "; n %= 1000; }
+    if (n > 0) words += chunkWords(n) + " ";
+    return words.trim();
+  }
+  function inrWords(amount) {
+    if (amount == null || isNaN(amount)) return "Rupees Zero Only";
+    var neg = amount < 0;
+    amount = Math.abs(amount);
+    var totalPaise = Math.round(amount * 100);
+    var rupees = Math.floor(totalPaise / 100);
+    var paise = totalPaise % 100;
+    var out;
+    if (totalPaise === 0) {
+      out = "Rupees Zero Only";
+    } else {
+      var rw = rupeesWords(rupees);
+      if (paise === 0) {
+        out = rupees === 1 ? "Rupee One Only" : "Rupees " + rw + " Only";
+      } else {
+        var pw = rupeesWords(paise);
+        out = rupees === 0 ? "Rupees " + pw + " Paise Only" : "Rupees " + rw + " and " + pw + " Paise Only";
+      }
+    }
+    return neg ? "Minus " + out : out;
+  }
+
+  window.submitQuotation = function() {
+    var name = document.getElementById('custName').value.trim();
+    if (!name) { showToast('Please enter customer name', 'error'); return; }
+    if (!items.length) { showToast('Please add at least one item', 'error'); return; }
+    var stateVal = document.getElementById('custState').value;
+    var payload = {
+      customer_id: selectedCustomerId,
+      customer_name: name,
+      customer_mobile: document.getElementById('custMobile').value.trim(),
+      customer_email: document.getElementById('custEmail').value.trim(),
+      customer_state: document.getElementById('custState').selectedOptions[0] ? document.getElementById('custState').selectedOptions[0].text.replace(/^\d+\s*-\s*/, '') : '',
+      customer_state_code: stateVal,
+      customer_gstin: document.getElementById('custGstin').value.trim().toUpperCase(),
+      quotation_date: document.getElementById('qDate').value,
+      valid_until: document.getElementById('validUntil').value,
+      notes: document.getElementById('qNotes').value.trim(),
+      terms: document.getElementById('qTerms').value.trim(),
+      items: items.map(function(item) {
+        return {
+          product_id: item.product_id,
+          product_name: item.product_name,
+          hsn: item.hsn,
+          qty: item.qty,
+          unit: item.unit,
+          price: item.price,
+          discount: item.discount,
+          gst_rate: item.gst_rate,
+          description: item.description || ''
+        };
+      })
+    };
+    var btn = document.getElementById('btnGenerate');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span> Creating...';
+    fetch('/quotations/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    .then(function(result) {
+      if (result.ok && result.data.redirect) {
+        showToast('Quotation created successfully!', 'success');
+        setTimeout(function() { window.location.href = result.data.redirect; }, 600);
+      } else {
+        showToast(result.data.error || 'Failed to create quotation', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="check-circle" style="width:16px;height:16px"></i> Create Quotation';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    })
+    .catch(function() {
+      showToast('Network error. Please try again.', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="check-circle" style="width:16px;height:16px"></i> Create Quotation';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+  };
+
+  window.resetForm = function() {
+    if (!confirm('Reset all fields?')) return;
+    items = [];
+    itemIdCounter = 0;
+    selectedCustomerId = null;
+    document.getElementById('customerSearch').value = '';
+    document.getElementById('custName').value = '';
+    document.getElementById('custMobile').value = '';
+    document.getElementById('custGstin').value = '';
+    document.getElementById('custState').value = '';
+    document.getElementById('qNotes').value = '';
+    document.getElementById('qDate').value = '{{ today }}';
+    renderItems();
+    recalcTotals();
+  };
+
+function hideDropdown(id) {
+    var dd = document.getElementById(id);
+    if (dd) dd.classList.remove('show');
+    if (id === 'productDropdown') prodCursor = -1;
+  }
+  function formatNum(n) { return n.toFixed(2); }
+  function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.autocomplete-wrap')) {
+      hideDropdown('customerDropdown');
+      hideDropdown('productDropdown');
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { hideDropdown('customerDropdown'); hideDropdown('productDropdown'); return; }
+    var pdd = document.getElementById('productDropdown');
+    if (pdd && pdd.classList.contains('show')) {
+      var items = pdd.querySelectorAll('.autocomplete-item');
+      if (items.length) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          prodCursor = (prodCursor + 1) % items.length;
+          paintQProdCursor(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          prodCursor = (prodCursor - 1 + items.length) % items.length;
+          paintQProdCursor(items);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (prodCursor < 0) prodCursor = 0;
+          items[prodCursor].click();
+        }
+      }
+    }
+  });
+
+  function paintQProdCursor(items) {
+    items.forEach(function(it, idx) {
+      it.classList.toggle('ac-active', idx === prodCursor);
+      if (idx === prodCursor) it.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  renderItems();
+  recalcTotals();
+})();
+</script>
+{% endblock %}

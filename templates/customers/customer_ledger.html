@@ -1,0 +1,157 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Ledger - {{ customer.name }}{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('customer_profile', cid=customer.id) }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to {{ customer.name }}</a>
+{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h1><i data-lucide="book-open" class="me-2" style="width:24px;height:24px;color:var(--color-primary);"></i>Account Ledger</h1>
+        <p>{{ customer.name }} &middot; <span class="font-monospace">{{ customer.mobile or '—' }}</span></p>
+    </div>
+    <div class="page-header-actions">
+        <button class="btn btn-outline-secondary" onclick="window.print()"><i data-lucide="printer"></i> Print</button>
+        <a class="btn btn-outline-primary" href="{{ url_for('customer_ledger_export', cid=customer.id, fmt='pdf', from=from_date.isoformat() if from_date else '', to=to_date.isoformat()) }}"><i data-lucide="file-down"></i> Export PDF</a>
+        <a class="btn btn-outline-success" href="{{ url_for('customer_ledger_export', cid=customer.id, fmt='excel', from=from_date.isoformat() if from_date else '', to=to_date.isoformat()) }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+        <a class="btn btn-outline-secondary" href="{{ url_for('customer_ledger_export', cid=customer.id, fmt='csv', from=from_date.isoformat() if from_date else '', to=to_date.isoformat()) }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="card mb-24">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">From Date</label>
+                <input type="date" class="form-control" name="from" value="{{ from_date.isoformat() if from_date else '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">To Date</label>
+                <input type="date" class="form-control" name="to" value="{{ to_date.isoformat() }}">
+            </div>
+            <div class="col-md-6 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i data-lucide="filter" style="width:15px;height:15px;"></i> Apply</button>
+                <a href="{{ url_for('customer_ledger', cid=customer.id) }}" class="btn btn-outline-secondary">Reset</a>
+                <span class="align-self-center text-muted" style="font-size:0.85rem;">Opening balance is computed as of the day before the From date.</span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-16 mb-24">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center" style="padding:20px;">
+                <small style="color:var(--text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;">Opening Balance</small>
+                <h4 style="margin:8px 0 0;font-weight:700;color:var(--text-primary);">{{ format_currency(data.opening) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center" style="padding:20px;">
+                <small style="color:var(--text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;">Total Billed</small>
+                <h4 style="margin:8px 0 0;font-weight:700;color:var(--color-danger);">{{ format_currency(data.total_debit) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center" style="padding:20px;">
+                <small style="color:var(--text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;">Total Paid</small>
+                <h4 style="margin:8px 0 0;font-weight:700;color:var(--color-success);">{{ format_currency(data.total_credit) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center" style="padding:20px;">
+                <small style="color:var(--text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;">Closing Balance</small>
+                <h4 style="margin:8px 0 0;font-weight:700;color:{{ 'var(--color-danger)' if data.closing > 0 else 'var(--color-success)' }};">{{ format_currency(data.closing) }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i data-lucide="list" style="width:16px;height:16px;" class="me-2"></i>Ledger Entries</h6>
+        <span class="text-muted" style="font-size:0.8rem;">{{ data.entries|length }} entr{{ 'y' if data.entries|length == 1 else 'ies' }}</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Reference</th>
+                        <th>Description</th>
+                        <th class="text-end">Debit (Invoice)</th>
+                        <th class="text-end">Credit (Payment)</th>
+                        <th class="text-end">Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background:var(--bg-gray);">
+                        <td colspan="4" class="text-muted" style="font-size:0.85rem;font-weight:600;">Opening Balance{% if from_date %} (before {{ from_date.strftime('%d-%b-%Y') }}){% endif %}</td>
+                        <td class="text-end text-muted" style="font-weight:600;">{{ format_currency(data.opening) }}</td>
+                        <td></td>
+                        <td class="text-end text-muted" style="font-weight:600;">{{ format_currency(data.opening) }}</td>
+                    </tr>
+                    {% for e in data.entries %}
+                    <tr>
+                        <td class="text-nowrap">{{ e.date.strftime('%d-%b-%Y') }}</td>
+                        <td>
+                            {% if e.type == 'invoice' %}
+                            <span class="badge badge-danger"><i data-lucide="receipt" style="width:11px;height:11px;"></i> Invoice</span>
+                            {% else %}
+                            <span class="badge badge-success"><i data-lucide="hand-coins" style="width:11px;height:11px;"></i> Payment</span>
+                            {% endif %}
+                        </td>
+                        <td class="font-monospace"><a href="{{ e.link }}" style="color:var(--color-primary);text-decoration:none;font-weight:600;">{{ e.reference }}</a></td>
+                        <td>{{ e.description }}</td>
+                        <td class="text-end" style="color:var(--color-danger);font-weight:600;">{{ format_currency(e.debit) if e.debit > 0 else '—' }}</td>
+                        <td class="text-end" style="color:var(--color-success);font-weight:600;">{{ format_currency(e.credit) if e.credit > 0 else '—' }}</td>
+                        <td class="text-end font-monospace" style="font-weight:600;">{{ format_currency(e.balance) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state" style="padding:40px 20px;">
+                                <div class="empty-state-icon"><i data-lucide="book-open"></i></div>
+                                <h3>No ledger entries</h3>
+                                <p>No invoices or payments in the selected period.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr style="background:var(--bg-gray);">
+                        <td colspan="4" class="text-muted" style="font-size:0.85rem;font-weight:600;">Totals</td>
+                        <td class="text-end" style="font-weight:700;color:var(--color-danger);">{{ format_currency(data.total_debit) }}</td>
+                        <td class="text-end" style="font-weight:700;color:var(--color-success);">{{ format_currency(data.total_credit) }}</td>
+                        <td></td>
+                    </tr>
+                    <tr style="background:var(--bg-gray);">
+                        <td colspan="4" class="text-muted" style="font-size:0.85rem;font-weight:600;">Closing Balance</td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-end" style="font-weight:800;color:{{ 'var(--color-danger)' if data.closing > 0 else 'var(--color-success)' }};">{{ format_currency(data.closing) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

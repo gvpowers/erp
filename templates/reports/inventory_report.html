@@ -1,0 +1,132 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Inventory Report{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('reports_page') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Reports</a>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="rpt-page">
+  <div class="rpt-hero">
+    <div>
+      <div class="rpt-crumb">Analytics / Inventory</div>
+      <h4>Inventory Report</h4>
+      <p>Complete stock levels, valuation and low-stock alerts across all products.</p>
+    </div>
+    <div class="rpt-actions">
+      <button class="rpt-btn print" onclick="RP.printPage()"><i data-lucide="printer"></i> Print</button>
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='inventory') }}"><i data-lucide="file-down"></i> PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='inventory') }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='inventory') }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+  </div>
+
+  <form method="GET" class="rpt-filters">
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Search</label>
+      <input type="text" class="rpt-input" name="q" placeholder="Product / SKU / HSN / Brand" value="{{ request.args.get('q') or '' }}">
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Sort By</label>
+      <select class="rpt-select" name="sort">
+        <option value="name" {{ 'selected' if sort=='name' }}>Name</option>
+        <option value="stock" {{ 'selected' if sort=='stock' }}>Stock (High)</option>
+        <option value="value" {{ 'selected' if sort=='value' }}>Stock Value</option>
+        <option value="low" {{ 'selected' if sort=='low' }}>Low Stock First</option>
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <button type="submit" class="rpt-btn rpt-btn-filter"><i data-lucide="filter"></i> Apply</button>
+    </div>
+    <div class="rpt-fgroup">
+      <a href="{{ url_for('inventory_report') }}" class="rpt-btn rpt-btn-reset"><i data-lucide="rotate-ccw"></i> Reset</a>
+    </div>
+  </form>
+
+  <div class="rpt-stats">
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="boxes"></i></span></div><div class="rpt-stat-value">{{ total_products }}</div><div class="rpt-stat-label">Active Products</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="package"></i></span></div><div class="rpt-stat-value">{{ total_stock }}</div><div class="rpt-stat-label">Total Units</div></div>
+    <div class="rpt-stat purple"><div class="rpt-stat-row"><span class="rpt-stat-ico purple"><i data-lucide="indian-rupee"></i></span></div><div class="rpt-stat-value">{{ format_currency(total_value) }}</div><div class="rpt-stat-label">Stock Value</div></div>
+    <div class="rpt-stat red"><div class="rpt-stat-row"><span class="rpt-stat-ico red"><i data-lucide="ban"></i></span></div><div class="rpt-stat-value">{{ out_of_stock_count }}</div><div class="rpt-stat-label">Out of Stock</div></div>
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="alert-triangle"></i></span></div><div class="rpt-stat-value">{{ low_stock_count }}</div><div class="rpt-stat-label">Low Stock</div></div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="pie-chart"></i> Stock Value by Category</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="catChart"></canvas></div></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="gauge"></i> Stock Health</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="healthChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="alert-triangle"></i> Low Stock Alerts</h3></div>
+      <div class="rpt-scroll no-h"><table class="rpt-table">
+        <thead><tr><th>Product</th><th class="tar">Stock</th><th class="tar">Min</th><th class="tar">Value</th></tr></thead>
+        <tbody>
+        {% for p in low_stock %}<tr><td>{{ p.name }}</td><td class="tar"><b>{{ p.current_stock }}</b></td><td class="tar">{{ p.min_stock }}</td><td class="tar">{{ format_currency(p.current_stock * p.purchase_price) }}</td></tr>
+        {% else %}<tr class="empty-row"><td colspan="4">No low stock items</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="ban"></i> Out of Stock</h3></div>
+      <div class="rpt-scroll no-h"><table class="rpt-table">
+        <thead><tr><th>Product</th><th>SKU</th></tr></thead>
+        <tbody>
+        {% for p in out_of_stock %}<tr><td>{{ p.name }}</td><td class="rpt-muted">{{ p.sku or '—' }}</td></tr>
+        {% else %}<tr class="empty-row"><td colspan="2">No out of stock items</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div>
+  </div>
+
+  <div class="rpt-card" data-report-table>
+    <div class="rpt-card-head"><h3><i data-lucide="warehouse"></i> Full Stock Register</h3><span class="rpt-count"></span></div>
+    <div class="rpt-toolbar">
+      <div class="rpt-search"><i data-lucide="search"></i><input type="text" placeholder="Search products..."></div>
+      <div class="rpt-perpage">Show <select><option>25</option><option>50</option><option>100</option><option>200</option></select> rows</div>
+    </div>
+    <div class="rpt-scroll">
+      <table class="rpt-table">
+        <thead><tr><th>Product</th><th>SKU</th><th>HSN</th><th>Category</th><th class="tar">Purchase Rs.</th><th class="tar">Selling Rs.</th><th class="tar">Current</th><th class="tar">Stock Value</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for p in products %}
+        {% set stock_val = p.current_stock * p.purchase_price %}
+        {% set status_cls = 'red' if p.current_stock <= 0 else 'amber' if p.current_stock <= p.min_stock else 'green' %}
+        {% set status_txt = 'Out' if p.current_stock <= 0 else 'Low' if p.current_stock <= p.min_stock else 'OK' %}
+        <tr>
+          <td><b>{{ p.name }}</b></td><td class="rpt-muted">{{ p.sku or '—' }}</td><td class="rpt-muted">{{ p.hsn or '—' }}</td><td>{{ p.category.name if p.category else '—' }}</td>
+          <td class="tar">{{ format_currency(p.purchase_price) }}</td><td class="tar">{{ format_currency(p.selling_price) }}</td>
+          <td class="tar"><b>{{ p.current_stock }}</b></td>
+          <td class="tar">{{ format_currency(stock_val) }}</td>
+          <td><span class="rpt-badge {{ status_cls }}">{{ status_txt }}</span></td>
+        </tr>
+        {% else %}<tr class="empty-row"><td colspan="9">No products found.</td></tr>{% endfor %}
+        </tbody>
+      </table></div>
+    <div class="rpt-pager"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/reports.js') }}?v=2"></script>
+<script>
+  var cats = {{ category_data | tojson }};
+  var pal = RP.PALETTE;
+  var good = {{ total_products }} - {{ low_stock_count }} - {{ out_of_stock_count }};
+  if (cats.length) RP.drawChart({ el: document.getElementById('catChart'), type:'doughnut', money:true, legend:true,
+    labels: cats.map(function(c){return c.name;}),
+    datasets:[{ data: cats.map(function(c){return c.value;}), backgroundColor: cats.map(function(_,i){return pal[i%pal.length]+'CC';}), borderColor:'#fff', borderWidth:2 }]});
+  RP.drawChart({ el: document.getElementById('healthChart'), type:'bar', money:false, legend:false,
+    labels: ['Healthy','Low Stock','Out of Stock'],
+    datasets:[{ data: [good, {{ low_stock_count }}, {{ out_of_stock_count }}],
+      backgroundColor: [pal[1]+'BB', pal[2]+'BB', pal[4]+'BB'], borderRadius:6 }]});
+</script>
+{% endblock %}

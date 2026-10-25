@@ -1,0 +1,335 @@
+{% extends "layouts/admin_layout.html" %}
+{% from "invoices/standard_invoice.html" import standard_invoice with context %}
+{% block page_title %}Invoice {{ invoice.invoice_number }}{% endblock %}
+
+{# The ERP invoice preview MUST load the one canonical invoice stylesheet.
+   It is fully scoped to .gvp-page / .gvp-sheet (no global reset, @page kept
+   inside @media print), so it styles the invoice and nothing else. Without
+   this link the invoice renders as raw unstyled HTML. #}
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/invoice.css') }}?v=2.2">
+{% endblock %}
+
+{% block back_link %}
+<a href="{{ url_for('invoice_history') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Invoice History</a>
+{% endblock %}
+{% block content %}
+
+<div class="standard-invoice-preview gvp-page">
+    <div class="standard-preview-toolbar no-print">
+        <div class="standard-copy-tabs">
+            <a class="standard-copy-tab {% if copy_type == 'owner' %}active{% endif %}"
+               href="{{ url_for('view_invoice', iid=invoice.id, copy='owner') }}">Owner Copy</a>
+            <a class="standard-copy-tab {% if copy_type == 'customer' %}active{% endif %}"
+               href="{{ url_for('view_invoice', iid=invoice.id, copy='customer') }}">Customer Copy</a>
+            <a class="standard-copy-tab {% if copy_type == 'gst' %}active{% endif %}"
+               href="{{ url_for('view_invoice', iid=invoice.id, copy='gst') }}">GST Tax Copy</a>
+        </div>
+    </div>
+
+    <div class="standard-invoice-paper">
+        {{ standard_invoice(invoice, company, copy_type, amount_words) }}
+    </div>
+
+    <div class="standard-actions no-print">
+        <div class="standard-actions-title">
+            <i data-lucide="download"></i><span>Download &amp; Print</span>
+        </div>
+        <div class="standard-action-grid">
+            <div class="standard-action-group">
+                <div class="standard-action-group-title"><i data-lucide="download"></i> Download PDF</div>
+                <a href="{{ url_for('download_invoice_pdf', inv_id=invoice.id, copy_type='owner') }}" class="btn btn-primary btn-sm">Owner Copy</a>
+                <a href="{{ url_for('download_invoice_pdf', inv_id=invoice.id, copy_type='customer') }}" class="btn btn-primary btn-sm">Customer Copy</a>
+                <a href="{{ url_for('download_invoice_pdf', inv_id=invoice.id, copy_type='gst') }}" class="btn btn-primary btn-sm">GST Tax Copy</a>
+                <a href="{{ url_for('download_all_pdfs', inv_id=invoice.id) }}" class="btn btn-info btn-sm">Download All 3</a>
+            </div>
+            <div class="standard-action-group">
+                <div class="standard-action-group-title"><i data-lucide="printer"></i> Print</div>
+                <a href="{{ url_for('print_invoice_pdf', inv_id=invoice.id, copy_type='owner') }}" target="_blank" class="btn btn-primary btn-sm">Owner Copy</a>
+                <a href="{{ url_for('print_invoice_pdf', inv_id=invoice.id, copy_type='customer') }}" target="_blank" class="btn btn-primary btn-sm">Customer Copy</a>
+                <a href="{{ url_for('print_invoice_pdf', inv_id=invoice.id, copy_type='gst') }}" target="_blank" class="btn btn-primary btn-sm">GST Tax Copy</a>
+                <a href="{{ url_for('print_all_copies', inv_id=invoice.id) }}" target="_blank" class="btn btn-info btn-sm">Print All 3</a>
+            </div>
+        </div>
+        <div class="standard-action-bottom">
+            <a href="{{ url_for('invoice_history') }}" class="btn btn-outline-secondary btn-sm">
+                <i data-lucide="arrow-left"></i> Back
+            </a>
+            <button class="btn btn-success btn-sm" type="button" onclick="showPaymentModal()">
+                <i data-lucide="indian-rupee"></i> Add Payment
+            </button>
+            {% if current_user.is_admin and invoice.status != 'cancelled' %}
+            <button class="btn btn-danger btn-sm" type="button" onclick="cancelInvoice()">
+                <i data-lucide="x-circle"></i> Cancel Invoice
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div id="paymentModalWrap" class="pm-backdrop" style="display:none;">
+    <div class="pm-modal">
+        <div class="pm-header">
+            <h6 class="pm-title" id="payModalTitle">Record Payment</h6>
+            <button type="button" onclick="closePaymentModal()" class="pm-close">&times;</button>
+        </div>
+        <div class="pm-body">
+            <div class="pm-balance">
+                <div class="pm-balance-label">Balance Due</div>
+                <div class="pm-balance-amount" id="modalBalance">{{ format_currency(invoice.balance_due) }}</div>
+            </div>
+            <div class="pm-error" id="payError"></div>
+            <div class="pm-grid">
+                <div class="pm-field">
+                    <label class="pm-label" for="payDate">Payment Date</label>
+                    <input type="date" class="pm-input" id="payDate">
+                </div>
+                <div class="pm-field">
+                    <label class="pm-label" for="payAmount">Payment Amount</label>
+                    <input type="number" class="pm-input pm-input--amount" id="payAmount" step="0.01" min="0">
+                </div>
+                <div class="pm-field">
+                    <label class="pm-label" for="payMethod">Payment Method</label>
+                    <select class="pm-input" id="payMethod">
+                        <option value="cash">Cash</option>
+                        <option value="upi">UPI</option>
+                        <option value="card">Card</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="pm-field">
+                    <label class="pm-label" for="payReceivedBy">Received By</label>
+                    <input type="text" class="pm-input" id="payReceivedBy">
+                </div>
+                <div class="pm-field pm-field--full">
+                    <label class="pm-label" for="payTransactionId">Transaction / UTR ID</label>
+                    <input type="text" class="pm-input" id="payTransactionId" placeholder="e.g. UPI UTR number">
+                </div>
+                <div class="pm-field pm-field--full">
+                    <label class="pm-label" for="payRemarks">Remarks</label>
+                    <input type="text" class="pm-input" id="payRemarks" placeholder="Optional note">
+                </div>
+            </div>
+            <div class="pm-hint">Amount cannot exceed the outstanding balance shown above.</div>
+        </div>
+        <div class="pm-footer">
+            <button type="button" class="pm-btn pm-btn-cancel" onclick="closePaymentModal()">Cancel</button>
+            <button type="button" class="pm-btn pm-btn-save" onclick="savePayment()">
+                <i data-lucide="check-circle"></i> Save Payment
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.standard-invoice-preview{max-width:1120px;margin:0 auto}
+.standard-preview-toolbar{display:flex;justify-content:flex-start;margin-bottom:14px}
+.standard-copy-tabs{display:flex;gap:7px;flex-wrap:wrap}
+.standard-copy-tab{display:inline-flex;align-items:center;padding:9px 18px;border:1px solid var(--border-color);border-radius:10px;background:var(--bg-white);color:var(--text-primary);text-decoration:none;font-size:.82rem;font-weight:700}
+.standard-copy-tab.active{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.standard-copy-tab:hover{border-color:var(--color-primary);color:var(--color-primary)}
+.standard-copy-tab.active:hover{color:#fff}
+.standard-invoice-paper{background:#eef1f5;padding:12px;border-radius:14px;overflow-x:auto}
+.standard-actions{background:var(--bg-white);border:1px solid var(--border-color);border-radius:16px;padding:22px;margin-top:18px;box-shadow:var(--shadow-card)}
+.standard-actions-title{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text-primary);display:flex;align-items:center;gap:7px;margin-bottom:15px}
+.standard-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.standard-action-group{border:1px solid var(--border-light);border-radius:12px;padding:14px;background:var(--bg-gray)}
+.standard-action-group-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:10px;display:flex;gap:6px;align-items:center}
+.standard-action-group .btn{width:100%;margin-bottom:6px;font-size:.78rem;font-weight:700}
+.standard-action-group .btn:last-child{margin-bottom:0}
+.standard-action-bottom{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
+.standard-action-bottom .btn{font-weight:700}
+@media(max-width:760px){.standard-action-grid{grid-template-columns:1fr}.standard-invoice-paper{padding:4px}}
+</style>
+
+<script>
+function showSuccess(msg) {
+    // The canonical invoice page intentionally has no second invoice layout.
+    // Use a small browser notification when an action completes.
+    if (typeof showToast === 'function') {
+        showToast(msg, 'success');
+        return;
+    }
+    console.log(msg);
+}
+
+let paymentEditId = null;
+
+function showPaymentModal() {
+    paymentEditId = null;
+    document.getElementById('payModalTitle').textContent = 'Record Payment';
+    document.getElementById('payDate').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('payAmount').value = '';
+    document.getElementById('payMethod').value = 'cash';
+    document.getElementById('payReceivedBy').value = '';
+    document.getElementById('payTransactionId').value = '';
+    document.getElementById('payRemarks').value = '';
+    document.getElementById('payError').style.display = 'none';
+    document.getElementById('modalBalance').textContent = 'Rs. ' + formatCurrency({{ invoice.balance_due }});
+    document.getElementById('paymentModalWrap').style.display = 'flex';
+    document.getElementById('payAmount').focus();
+}
+
+function editPayment(pid) {
+    fetch('/api/payments/' + pid + '/get', {
+        method: 'GET',
+        headers: { 'X-CSRFToken': getCsrfToken(), 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+    .then(({ ok, data }) => {
+        if (!ok) { alert(data.error || 'Failed to load payment'); return; }
+        const p = data.payment;
+        paymentEditId = pid;
+        document.getElementById('payModalTitle').textContent = 'Edit Payment';
+        document.getElementById('payDate').value = (p.payment_date || '').slice(0, 10);
+        document.getElementById('payAmount').value = p.amount;
+        document.getElementById('payMethod').value = p.payment_method || 'cash';
+        document.getElementById('payReceivedBy').value = p.received_by || '';
+        document.getElementById('payTransactionId').value = p.transaction_id || '';
+        document.getElementById('payRemarks').value = p.remarks || '';
+        document.getElementById('payError').style.display = 'none';
+        document.getElementById('modalBalance').textContent = 'Rs. ' + formatCurrency(p.max_amount);
+        document.getElementById('paymentModalWrap').style.display = 'flex';
+    })
+    .catch(() => alert('Network error'));
+}
+
+function closePaymentModal() {
+    document.getElementById('paymentModalWrap').style.display = 'none';
+}
+
+function savePayment() {
+    const amount = parseFloat(document.getElementById('payAmount').value);
+    const errBox = document.getElementById('payError');
+    if (!amount || amount <= 0) {
+        errBox.textContent = 'Please enter a valid payment amount.';
+        errBox.style.display = 'block';
+        return;
+    }
+    const payload = {
+        amount: amount,
+        payment_date: document.getElementById('payDate').value,
+        payment_method: document.getElementById('payMethod').value,
+        transaction_id: document.getElementById('payTransactionId').value.trim(),
+        received_by: document.getElementById('payReceivedBy').value.trim(),
+        remarks: document.getElementById('payRemarks').value.trim()
+    };
+    const url = paymentEditId
+        ? '/api/payments/' + paymentEditId + '/edit'
+        : '/api/invoices/{{ invoice.id }}/payment';
+    fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+    .then(({ ok, data }) => {
+        if (!ok) {
+            errBox.textContent = data.error || 'Failed to save payment';
+            errBox.style.display = 'block';
+            return;
+        }
+        closePaymentModal();
+        applyPaymentState(data);
+        showSuccess(data.message || 'Payment saved successfully');
+    })
+    .catch(() => { errBox.textContent = 'Network error'; errBox.style.display = 'block'; });
+}
+
+function deletePayment(pid) {
+    if (!confirm('Delete this payment? Invoice amounts will be recalculated.')) return;
+    fetch('/api/payments/' + pid + '/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken(), 'X-Requested-With': 'XMLHttpRequest' },
+        body: '{}'
+    })
+    .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+    .then(({ ok, data }) => {
+        if (!ok) { alert(data.error || 'Failed to delete payment'); return; }
+        showSuccess(data.message || 'Payment deleted');
+        setTimeout(function () { window.location.reload(); }, 350);
+    })
+    .catch(() => alert('Network error'));
+}
+
+function applyPaymentState(d) {
+    if (!d) return;
+    window.location.reload();
+}
+
+function fillRow(row, p) {
+    const cells = row.cells;
+    if (!cells || cells.length < 6) return;
+    cells[0].textContent = (p.payment_date || '').slice(0, 10);
+    cells[0].style.whiteSpace = 'nowrap';
+    cells[1].textContent = 'Rs. ' + formatCurrency(p.amount);
+    cells[1].style.textAlign = 'right';
+    cells[1].style.fontWeight = '600';
+    cells[1].style.fontFamily = 'var(--font-mono)';
+    cells[1].style.color = 'var(--color-success)';
+    cells[2].textContent = p.method_label || p.payment_method || '-';
+    cells[3].textContent = p.display_ref || '—';
+    cells[3].style.fontFamily = 'var(--font-mono)';
+    cells[4].textContent = p.received_by || '-';
+    cells[5].textContent = p.remarks || '-';
+}
+
+function prependPaymentRow(p) {
+    const body = document.getElementById('payHistoryBody');
+    if (!body) return;
+    const isAdmin = {{ 'true' if current_user.is_admin else 'false' }};
+    const row = document.createElement('tr');
+    row.id = 'payRow' + p.id;
+    row.innerHTML =
+        '<td style="white-space:nowrap;">' + (p.payment_date || '').slice(0, 10) + '</td>' +
+        '<td style="text-align:right;font-weight:600;font-family:var(--font-mono);color:var(--color-success);">Rs. ' + formatCurrency(p.amount) + '</td>' +
+        '<td>' + escHtml(p.method_label || p.payment_method || '-') + '</td>' +
+        '<td style="font-family:var(--font-mono);">' + escHtml(p.display_ref || '—') + '</td>' +
+        '<td>' + escHtml(p.received_by || '-') + '</td>' +
+        '<td>' + escHtml(p.remarks || '-') + '</td>' +
+        (isAdmin
+            ? '<td style="text-align:center;white-space:nowrap;">' +
+                '<button class="btn btn-outline-secondary btn-sm" onclick="editPayment(' + p.id + ')"><i data-lucide="pencil" style="width:13px;height:13px;"></i></button> ' +
+                '<button class="btn btn-outline-danger btn-sm" onclick="deletePayment(' + p.id + ')"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button></td>'
+            : '');
+    body.insertBefore(row, body.firstChild);
+    const noMsg = document.getElementById('noPaymentsMsg');
+    if (noMsg) noMsg.remove();
+    if (lucide.createIcons) lucide.createIcons({ nameMapper: () => '' });
+}
+
+function escHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function formatCurrency(v) {
+    const n = Math.round((Number(v) + Number.EPSILON) * 100) / 100;
+    return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+document.getElementById('paymentModalWrap').addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closePaymentModal();
+});
+document.getElementById('paymentModalWrap').addEventListener('click', function (e) {
+    if (e.target === this) closePaymentModal();
+});
+
+function cancelInvoice() {
+    if (!confirm('Are you sure you want to cancel this invoice? This action cannot be undone.')) return;
+    fetch('/api/invoices/{{ invoice.id }}/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() }
+    })
+    .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+    .then(({ ok, data }) => {
+        if (ok) { window.location.reload(); }
+        else { alert(data.error || 'Failed to cancel invoice'); }
+    })
+    .catch(() => alert('Network error'));
+}
+</script>
+<style>
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.spin { animation: spin 1s linear infinite; display: inline-block; }
+</style>
+{% endblock %}

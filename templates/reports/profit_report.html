@@ -1,0 +1,139 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Profit Report{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('reports_page') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Reports</a>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="rpt-page">
+  <div class="rpt-hero">
+    <div>
+      <div class="rpt-crumb">Analytics / Profit</div>
+      <h4>Profit Report</h4>
+      <p>Revenue, cost of goods and gross/net profit analysis for the period.</p>
+    </div>
+    <div class="rpt-actions">
+      <button class="rpt-btn print" onclick="RP.printPage()"><i data-lucide="printer"></i> Print</button>
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='sales', **filters) }}"><i data-lucide="file-down"></i> PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='sales', **filters) }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='sales', **filters) }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+  </div>
+
+  <form method="GET" class="rpt-filters">
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Period</label>
+      <select class="rpt-select" name="period">
+        {% for k, v in [('today','Today'),('week','This Week'),('month','This Month'),('year','This Year')] %}
+        <option value="{{ k }}" {{ 'selected' if request.args.get('period')==k }}>{{ v }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup"><label class="rpt-flabel">From</label><input type="date" class="rpt-input" name="start_date" value="{{ request.args.get('start_date') or '' }}"></div>
+    <div class="rpt-fgroup"><label class="rpt-flabel">To</label><input type="date" class="rpt-input" name="end_date" value="{{ request.args.get('end_date') or '' }}"></div>
+    <div class="rpt-fgroup"><label class="rpt-flabel">Customer</label>
+      <select class="rpt-select" name="customer_id"><option value="">All</option>
+      {% for c in customers %}<option value="{{ c.id }}" {{ 'selected' if filters.get('customer_id')==c.id }}>{{ c.name }}</option>{% endfor %}</select></div>
+    <div class="rpt-fgroup"><button type="submit" class="rpt-btn rpt-btn-filter"><i data-lucide="filter"></i> Apply</button></div>
+    <div class="rpt-fgroup"><a href="{{ url_for('profit_report') }}" class="rpt-btn rpt-btn-reset"><i data-lucide="rotate-ccw"></i> Reset</a></div>
+  </form>
+
+  <div class="rpt-stats">
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="trending-up"></i></span></div><div class="rpt-stat-value">{{ format_currency(revenue) }}</div><div class="rpt-stat-label">Revenue</div></div>
+    <div class="rpt-stat red"><div class="rpt-stat-row"><span class="rpt-stat-ico red"><i data-lucide="receipt"></i></span></div><div class="rpt-stat-value">{{ format_currency(purchase_cost) }}</div><div class="rpt-stat-label">Cost of Goods</div></div>
+    <div class="rpt-stat purple"><div class="rpt-stat-row"><span class="rpt-stat-ico purple"><i data-lucide="landmark"></i></span></div><div class="rpt-stat-value">{{ format_currency(gst_liability) }}</div><div class="rpt-stat-label">GST Liability</div></div>
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="badge-percent"></i></span></div><div class="rpt-stat-value">{{ format_currency(discount) }}</div><div class="rpt-stat-label">Discounts</div></div>
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="receipt-text"></i></span></div><div class="rpt-stat-value">{{ format_currency(expenses) }}</div><div class="rpt-stat-label">Expenses</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="wallet"></i></span></div><div class="rpt-stat-value">{{ format_currency(gross_profit) }}</div><div class="rpt-stat-label">Gross Profit</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="badge-check"></i></span></div><div class="rpt-stat-value">{{ format_currency(net_profit) }}</div><div class="rpt-stat-label">Net Profit</div></div>
+    <div class="rpt-stat purple"><div class="rpt-stat-row"><span class="rpt-stat-ico purple"><i data-lucide="percent"></i></span></div><div class="rpt-stat-value">{{ profit_pct }}%</div><div class="rpt-stat-label">Net Margin</div></div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="chart-bar"></i> Revenue vs Cost</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="pLChart"></canvas></div></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="chart-line"></i> Revenue Trend</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="revChart"></canvas></div></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="pie-chart"></i> Profit by Category</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="catChart"></canvas></div></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="users"></i> Top Customers</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="custChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="percent"></i> Best Margin Item</h3></div>
+      <div class="rpt-card-body">
+        {% if highest_profit %}
+        <div class="rpt-stat-value" style="margin-bottom:.4rem">{{ highest_profit.name }}</div>
+        <div class="rpt-stat-label">Profit <b class="rpt-pos">{{ format_currency(highest_profit.profit) }}</b></div>
+        {% else %}<p class="rpt-muted">No data.</p>{% endif %}
+      </div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="arrow-down-right"></i> Lowest Margin Item</h3></div>
+      <div class="rpt-card-body">
+        {% if lowest_profit %}
+        <div class="rpt-stat-value" style="margin-bottom:.4rem">{{ lowest_profit.name }}</div>
+        <div class="rpt-stat-label">Profit <b class="rpt-neg">{{ format_currency(lowest_profit.profit) }}</b></div>
+        {% else %}<p class="rpt-muted">No data.</p>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="rpt-card" data-report-table>
+    <div class="rpt-card-head"><h3><i data-lucide="package"></i> Product-wise Profit</h3><span class="rpt-count"></span></div>
+    <div class="rpt-toolbar">
+      <div class="rpt-search"><i data-lucide="search"></i><input type="text" placeholder="Search products..."></div>
+      <div class="rpt-perpage">Show <select><option>25</option><option>50</option><option>100</option></select> rows</div>
+    </div>
+    <div class="rpt-scroll">
+      <table class="rpt-table">
+        <thead><tr><th>Product</th><th class="tar">Qty</th><th class="tar">Revenue</th><th class="tar">Cost</th><th class="tar">Profit</th><th class="tar">Margin %</th></tr></thead>
+        <tbody>
+        {% for p in product_list %}
+        <tr><td><b>{{ p.name }}</b></td><td class="tar">{{ p.qty }}</td><td class="tar">{{ format_currency(p.revenue) }}</td><td class="tar">{{ format_currency(p.cost) }}</td><td class="tar {{ 'rpt-pos' if p.profit>=0 else 'rpt-neg' }}">{{ format_currency(p.profit) }}</td><td class="tar">{{ '%.2f'|format(p.profit/p.revenue*100 if p.revenue else 0) }}%</td></tr>
+        {% else %}<tr class="empty-row"><td colspan="6">No product sales in this period.</td></tr>{% endfor %}
+        </tbody>
+      </table></div>
+    <div class="rpt-pager"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/reports.js') }}?v=2"></script>
+<script>
+  var daily = {{ daily_profit | tojson }};
+  var cats = {{ category_profit | tojson }};
+  var custs = {{ customer_profit | tojson }};
+  var pal = RP.PALETTE;
+  RP.drawChart({ el: document.getElementById('pLChart'), type:'bar', money:true, legend:false,
+    labels: ['Revenue','COGS','GST','Discounts','Net Profit'],
+    datasets:[{ data: [{{ revenue }}, {{ purchase_cost }}, {{ gst_liability }}, {{ discount }}, {{ net_profit }}],
+      backgroundColor: [pal[0]+'BB', pal[4]+'BB', pal[2]+'BB', pal[3]+'BB', pal[1]+'BB'], borderRadius:5 }]});
+  var dk = Object.keys(daily).sort();
+  if (dk.length) RP.drawChart({ el: document.getElementById('revChart'), type:'line', money:true, legend:false,
+    labels: dk, datasets:[{ label:'Revenue', data: dk.map(function(k){return daily[k];}),
+      borderColor: pal[0], backgroundColor: pal[0]+'22', fill:true, tension:0.3, pointRadius:3 }]});
+  if (cats.length) RP.drawChart({ el: document.getElementById('catChart'), type:'doughnut', money:true, legend:true,
+    labels: cats.map(function(c){return c.name;}), datasets:[{ data: cats.map(function(c){return c.revenue;}),
+      backgroundColor: cats.map(function(_,i){return pal[i%pal.length]+'CC';}), borderColor:'#fff', borderWidth:2 }]});
+  var top = custs.slice(0, 8);
+  if (top.length) RP.drawChart({ el: document.getElementById('custChart'), type:'bar', money:true, legend:false, categoryPercent:true,
+    labels: top.map(function(c){return c.name;}).reverse(), datasets:[{ data: top.map(function(c){return c.profit;}).reverse(),
+      backgroundColor: top.map(function(_,i){return pal[i%pal.length]+'99';}), borderRadius:5 }]});
+</script>
+{% endblock %}

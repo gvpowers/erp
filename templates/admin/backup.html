@@ -1,0 +1,255 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Backup Management{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('dashboard') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+{% endblock %}
+{% block content %}
+{% set backup_count = (backups | length) if backups else 0 %}
+{% set backup_total = (backups | sum(attribute='size')) if backups else 0 %}
+{% set backup_last = backups[0].created if backups else none %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-1"><i data-lucide="database" class="me-2"></i>Backup Management</h4>
+    <small class="text-muted">Create, download, and delete database backups</small>
+  </div>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBackupModal">
+    <i data-lucide="hard-drive-download" class="me-1"></i> Create Backup
+  </button>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for cat, msg in messages %}
+      <div class="alert alert-{{ 'success' if cat == 'success' else 'danger' if cat == 'danger' else 'info' }} alert-dismissible fade show" role="alert">
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{# Counters are always computed from the real backup files on disk. #}
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="kpi-card h-100">
+      <div class="d-flex align-items-center">
+        <div class="kpi-icon blue">
+          <i data-lucide="database"></i>
+        </div>
+        <div class="ms-3">
+          <div class="kpi-value" style="font-size:1.25rem;" id="kpiTotalBackups">{{ backup_count }}</div>
+          <div class="kpi-label">Total Backups</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="kpi-card h-100">
+      <div class="d-flex align-items-center">
+        <div class="kpi-icon green">
+          <i data-lucide="hard-drive"></i>
+        </div>
+        <div class="ms-3">
+          <div class="kpi-value" style="font-size:1.25rem;" id="kpiTotalSize">{{ format_bytes(backup_total) }}</div>
+          <div class="kpi-label">Total Size</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="kpi-card h-100">
+      <div class="d-flex align-items-center">
+        <div class="kpi-icon yellow">
+          <i data-lucide="clock"></i>
+        </div>
+        <div class="ms-3">
+          <div class="kpi-value" style="font-size:1.25rem;" id="kpiLastBackup">
+            {%- if backup_last %}{{ format_backup_datetime(backup_last) }}{% else %}No backups available{% endif -%}
+          </div>
+          <div class="kpi-label">Last Backup</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <i data-lucide="list"></i>
+    <span>Backup History</span>
+  </div>
+  <div class="card-body p-0">
+    {% if backup_count %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="ps-3">Filename</th>
+            <th>Size</th>
+            <th>Date</th>
+            <th class="text-end pe-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for backup in backups %}
+          {% set did = 'deleteBackupModal' ~ loop.index %}
+          <tr>
+            <td class="ps-3">
+              <div class="d-flex align-items-center">
+                <div class="rounded-lg bg-gray d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;flex-shrink:0;border:1px solid var(--border-color);">
+                  <i data-lucide="file-archive" class="text-muted"></i>
+                </div>
+                <div>
+                  <span class="fw-semibold text-break">{{ backup.filename }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="text-muted">{{ format_bytes(backup.size) }}</td>
+            <td class="text-muted">
+              <i data-lucide="clock" style="width:12px;height:12px;" class="me-1"></i>
+              {{ format_backup_datetime(backup.created) }}
+            </td>
+            <td class="text-end pe-3">
+              <div class="btn-group btn-group-sm">
+                <a href="{{ url_for('download_backup', filename=backup.filename) }}"
+                   class="btn btn-outline-secondary" title="Download" download>
+                  <i data-lucide="download" style="width:14px;height:14px;"></i>
+                </a>
+                <button class="btn btn-outline-warning" title="Restore"
+                        data-bs-toggle="modal" data-bs-target="#restoreModal{{ loop.index }}">
+                  <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
+                </button>
+                {% if current_user.is_admin %}
+                <button class="btn btn-outline-danger" title="Delete backup"
+                        data-bs-toggle="modal" data-bs-target="#{{ did }}">
+                  <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                </button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    {# Professional empty state — no blank rows, no 0-byte or missing files. #}
+    <div class="text-center py-5">
+      <div class="text-muted">
+        <i data-lucide="database" style="width:48px;height:48px;" class="d-block mx-auto mb-3 opacity-25"></i>
+        <p class="mb-1 fw-semibold fs-5" style="color:var(--text-color);">No backups available</p>
+        <small class="d-block mb-3">Create your first database backup to protect your ERP data.</small>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBackupModal">
+          <i data-lucide="hard-drive-download" class="me-1"></i> Create Backup
+        </button>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{# ---- Per-backup restore / delete modals (outside the table) ---- #}
+{% for backup in backups or [] %}
+<div class="modal fade" id="restoreModal{{ loop.index }}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <h6 class="modal-title fw-bold"><i data-lucide="rotate-ccw" class="me-2 text-warning" style="width:16px;height:16px;"></i>Restore Backup</h6>
+          <small class="text-muted">This will overwrite the current database</small>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning d-flex align-items-center mb-3">
+          <i data-lucide="alert-triangle" style="width:18px;height:18px;" class="me-2 flex-shrink-0"></i>
+          <div>This will overwrite the current database. This action cannot be undone.</div>
+        </div>
+        <p class="text-muted mb-0">Are you sure you want to restore backup <strong>{{ backup.filename }}</strong>?</p>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="POST" action="{{ url_for('restore_backup') }}" class="d-inline">
+          <input type="hidden" name="csrf_token" value="{{ get_csrf_token() }}">
+          <input type="hidden" name="filename" value="{{ backup.filename }}">
+          <button type="submit" class="btn btn-warning" onclick="return confirm('Are you absolutely sure? This will overwrite the current database.')">
+            <i data-lucide="rotate-ccw" style="width:14px;height:14px;" class="me-1"></i> Restore
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if current_user.is_admin %}
+<div class="modal fade" id="deleteBackupModal{{ loop.index }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <h6 class="modal-title fw-bold"><i data-lucide="trash-2" class="me-2 text-danger" style="width:16px;height:16px;"></i>Delete Backup?</h6>
+          <small class="text-muted">This action cannot be undone</small>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3">Are you sure you want to permanently delete this backup?</p>
+        <div class="border rounded p-3 mb-3" style="border-color:var(--border-color) !important;">
+          <div class="d-flex justify-content-between gap-3 mb-1">
+            <span class="text-muted">Backup</span>
+            <span class="fw-semibold text-break text-end">{{ backup.filename }}</span>
+          </div>
+          <div class="d-flex justify-content-between gap-3">
+            <span class="text-muted">Size</span>
+            <span class="fw-semibold">{{ format_bytes(backup.size) }}</span>
+          </div>
+        </div>
+        <div class="alert alert-danger d-flex align-items-center mb-0 py-2">
+          <i data-lucide="alert-octagon" style="width:18px;height:18px;" class="me-2 flex-shrink-0"></i>
+          <div>This action cannot be undone.</div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="POST" action="{{ url_for('delete_backup', filename=backup.filename) }}" class="d-inline">
+          <input type="hidden" name="csrf_token" value="{{ get_csrf_token() }}">
+          <button type="submit" class="btn btn-danger">
+            <i data-lucide="trash-2" style="width:14px;height:14px;" class="me-1"></i> Delete Backup
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<div class="modal fade" id="createBackupModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <h6 class="modal-title fw-bold"><i data-lucide="hard-drive-download" class="me-2 text-primary" style="width:16px;height:16px;"></i>Create Backup</h6>
+          <small class="text-muted">Generate a new database backup</small>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info d-flex align-items-center mb-0">
+          <i data-lucide="info" style="width:18px;height:18px;" class="me-2 flex-shrink-0"></i>
+          <span>A new backup of the entire database will be created and added to the backup history.</span>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="POST" action="{{ url_for('create_backup') }}" class="d-inline">
+          <input type="hidden" name="csrf_token" value="{{ get_csrf_token() }}">
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="hard-drive-download" style="width:14px;height:14px;" class="me-1"></i> Create Backup
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

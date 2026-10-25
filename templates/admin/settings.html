@@ -1,0 +1,485 @@
+{% extends "layouts/admin_layout.html" %}
+{% from "partials/logo.html" import gv_logo with context %}
+{% block page_title %}Settings{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}?v=5.0">
+{% endblock %}
+
+{% block back_link %}
+<a href="{{ url_for('dashboard') }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:#64748B;text-decoration:none;">← Back to Dashboard</a>
+{% endblock %}
+
+{% block content %}
+<div id="settingsApp" class="settings-app">
+  <div class="gv-shell">
+
+    <!-- ————— LEFT NAV ————— -->
+    <nav class="gv-nav">
+      <div class="gv-nav-title">Settings</div>
+      {% set items = [
+        ('company', 'building-2', 'Company Information'),
+        ('invoice', 'file-text', 'Invoice Settings'),
+        ('users', 'users', 'Users & Roles'),
+        ('reports', 'bar-chart-2', 'Reports Configuration'),
+        ('backup', 'database', 'Backup & Restore'),
+        ('backupapi', 'cloud-upload', 'Backup API (Remote Archive)'),
+        ('system', 'info', 'System Information')
+      ] %}
+      {% for key, ico, label in items %}
+      <button type="button" class="gv-nav-item" data-gv-nav="{{ key }}">
+        <i data-lucide="{{ ico }}" class="gv-nav-ico" width="20" height="20"></i>
+        <span>{{ label }}</span>
+      </button>
+      {% endfor %}
+    </nav>
+
+    <!-- ————— RIGHT PANEL ————— -->
+    <main class="gv-main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for cat, msg in messages %}
+            <div class="gv-banner {{ 'gv-banner--ok' if cat == 'success' else 'gv-banner--warn' }}" role="alert">
+              <span class="gv-banner-ico">{{ '✓' if cat == 'success' else '✗' }}</span>
+              {{ msg }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <div class="gv-head">
+        <div>
+          <h2>Settings</h2>
+          <div class="gv-sub">Configure company, taxation, billing, users and application preferences.</div>
+        </div>
+        <span class="gv-publish" data-gv-publish>
+          <span class="gv-publish-dot"></span>
+          <span data-gv-publish-text>All changes saved</span>
+        </span>
+      </div>
+
+      <form action="{{ url_for('settings_page') }}" method="post" data-gv-form enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ get_csrf_token() }}">
+      <div class="gv-modules">
+
+        {# —————————— COMPANY —————————— #}
+        <div class="gv-module" data-gv-module="company">
+          <div class="gv-card">
+            <h3 class="gv-card-title"><i data-lucide="building-2" class="gv-card-ico" width="20" height="20"></i> Company Information
+              <span class="gv-fixed-badge"><span class="gv-fixed-badge-dot"></span> Fixed Company Profile</span>
+            </h3>
+            <p class="gv-card-desc">Business identity shown on invoices, quotations, reports and PDFs.</p>
+
+            <div class="gv-company-profile">
+              <div class="gv-logo-box">
+                {{ gv_logo(alt="GV Powers logo") }}
+              </div>
+              <div class="gv-logo-meta">
+                <div class="gv-logo-title">Company Logo</div>
+                <div class="gv-logo-sub">GV Powers official company logo</div>
+                <button type="button" class="gv-btn gv-btn--ghost gv-btn--sm" data-gv-logo-preview>
+                  <i data-lucide="eye" class="gv-btn-ico" width="16" height="16"></i> Preview
+                </button>
+              </div>
+            </div>
+
+            <div class="gv-section-head"><div class="gv-section-title">Company Details</div></div>
+
+            <div class="gv-details-grid">
+              <div class="gv-detail">
+                <span class="gv-detail-key">Company Name</span>
+                <span class="gv-detail-val">GV Powers</span>
+              </div>
+              <div class="gv-detail">
+                <span class="gv-detail-key">GSTIN</span>
+                <span class="gv-detail-val">{{ company.gstin or '33AGEPV1534G2ZJ' }}</span>
+              </div>
+              <div class="gv-detail">
+                <span class="gv-detail-key">Phone 1</span>
+                <span class="gv-detail-val">{{ company.phone or '+91 98940 79090' }}</span>
+              </div>
+              <div class="gv-detail">
+                <span class="gv-detail-key">Phone 2</span>
+                <span class="gv-detail-val">{{ company.mobile or '+91 98940 79095' }}</span>
+              </div>
+              <div class="gv-detail">
+                <span class="gv-detail-key">Email</span>
+                <span class="gv-detail-val">{{ company.email or 'gvpowerssalem@gmail.com' }}</span>
+              </div>
+              <div class="gv-detail">
+                <span class="gv-detail-key">Website</span>
+                <span class="gv-detail-val"><a href="https://gvpowers.in" target="_blank" rel="noopener" class="gv-detail-link">https://gvpowers.in</a></span>
+              </div>
+              <div class="gv-detail">
+                <span class="gv-detail-key">State</span>
+                <span class="gv-detail-val">{{ company.state or 'Tamil Nadu' }}</span>
+              </div>
+              <div class="gv-detail">
+                <span class="gv-detail-key">State Code</span>
+                <span class="gv-detail-val">{{ company.state_code or 33 }}</span>
+              </div>
+              <div class="gv-detail gv-detail--full">
+                <span class="gv-detail-key">Address</span>
+                <span class="gv-detail-val">No. 10, Kadharkhan Street,<br>Opp. Railway Junction,<br>Salem - 636005,<br>Tamil Nadu, India</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gv-logo-modal" data-gv-logo-modal hidden>
+            <div class="gv-logo-modal-backdrop" data-gv-logo-close></div>
+            <div class="gv-logo-modal-body">
+              <button type="button" class="gv-logo-modal-close" data-gv-logo-close aria-label="Close">&#10005;</button>
+              {{ gv_logo(alt="GV Powers logo") }}
+            </div>
+          </div>
+        </div>
+
+        {# —————————— INVOICE —————————— #}
+        <div class="gv-module" data-gv-module="invoice">
+          <div class="gv-card">
+            <h3 class="gv-card-title"><i data-lucide="file-text" class="gv-card-ico" width="20" height="20"></i> Invoice & Quotation</h3>
+            <p class="gv-card-desc">Defaults applied when creating invoices and quotations.</p>
+            <div class="gv-grid">
+              <div class="gv-field">
+                <label class="gv-label">Invoice Series Prefix</label>
+                <input type="text" class="gv-input" name="invoice_prefix" value="{{ settings.get('invoice_prefix') or 'INV' }}" placeholder="INV">
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Number of Copies</label>
+                <select class="gv-select" name="invoice_copies">{% for c in range(1,6) %}<option value="{{ c }}" {% if settings.get('invoice_copies')|int == c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+              </div>
+              <div class="gv-field gv-field--full">
+                <label class="gv-label">Invoice Terms &amp; Conditions</label>
+                <textarea class="gv-textarea" name="invoice_terms" rows="4" placeholder="Payment terms, delivery, warranty...">{{ settings.get('invoice_terms') or '' }}</textarea>
+              </div>
+              <div class="gv-field gv-field--full">
+                <label class="gv-label">Quotation Terms &amp; Conditions</label>
+                <textarea class="gv-textarea" name="quotation_terms" rows="4" placeholder="Validity, terms accepted, quotations subject to change...">{{ settings.get('quotation_terms') or '' }}</textarea>
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Default GST Rate</label>
+                <select class="gv-select" name="default_gst_rate">
+                  {% for r in [0,5,12,18,28] %}
+                  <option value="{{ r }}" {% if (settings.get('default_gst_rate')|int) == r or (not settings.get('default_gst_rate') and r == 18) %}selected{% endif %}>{{ r }}%{% if r == 18 %} (Default){% endif %}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Invoice Currency</label>
+                <select class="gv-select" name="currency"><option value="INR" {% if settings.get('currency') == 'INR' or not settings.get('currency') %}selected{% endif %}>INR - Rs. (Indian Rupee)</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# —————————— USERS —————————— #}
+        <div class="gv-module" data-gv-module="users">
+          <div class="gv-card">
+            <h3 class="gv-card-title"><i data-lucide="users" class="gv-card-ico" width="20" height="20"></i> User Permissions</h3>
+            <p class="gv-card-desc">Control access to modules for every role.</p>
+            {% set perms = ['Dashboard','Invoices','Customers','Products','Reports','Settings','Delete','Print','Export'] %}
+            {% set roles = ['Admin','Owner','Sales','Viewer'] %}
+            <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;min-width:560px">
+              <thead>
+                <tr style="color:#64748B;font-size:13px;text-transform:uppercase;letter-spacing:.4px">
+                  <th style="text-align:left;padding:12px">Module</th>
+                  {% for r in roles %}<th style="text-align:center;padding:12px">{{ r }}</th>{% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in perms %}
+                <tr style="border-top:1px solid #E2E8F0">
+                  <td style="padding:12px;font-weight:600;color:#0F172A">{{ p }}</td>
+                  {% for r in roles %}
+                  <td style="text-align:center"><input class="gv-input" type="checkbox" style="width:20px;height:20px;padding:0" {% if r in ('admin','owner') %}checked disabled{% endif %}></td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            </div>
+            <p class="gv-hint">Checkboxes in gray are fixed. Admin and Owner roles retain full access.</p>
+          </div>
+        </div>
+
+        {# —————————— REPORTS —————————— #}
+        <div class="gv-module" data-gv-module="reports">
+          <div class="gv-card">
+            <h3 class="gv-card-title"><i data-lucide="bar-chart-2" class="gv-card-ico" width="20" height="20"></i> Report Configuration</h3>
+            <p class="gv-card-desc">Defaults for generated reports, PDF exports and financial periods.</p>
+            <div class="gv-grid">
+              <div class="gv-field">
+                <label class="gv-label">Default Report Format</label>
+                <select class="gv-select" name="report_format">
+                  {% for rf in ['PDF','Excel','CSV'] %}<option value="{{ rf }}" {% if settings.get('report_format') == rf or (not settings.get('report_format') and rf == 'PDF') %}selected{% endif %}>{{ rf }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Default Export Type</label>
+                <select class="gv-select" name="report_export_type">
+                  {% for e in ['Download','Email','Both'] %}<option value="{{ e }}" {% if settings.get('report_export_type') == e or (not settings.get('report_export_type') and e == 'Download') %}selected{% endif %}>{{ e }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="gv-field gv-field--full">
+                <label class="gv-label">PDF Header</label>
+                <input type="text" class="gv-input" name="report_pdf_header" value="{{ settings.get('report_pdf_header') or company.name or 'GV Powers' }}" placeholder="GV Powers">
+              </div>
+              <div class="gv-field gv-field--full">
+                <label class="gv-label">PDF Footer</label>
+                <input type="text" class="gv-input" name="report_pdf_footer" value="{{ settings.get('report_pdf_footer') or 'Thank you for your business' }}" placeholder="Thank you for your business">
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Company Logo</label>
+                <select class="gv-select" name="report_pdf_logo"><option value="company" {% if settings.get('report_pdf_logo') == 'company' or not settings.get('report_pdf_logo') %}selected{% endif %}>Company Logo</option></select>
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Default Date Range</label>
+                <select class="gv-select" name="report_date_range">
+                  {% for r in ['Today','This Week','This Month','This Quarter','This Year','Financial Year','Custom'] %}
+                  <option value="{{ r }}" {% if settings.get('report_date_range') == r or (not settings.get('report_date_range') and r == 'This Month') %}selected{% endif %}>{{ r }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Financial Year</label>
+                {% set fy = settings.get('financial_year') or 'FY 2026-27' %}
+                <select class="gv-select" name="financial_year">
+                  {% for y in ['FY 2024-25','FY 2025-26','FY 2026-27','FY 2027-28'] %}
+                  <option value="{{ y }}" {% if fy == y %}selected{% endif %}>{{ y }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Export Folder</label>
+                <input type="text" class="gv-input" name="export_folder" value="{{ settings.get('export_folder') or 'exports' }}" placeholder="exports">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# —————————— BACKUP —————————— #}
+        <div class="gv-module" data-gv-module="backup">
+          <div class="gv-card">
+            <h3 class="gv-card-title"><i data-lucide="database" class="gv-card-ico" width="20" height="20"></i> Backup & Restore</h3>
+            <p class="gv-card-desc">Create, download and restore database backups.</p>
+            <div class="gv-grid">
+              <div class="gv-field">
+                <label class="gv-label">Automatic Daily Backup</label>
+                <select class="gv-select" name="auto_backup">
+                  <option value="never" {% if settings.get('auto_backup')=='never' or not settings.get('auto_backup') %}selected{% endif %}>Disabled (Manual only)</option>
+                  <option value="daily" {% if settings.get('auto_backup')=='daily' %}selected{% endif %}>Enabled — Daily</option>
+                </select>
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Backups Retained</label>
+                <input type="text" class="gv-input" name="backup_retention" value="{{ settings.get('backup_retention') or '10' }}" placeholder="10">
+              </div>
+            </div>
+            <div class="gv-kv"><span class="k">Database Size</span><span class="v">{{ db_size or '—' }}</span></div>
+            <div class="gv-kv"><span class="k">Last Backup</span><span class="v">{{ last_backup or 'No backup yet' }}</span></div>
+            <div class="gv-kv"><span class="k">Stored Backups</span><span class="v">{{ backups|length if backups else 0 }}</span></div>
+            <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+              <a class="gv-btn gv-btn--primary" href="{{ url_for('create_backup') }}">Manual Backup</a>
+              {% if backups and backups|length > 0 %}
+              <a class="gv-btn gv-btn--soft" href="{{ url_for('download_backup', filename=backups[0].filename) }}">Download Latest</a>
+              {% endif %}
+              <button type="button" class="gv-btn gv-btn--ghost" data-gv-restore>Restore Backup</button>
+              <a class="gv-btn gv-btn--link" href="{{ url_for('backup_page') }}">Manage Backups</a>
+            </div>
+          </div>
+        </div>
+
+        {# —————————— BACKUP API (REMOTE ARCHIVE) —————————— #}
+        <div class="gv-module" data-gv-module="backupapi">
+          <div class="gv-card">
+            <h3 class="gv-card-title"><i data-lucide="cloud-upload" class="gv-card-ico" width="20" height="20"></i> Backup API — Remote Archive
+              <span id="gvBackupConnBadge" class="gv-fixed-badge" style="{{ 'color:#16A34A' if backup_status.connected else 'color:#B45309' }}">
+                <span class="gv-fixed-badge-dot"></span>
+                <span id="gvBackupConnText">{{ 'Connected' if backup_status.connected else ('Not configured' if not backup_status.configured else 'Offline / Not verified') }}</span>
+              </span>
+            </h3>
+            <p class="gv-card-desc">
+              Streams an immutable, append-only history of every record to the remote Backup &amp; Owner Server.
+              ERP deletions are archived as <strong>DELETED_IN_ERP</strong> markers — remote data is never removed.
+            </p>
+
+            <div class="gv-grid">
+              <div class="gv-field">
+                <label class="gv-label">Backup Server URL</label>
+                <input type="text" class="gv-input" name="backup_api_url"
+                       value="{{ settings.get('backup_api_url') or '' }}"
+                       placeholder="https://backup.gvpowers.in">
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">Remote Sync</label>
+                <select class="gv-select" name="backup_enabled">
+                  <option value="1" {% if (settings.get('backup_enabled') or '1') != '0' %}selected{% endif %}>Enabled</option>
+                  <option value="0" {% if settings.get('backup_enabled')=='0' %}selected{% endif %}>Disabled</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="gv-section-head"><div class="gv-section-title">API Key</div></div>
+            <p class="gv-card-desc">Generate a key here, then copy and paste it into the backup/database site settings. The key is shown only once and is never displayed again.</p>
+            <div class="gv-grid">
+              <div class="gv-field">
+                <label class="gv-label">Generated Key (shown once)</label>
+                <div style="display:flex;gap:8px">
+                  <input type="text" class="gv-input" id="gvBackupKeyBox" readonly placeholder="No key generated yet" style="font-family:monospace;font-size:12px">
+                  <button type="button" class="gv-btn gv-btn--ghost gv-btn--sm" id="gvBackupKeyCopy" style="display:none">Copy</button>
+                </div>
+              </div>
+              <div class="gv-field">
+                <label class="gv-label">&nbsp;</label>
+                <button type="button" class="gv-btn gv-btn--soft" id="gvBackupGenKey" style="width:100%">Generate New API Key</button>
+              </div>
+            </div>
+
+            <div class="gv-section-head"><div class="gv-section-title">Status</div></div>
+            <div class="gv-kv"><span class="k">Connection</span><span class="v" id="gvBackupKvConn">{{ 'Connected' if backup_status.connected else 'Not connected yet' }}</span></div>
+            <div class="gv-kv"><span class="k">Last Successful Sync</span><span class="v" id="gvBackupKvLast">{{ backup_status.last_success_at.strftime('%d %b %Y %H:%M:%S') if backup_status.last_success_at else 'Never' }}</span></div>
+            <div class="gv-kv"><span class="k">Events Delivered</span><span class="v" id="gvBackupKvDone">{{ backup_status.completed }}</span></div>
+            <div class="gv-kv"><span class="k">Pending Events</span><span class="v" id="gvBackupKvPending">{{ backup_status.pending }}</span></div>
+            <div class="gv-kv"><span class="k">Failed Events</span><span class="v" id="gvBackupKvFailed">{{ backup_status.failed }}</span></div>
+            <div class="gv-kv"><span class="k">Last Error</span><span class="v" id="gvBackupKvError">{{ backup_status.last_error or '—' }}</span></div>
+            <div class="gv-kv"><span class="k">API Key Source</span><span class="v">{{ 'Environment variable (.env)' if backup_status.key_from_env else ('Saved in ERP settings (encrypted)' if backup_status.key_saved else 'Not set') }}</span></div>
+
+            <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+              <button type="button" class="gv-btn gv-btn--primary" id="gvBackupTest">Test Connection</button>
+              <button type="button" class="gv-btn gv-btn--soft" id="gvBackupSync">Sync Now</button>
+              <button type="button" class="gv-btn gv-btn--ghost" id="gvBackupRetry">Retry Failed</button>
+            </div>
+            <div id="gvBackupMsg" style="margin-top:12px;display:none;padding:10px 12px;border-radius:10px;font-size:13px"></div>
+          </div>
+        </div>
+
+{# —————————— SYSTEM —————————— #}
+        <div class="gv-module" data-gv-module="system">
+          <div class="gv-card">
+            <h3 class="gv-card-title"><i data-lucide="info" class="gv-card-ico" width="20" height="20"></i> System Information</h3>
+            <p class="gv-card-desc">Read-only information about this GV POWERS ERP installation. These values cannot be edited.</p>
+            {% set sys_rows = [
+              ('ERP Version', sys_info.erp_version if sys_info else '1.0.0'),
+              ('Flask Version', sys_info.flask_version if sys_info else ''),
+              ('Python Version', sys_info.python_version if sys_info else ''),
+              ('Operating System', sys_info.os_name if sys_info else ''),
+              ('Database Status', sys_info.db_status if sys_info else ''),
+              ('Database Size', sys_info.db_size if sys_info else ''),
+              ('Server Time', sys_info.server_time if sys_info else ''),
+              ('Cloudflare Status', sys_info.cloudflare if sys_info else ''),
+              ('Environment', sys_info.environment if sys_info else ''),
+              ('Application Uptime', sys_info.uptime if sys_info else ''),
+              ('Current User', current_user.full_name),
+              ('Last Login', current_user.last_login.strftime('%d %b %Y %H:%M') if current_user.last_login else 'N/A')
+            ] %}
+            {% for k, v in sys_rows %}
+            <div class="gv-kv"><span class="k">{{ k }}</span><span class="v">{{ v or '—' }}</span></div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+      {# ————— STICKY ACTION BAR ————— #}
+      <div class="gv-actions">
+        <button type="button" class="gv-btn gv-btn--link" data-gv-cancel>Cancel</button>
+        <span class="gv-actions-sep"></span>
+        <button type="button" class="gv-btn gv-btn--ghost" data-gv-preview>Preview Invoice</button>
+        <button type="button" class="gv-btn gv-btn--ghost" data-gv-reset>Reset</button>
+        <button type="submit" class="gv-btn gv-btn--primary" data-gv-save>Save Changes</button>
+      </div>
+      </form>
+    </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/settings.js') }}?v=5.0"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var msgBox = $('gvBackupMsg');
+
+  function showMsg(text, ok) {
+    if (!msgBox) return;
+    msgBox.style.display = 'block';
+    msgBox.style.background = ok ? '#ECFDF5' : '#FEF2F2';
+    msgBox.style.color = ok ? '#065F46' : '#991B1B';
+    msgBox.textContent = text;
+  }
+
+  function refreshStatus(st) {
+    if (!st) return;
+    $('gvBackupKvConn').textContent = st.connected ? 'Connected' : (st.configured ? 'Not verified / offline' : 'Not configured');
+    $('gvBackupKvLast').textContent = st.last_success_at || 'Never';
+    $('gvBackupKvDone').textContent = st.completed;
+    $('gvBackupKvPending').textContent = st.pending;
+    $('gvBackupKvFailed').textContent = st.failed;
+    $('gvBackupKvError').textContent = st.last_error || '—';
+  }
+
+  function post(url, onDone) {
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('input[name=csrf_token]').value,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      credentials: 'same-origin'
+    })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) { onDone(res.j); })
+      .catch(function () { showMsg('Network error — please try again.', false); });
+  }
+
+  var btnTest = $('gvBackupTest');
+  if (btnTest) btnTest.addEventListener('click', function () {
+    btnTest.disabled = true; showMsg('Testing connection…', true);
+    post('/settings/backup-api/test', function (j) {
+      btnTest.disabled = false; refreshStatus(j.status);
+      showMsg(j.message || j.error || ('Error: ' + (j.error || 'Unknown')), !!(j.success));
+    });
+  });
+
+  var btnSync = $('gvBackupSync');
+  if (btnSync) btnSync.addEventListener('click', function () {
+    btnSync.disabled = true; showMsg('Syncing queued events…', true);
+    post('/settings/backup-api/sync', function (j) {
+      btnSync.disabled = false; refreshStatus(j.status);
+      showMsg(j.message || j.error || 'Sync finished.', true);
+    });
+  });
+
+  var btnRetry = $('gvBackupRetry');
+  if (btnRetry) btnRetry.addEventListener('click', function () {
+    btnRetry.disabled = true; showMsg('Retrying failed events…', true);
+    post('/settings/backup-api/retry-failed', function (j) {
+      btnRetry.disabled = false; refreshStatus(j.status);
+      showMsg(j.message || j.error || 'Retry finished.', true);
+    });
+  });
+
+  var btnGen = $('gvBackupGenKey');
+  if (btnGen) btnGen.addEventListener('click', function () {
+    if (!window.confirm('Generate a new Backup API key? Any previously generated key stops working immediately and must be replaced on the backup site.')) return;
+    btnGen.disabled = true;
+    post('/settings/backup-api/generate-key', function (j) {
+      btnGen.disabled = false;
+      if (!j.success) { showMsg(j.error || 'Key generation failed.', false); return; }
+      var box = $('gvBackupKeyBox'), copyBtn = $('gvBackupKeyCopy');
+      box.value = j.api_key; copyBtn.style.display = '';
+      showMsg('Key generated. Copy it now and paste it into the backup/database site — it will NOT be shown again.', true);
+      copyBtn.onclick = function () {
+        box.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        if (navigator.clipboard) navigator.clipboard.writeText(box.value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(function () { copyBtn.textContent = 'Copy'; }, 1500);
+      };
+    });
+  });
+})();
+</script>
+{% endblock %}

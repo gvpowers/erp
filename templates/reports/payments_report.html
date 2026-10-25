@@ -1,0 +1,108 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Collection Report{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('reports_page') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Reports</a>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}?v=2">
+<script src="{{ url_for('static', filename='js/reports.js') }}?v=2"></script>
+{% endblock %}
+
+{% block content %}
+<div class="rpt-page">
+  <div class="rpt-hero">
+    <div>
+      <div class="rpt-crumb">Analytics / Collection</div>
+      <h4>Collection Report</h4>
+      <p>Payments received in the selected period, broken down by date and payment method.</p>
+    </div>
+    <div class="rpt-actions">
+      <button class="rpt-btn print" onclick="RP.printPage()"><i data-lucide="printer"></i> Print</button>
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='payments', **filters) }}"><i data-lucide="file-down"></i> PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='payments', **filters) }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='payments', **filters) }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+  </div>
+
+  <form method="GET" class="rpt-filters">
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Period</label>
+      <select class="rpt-select" name="period">
+        {% for k, v in [('today','Today'),('yesterday','Yesterday'),('week','This Week'),('month','This Month'),('year','This Year')] %}
+        <option value="{{ k }}" {{ 'selected' if request.args.get('period')==k }}>{{ v }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">From</label>
+      <input type="date" class="rpt-input" name="start_date" value="{{ request.args.get('start_date') or '' }}">
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">To</label>
+      <input type="date" class="rpt-input" name="end_date" value="{{ request.args.get('end_date') or '' }}">
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Payment Method</label>
+      <select class="rpt-select" name="payment_method">
+        <option value="">All</option>
+        {% for m in ['cash','upi','card','other'] %}
+        <option value="{{ m }}" {{ 'selected' if request.args.get('payment_method')==m }}>{{ m.replace('_',' ').title() }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Customer</label>
+      <select class="rpt-select" name="customer_id">
+        <option value="">All</option>
+        {% for c in customers %}<option value="{{ c.id }}" {{ 'selected' if filters.get('customer_id')==c.id }}>{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup rpt-fgroup-wide">
+      <label class="rpt-flabel">Search</label>
+      <input type="text" class="rpt-input" name="q" value="{{ request.args.get('q') or '' }}" placeholder="Invoice # / customer / mobile">
+    </div>
+    <button class="rpt-btn blue" type="submit"><i data-lucide="filter"></i> Apply</button>
+    <a class="rpt-btn ghost" href="{{ url_for('payments_report') }}">Reset</a>
+  </form>
+
+  <div class="rpt-section-label"><i data-lucide="layout-dashboard"></i> Summary</div>
+  <div class="rpt-stats">
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="hand-coins"></i></span></div><div class="rpt-stat-value">{{ format_currency(total_collected) }}</div><div class="rpt-stat-label">Collected</div><div class="rpt-stat-sub">{{ payments|length }} payment{{ 's' if payments|length != 1 }}</div></div>
+    {% for m in method_data %}
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="credit-card"></i></span></div><div class="rpt-stat-value">{{ format_currency(m.total) }}</div><div class="rpt-stat-label">{{ m.method }}</div><div class="rpt-stat-sub">{{ m.count }} payment{{ 's' if m.count != 1 }}</div></div>
+    {% endfor %}
+    {% if not method_data %}<div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="info"></i></span></div><div class="rpt-stat-value">—</div><div class="rpt-stat-label">No payments</div></div>{% endif %}
+  </div>
+
+  <div class="rpt-section-label"><i data-lucide="calendar"></i> Daily Collections</div>
+  <div class="rpt-card">
+    <div class="rpt-scroll no-h"><table class="rpt-table">
+      <thead><tr><th>Date</th><th class="tar">Amount</th><th class="tar">Payments</th></tr></thead>
+      <tbody>
+      {% for d in daily_data %}
+      <tr><td>{{ d.date }}</td><td class="tar">{{ format_currency(d.total) }}</td><td class="tar">{{ d.count }}</td></tr>
+      {% else %}<tr class="empty-row"><td colspan="3">No collections in this period.</td></tr>{% endfor %}
+      </tbody></table></div>
+  </div>
+
+  <div class="rpt-section-label"><i data-lucide="list"></i> Payment Details</div>
+  <div class="rpt-card">
+    <div class="rpt-scroll no-h"><table class="rpt-table">
+      <thead><tr><th>Date</th><th>Invoice</th><th>Customer</th><th class="tar">Amount</th><th>Method</th><th>Reference</th><th>Collected By</th><th>Remarks</th></tr></thead>
+      <tbody>
+      {% for p, inv in payments %}
+      <tr>
+        <td>{{ p.payment_date.strftime('%d %b %Y') if p.payment_date else '' }}</td>
+        <td><a href="{{ url_for('view_invoice', iid=p.invoice_id) }}" class="rpt-strong" style="color:var(--erp-primary);text-decoration:none">{{ inv.invoice_number }}</a></td>
+        <td>{{ inv.customer_name or 'Walk-in' }}</td>
+        <td class="tar">{{ format_currency(p.amount or 0) }}</td>
+        <td>{{ _payment_method_label(p.payment_method) }}</td>
+        <td>{{ _payment_display_ref(p) or '—' }}</td>
+        <td>{{ p.received_by or '—' }}</td>
+        <td>{{ p.remarks or '—' }}</td>
+      </tr>
+      {% else %}<tr class="empty-row"><td colspan="8">No payments found. Record a payment on any invoice to see it here.</td></tr>{% endfor %}
+      </tbody></table></div>
+  </div>
+</div>
+{% endblock %}

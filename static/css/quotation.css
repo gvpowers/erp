@@ -1,0 +1,633 @@
+/* ==========================================================================
+   GV POWERS QUOTATION — SCREEN-ONLY STYLING + SHARED LAYOUT
+   This file is loaded after invoice.css into the quotation preview page.
+   It adds modern ERP document-preview UI around the quotation paper.
+   All quotation-paper (gvp-quotation-sheet) rules are preserved unchanged
+   for print/PDF generation. Uses the same CSS classes as invoice.css for
+   identical document geometry.
+   ========================================================================== */
+
+/* --------------------------------------------------------------
+   PAGE SHELL — modern ERP document-preview workspace
+   -------------------------------------------------------------- */
+.page-shell {
+    background: #f4f7fb;
+    min-height: 100vh;
+    padding: 24px 20px 40px;
+    box-sizing: border-box;
+}
+
+.page-shell > .document-preview-wrap {
+    max-width: 100%;
+}
+
+/* --------------------------------------------------------------
+   COPY TOOLBAR — exactly two quotation copies + both-copy actions
+   -------------------------------------------------------------- */
+.quotation-copy-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto 14px;
+}
+
+.quotation-copy-tabs {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.quotation-copy-tab {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 8px 18px;
+    border: 1px solid var(--border-color, #d7dee8);
+    border-radius: 9px;
+    background: #fff;
+    color: var(--text-primary, #0f2447);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.quotation-copy-tab.active {
+    background: var(--color-primary, #0f2447);
+    border-color: var(--color-primary, #0f2447);
+    color: #fff;
+}
+
+.quotation-bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.quotation-bulk-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-primary, #0f2447);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.quotation-bulk-actions a:hover { text-decoration: underline; }
+.quotation-bulk-actions .lucide { width: 16px; height: 16px; }
+
+/* --------------------------------------------------------------
+   PREVIEW STAGE — A4 paper floating in the preview workspace
+   -------------------------------------------------------------- */
+.preview-stage {
+    display: flex;
+    justify-content: center;
+    padding: 28px 24px 60px;
+}
+
+@media (min-width: 768px) {
+    .preview-stage {
+        padding: 32px 32px 72px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .preview-stage {
+        padding: 40px 40px 80px;
+    }
+}
+
+.gvp-quotation-sheet {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    box-shadow: 0 15px 45px rgba(15, 36, 71, 0.12);
+    border-radius: 4px;
+    flex-shrink: 0;
+    page-break-inside: avoid;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .gvp-quotation-sheet {
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 767px) {
+    .gvp-quotation-sheet {
+        margin: 0 auto;
+        width: 210mm;
+        min-width: 210mm;
+        min-height: 297mm;
+        box-shadow: 0 10px 30px rgba(15, 36, 71, 0.15);
+    }
+}
+
+@media print {
+    .gvp-quotation-sheet {
+        box-shadow: none;
+        margin: 0;
+        width: auto;
+        min-height: 294mm;
+        padding: 10mm 9mm 14mm;
+        background: #fff;
+    }
+    .document-preview-wrap,
+    .page-shell,
+    .page-header,
+    .preview-toolbar,
+    .back-button {
+        display: none !important;
+    }
+}
+
+/* --------------------------------------------------------------
+   SHARED LAYOUT — these rules are IDENTICAL to invoice.css
+   to ensure quotation and invoice share the same document geometry.
+   -------------------------------------------------------------- */
+
+/* Header: logo + identity | doc title + copy label */
+.quotation-header {
+    display: grid;
+    grid-template-columns: 85px minmax(0, 1fr) 180px;
+    column-gap: 16px;
+    align-items: start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+    .quotation-header {
+        margin-bottom: 20px;
+    }
+}
+
+.quotation-logo {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.quotation-logo .gvp-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.quotation-company {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.quotation-company .gvp-brand-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    line-height: 1.0;
+}
+
+.quotation-company .gvp-brand-contact {
+    font-size: 9.5px;
+    line-height: 1.25;
+    color: #64748b;
+}
+
+.quotation-company .gvp-line {
+    display: block;
+}
+
+.quotation-company .gvp-line .gvp-em {
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.quotation-company .gvp-line-navy {
+    color: #0f2447;
+    font-weight: 700;
+}
+
+.quotation-right {
+    text-align: right;
+    align-self: start;
+}
+
+.quotation-right .gvp-doc-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+}
+
+.quotation-right .gvp-copy-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+/* Subtle header accent below the GV POWERS header section */
+.gvp-head-accent {
+    border-bottom: 2px solid #1e3a8a;
+    margin: 8px 0 16px;
+    padding-bottom: 8px;
+}
+
+/* ===================== BILL TO / QUOTATION DETAILS GRID ===================== */
+/* Outer two-column grid */
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10mm;
+    width: 100%;
+}
+
+/* Bill To column */
+.bill-to-grid {
+    min-width: 0;
+}
+
+/* Quotation Details column */
+.quotation-details-grid {
+    min-width: 0;
+}
+
+/* Individual row inside Bill To */
+.bill-to-row {
+    display: grid;
+    grid-template-columns: 45px minmax(0, 1fr);
+    column-gap: 8px;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+/* Customer name spans full Bill To width */
+.bill-to-name {
+    grid-column: 1 / -1;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+/* Labels inside Bill To rows */
+.bill-to-label {
+    font-size: 9.5px;
+    color: #64748b;
+    font-weight: 700;
+    text-align: left;
+}
+
+/* Values inside Bill To rows */
+.bill-to-value {
+    font-size: 10px;
+    color: #1f2937;
+    font-weight: 700;
+    text-align: right;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+/* Email value - must never overflow into right column */
+.email-value {
+    font-size: 10px;
+    color: #1f2937;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Rows inside Quotation Details */
+.quotation-details-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 12px;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+/* Labels inside Quotation Details rows */
+.quotation-details-label {
+    font-size: 9.5px;
+    color: #64748b;
+    font-weight: 700;
+    text-align: left;
+    min-width: 0;
+}
+
+/* Values inside Quotation Details rows */
+.quotation-details-value {
+    font-size: 10px;
+    color: #1f2937;
+    font-weight: 700;
+    text-align: right;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+/* Subtle header accent below the GV POWERS header section */
+.gvp-head-accent {
+    border-bottom: 2px solid #1e3a8a;
+    margin: 8px 0 16px;
+    padding-bottom: 8px;
+}
+
+/* Back button */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: white;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1f2937;
+    text-decoration: none;
+    transition: background 150ms ease, transform 150ms ease;
+    flex-shrink: 0;
+    margin-bottom: 16px;
+}
+
+.back-button:hover {
+    background: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+.back-button:focus-visible {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+}
+
+.back-button:active {
+    transform: translateY(0);
+}
+
+.back-button .lucide {
+    width: 18px;
+    height: 18px;
+    color: #6b7280;
+}
+
+/* Page header with title and action buttons */
+.page-header {
+    background: white;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px rgba(15, 36, 71, 0.04);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+    .page-header {
+        padding: 24px 32px;
+    }
+}
+
+.header-accent {
+    width: 100%;
+    height: 2px;
+    background: #1e3a8a;
+    margin: 16px 0 24px;
+}
+
+@media (min-width: 768px) {
+    .header-accent {
+        margin: 20px 0 28px;
+    }
+}
+
+.page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1.3;
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.page-title .quotation-number {
+    font-size: 16px;
+    font-weight: 600;
+    color: #64748b;
+    margin-left: 8px;
+    font-family: inherit;
+}
+
+.page-title .quotation-number span {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: inherit;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-left: auto;
+}
+
+@media (min-width: 768px) {
+    .action-buttons {
+        margin-left: 24px;
+    }
+}
+
+.print-btn,
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+    transition: all 150ms ease;
+    white-space: nowrap;
+}
+
+.print-btn {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.print-btn:hover {
+    background: #e2e8f0;
+}
+
+.download-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.download-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.print-btn:focus-visible,
+.download-btn:focus-visible {
+    outline: 2px solid #d1d5db;
+    outline-offset: 2px;
+}
+
+.print-btn:active,
+.download-btn:active {
+    transform: translateY(0);
+}
+
+.print-btn .lucide,
+.download-btn .lucide {
+    width: 18px;
+    height: 18px;
+}
+
+/* Micro interactions */
+* {
+    transition: background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.back-button:hover,
+.print-btn:hover,
+.download-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* --------------------------------------------------------------
+   PRINT MEDIA — strip all preview controls, keep only A4 quotation
+   Uses the same CSS classes as invoice.css for identical PDF output
+   -------------------------------------------------------------- */
+@media print {
+    body {
+        background: white !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .page-shell,
+    .page-header,
+    .back-button,
+    .preview-toolbar,
+    .action-buttons,
+    .quotation-copy-toolbar,
+    .header-accent {
+        display: none !important;
+    }
+
+    .gvp-quotation-sheet {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 10mm 9mm 14mm !important;
+        width: auto !important;
+        min-height: 294mm !important;
+        background: #fff !important;
+    }
+
+    .gvp-quotation-sheet .gvp-head,
+    .gvp-quotation-sheet .gvp-sections,
+    .gvp-quotation-sheet .gvp-items-wrap,
+    .gvp-quotation-sheet .gvp-band-head,
+    .gvp-quotation-sheet .gvp-gst-wrap,
+    .gvp-quotation-sheet .gvp-lower {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .gvp-quotation-sheet .gvp-bottom {
+        margin-top: auto !important;
+    }
+
+    .gvp-foot {
+        font-size: 8px !important;
+    }
+
+    .gvp-sigs {
+        display: none !important;
+    }
+
+    table.gvp-items th,
+    table.gvp-items td {
+        border-color: #c9d2de !important;
+    }
+
+    table.gvp-totals tr.gvp-grand td {
+        border-top: 2px solid var(--gvp-navy) !important;
+        background: var(--gvp-bg-soft) !important;
+    }
+}
+
+/* --------------------------------------------------------------
+   RESPONSIVE: horizontal scroll on mobile for A4 document
+   -------------------------------------------------------------- */
+@media (max-width: 767px) {
+    .document-preview-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .preview-stage {
+        padding: 16px 12px 40px;
+        justify-content: flex-start;
+        overflow-x: auto;
+    }
+
+    .page-shell {
+        width: 100%;
+        max-width: 100vw;
+        padding: 16px 12px 24px;
+        overflow-x: hidden;
+    }
+
+    .page-header {
+        padding: 16px 12px;
+        margin-bottom: 16px;
+        align-items: stretch;
+    }
+
+    .page-title {
+        flex: 1 1 100%;
+    }
+
+    .action-buttons {
+        width: 100%;
+        margin-left: 0;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .print-btn,
+    .download-btn {
+        flex: none;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .back-button {
+        margin-bottom: 12px;
+    }
+}

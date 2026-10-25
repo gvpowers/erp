@@ -1,0 +1,66 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Outstanding Report{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('reports_page') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Reports</a>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}?v=2">
+<script src="{{ url_for('static', filename='js/reports.js') }}?v=2"></script>
+{% endblock %}
+
+{% block content %}
+<div class="rpt-page">
+  <div class="rpt-hero">
+    <div>
+      <div class="rpt-crumb">Analytics / Outstanding</div>
+      <h4>Outstanding Report</h4>
+      <p>Invoices with unpaid balances — including overdue items — that still need to be collected.</p>
+    </div>
+    <div class="rpt-actions">
+      <button class="rpt-btn print" onclick="RP.printPage()"><i data-lucide="printer"></i> Print</button>
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='outstanding') }}"><i data-lucide="file-down"></i> PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='outstanding') }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='outstanding') }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+  </div>
+
+  <form method="GET" class="rpt-filters">
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Customer</label>
+      <select class="rpt-select" name="customer_id">
+        <option value="">All</option>
+        {% for c in customers %}<option value="{{ c.id }}" {{ 'selected' if filters.get('customer_id')==c.id }}>{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <button class="rpt-btn blue" type="submit"><i data-lucide="filter"></i> Apply</button>
+    <a class="rpt-btn ghost" href="{{ url_for('outstanding_report') }}">Reset</a>
+  </form>
+
+  <div class="rpt-section-label"><i data-lucide="layout-dashboard"></i> Summary</div>
+  <div class="rpt-stats">
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="wallet"></i></span></div><div class="rpt-stat-value">{{ format_currency(total_outstanding) }}</div><div class="rpt-stat-label">Total Outstanding</div><div class="rpt-stat-sub">{{ invoices|length }} invoice{{ 's' if invoices|length != 1 }}</div></div>
+    <div class="rpt-stat red"><div class="rpt-stat-row"><span class="rpt-stat-ico red"><i data-lucide="alert-triangle"></i></span></div><div class="rpt-stat-value">{{ format_currency(overdue_total) }}</div><div class="rpt-stat-label">Overdue</div><div class="rpt-stat-sub">{{ overdue|length }} invoice{{ 's' if overdue|length != 1 }}</div></div>
+  </div>
+
+  <div class="rpt-section-label"><i data-lucide="list"></i> Outstanding Invoices</div>
+  <div class="rpt-card">
+    <div class="rpt-scroll no-h"><table class="rpt-table">
+      <thead><tr><th>Invoice</th><th>Date</th><th>Due Date</th><th>Customer</th><th>Mobile</th><th class="tar">Total</th><th class="tar">Paid</th><th class="tar">Balance</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for inv in invoices %}
+      <tr>
+        <td><a href="{{ url_for('view_invoice', iid=inv.id) }}" class="rpt-strong" style="color:var(--erp-primary);text-decoration:none">{{ inv.invoice_number }}</a></td>
+        <td>{{ inv.invoice_date.strftime('%d %b %Y') if inv.invoice_date else '' }}</td>
+        <td>{{ inv.due_date.strftime('%d %b %Y') if inv.due_date else '—' }}</td>
+        <td>{{ inv.customer_name or 'Walk-in' }}</td>
+        <td>{{ inv.customer_mobile or '—' }}</td>
+        <td class="tar">{{ format_currency(inv.grand_total or 0) }}</td>
+        <td class="tar">{{ format_currency(inv.amount_paid or 0) }}</td>
+        <td class="tar"><span class="rpt-badge amber">{{ format_currency(inv.balance_due or 0) }}</span></td>
+        <td>{% if inv.due_date and inv.due_date < today %}<span class="rpt-badge red">Overdue</span>{% else %}<span class="rpt-badge amber">Due</span>{% endif %}</td>
+      </tr>
+      {% else %}<tr class="empty-row"><td colspan="9">No outstanding invoices — everything is collected!</td></tr>{% endfor %}
+      </tbody></table></div>
+  </div>
+</div>
+{% endblock %}

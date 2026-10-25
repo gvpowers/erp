@@ -1,0 +1,28 @@
+/* ============================================
+   GV Powers ERP - Theme Definitions
+   Unified light enterprise design system
+   ============================================ */
+
+[data-theme="light"] {
+    --bg-page: #F5F7FB;
+    --bg-white: #FFFFFF;
+    --bg-gray: #F1F5F9;
+    --bg-hover: #EEF4FF;
+    --bg-active: #E2E8F0;
+    --text-primary: #111827;
+    --text-secondary: #4B5563;
+    --text-muted: #6B7280;
+    --border-color: #E5E7EB;
+    --border-light: #F3F4F6;
+    --color-primary: #2563EB;
+    --color-primary-hover: #1D4ED8;
+    --color-primary-light: #DBEAFE;
+    --color-success: #16A34A;
+    --color-success-light: #DCFCE7;
+    --color-warning: #F59E0B;
+    --color-warning-light: #FEF3C7;
+    --color-danger: #DC2626;
+    --color-danger-light: #FEE2E2;
+    --color-info: #3B82F6;
+    --color-info-light: #DBEAFE;
+}

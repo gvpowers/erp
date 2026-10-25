@@ -1,0 +1,215 @@
+/* ============================================
+   GV Powers ERP - Responsive Breakpoints
+   Unified responsive rules for all modules
+   ============================================ */
+
+/* ── Tablet (≤1024px) ───────────────────────── */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: var(--sidebar-collapsed);
+    }
+    .sidebar-brand {
+        padding: 0;
+        justify-content: center;
+        height: 72px;
+    }
+    .brand-icon-link {
+        width: 56px;
+        max-width: 56px;
+        height: 40px;
+    }
+    .brand-logo {
+        width: 56px;
+        height: 40px;
+        max-width: 56px;
+        max-height: 40px;
+        padding: 0;
+        object-fit: contain;
+    }
+    .sidebar .nav-text,
+    .sidebar .sidebar-section-title {
+        opacity: 0;
+        width: 0;
+        overflow: hidden;
+    }
+    .sidebar .nav-link {
+        justify-content: center;
+        padding: 10px;
+    }
+    .main-content {
+        margin-left: var(--sidebar-collapsed);
+    }
+    .chart-grid { grid-template-columns: 1fr; }
+    .settings-layout { grid-template-columns: 1fr; }
+    .settings-nav {
+        position: static;
+        display: flex;
+        overflow-x: auto;
+        padding: 4px;
+        gap: 0;
+    }
+    .settings-nav-item { white-space: nowrap; padding: 8px 12px; }
+    .settings-form-grid { grid-template-columns: 1fr; }
+    .user-cards-grid { grid-template-columns: 1fr; }
+    .admin-stats-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .bw-layout { grid-template-columns: 1fr; }
+    .ih-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .col-lg-4, .col-lg-6, .col-lg-8, .col-lg-12 { flex: 0 0 100%; max-width: 100%; }
+    .sales-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Mobile (≤991.98px) ─────────────────────── */
+@media (max-width: 991.98px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width);
+    }
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    .sidebar.mobile-open .nav-text,
+    .sidebar.mobile-open .sidebar-section-title {
+        opacity: 1;
+        width: auto;
+        overflow: visible;
+    }
+    .sidebar.mobile-open .nav-link {
+        justify-content: flex-start;
+        padding: 8px 12px;
+    }
+    .sidebar.mobile-open .sidebar-brand {
+        height: 150px;
+        padding: 0;
+    }
+    .sidebar.mobile-open .brand-icon-link {
+        width: 100%;
+        max-width: none;
+    }
+    .sidebar.mobile-open .brand-logo {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        padding: 10px 16px;
+    }
+    .main-content {
+        margin-left: 0 !important;
+    }
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s;
+    }
+    .sidebar-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    .search-trigger { min-width: auto; }
+    .search-trigger .search-label { display: none; }
+    .user-info { display: none; }
+    .page-content { padding: 16px; }
+    .top-navbar { padding: 0 16px; }
+    .col-md-4, .col-md-6, .col-md-8, .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+
+    .sales-sidebar {
+        transform: translateX(-100%);
+        z-index: 1050;
+    }
+    .sales-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    .sales-main {
+        margin-left: 0;
+    }
+}
+
+/* ── Small Tablet (≤768px) ──────────────────── */
+@media (max-width: 768px) {
+    .admin-stats-grid { grid-template-columns: 1fr; }
+    .admin-stat-card .stat-value { font-size: 1.5rem; }
+    .quick-actions-grid { grid-template-columns: repeat(3, 1fr); }
+    .user-management-card .user-card-details { grid-template-columns: 1fr; }
+    .gst-summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .ih-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .page-header { flex-direction: column; align-items: flex-start; }
+    .page-header-actions { width: 100%; }
+    .col-sm-4, .col-sm-6, .col-sm-8, .col-sm-12 { flex: 0 0 100%; max-width: 100%; }
+    .bw-layout { grid-template-columns: 1fr; }
+    .sales-content { padding: 1rem; }
+    .sales-topbar { padding: 0 1rem; height: 48px; }
+    .sales-search-bar { display: none; }
+    .sales-quick-actions .btn span { display: none; }
+    .sales-stats-row { grid-template-columns: 1fr 1fr; }
+    .sales-list-item { flex-wrap: wrap; gap: 0.5rem; }
+    .sales-panel { width: 100%; }
+    .admin-table-filters { width: 100%; }
+    .admin-table-filters .form-control { max-width: 100%; width: 100%; }
+}
+
+/* ── Small Mobile (≤575.98px) ───────────────── */
+@media (max-width: 575.98px) {
+    .page-content { padding: 12px; }
+    .container { padding: 0 12px; }
+    .kpi-value { font-size: 1.1rem; }
+    .quick-actions-grid { grid-template-columns: repeat(2, 1fr); }
+    .login-card { padding: 24px; }
+    .ih-stats-grid { grid-template-columns: 1fr; }
+    .page-header h1 { font-size: 1.5rem; }
+    .admin-table-header { padding: 12px 16px; }
+    .admin-table-content thead th,
+    .admin-table-content tbody td { padding: 10px 12px; }
+    .sales-quick-btn { padding: 0.375rem; }
+    .dt-length, .dt-info { font-size: 0.78rem; }
+    .admin-table-filters { flex-direction: column; align-items: stretch; }
+}
+
+/* ── Large Desktop (≥1440px) ────────────────── */
+@media (min-width: 1440px) {
+    .page-content { max-width: 1400px; }
+}
+
+/* ── Touch / small screens (general safety) ─── */
+@media (hover: none), (max-width: 768px) {
+    .search-modal {
+        width: calc(100% - 24px);
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    .dropdown-menu { max-height: 70vh; overflow-y: auto; }
+    .search-result-item { padding: 12px 14px; }
+}
+
+/* ── Landscape small phones ─────────────────── */
+@media (max-height: 520px) and (orientation: landscape) {
+    .top-navbar { position: sticky; top: 0; z-index: 1020; }
+    .sidebar { overflow-y: auto; }
+}
+
+/* ── Print ──────────────────────────────────── */
+@media print {
+    .sidebar, .top-navbar, .sidebar-overlay, .flash-container,
+    .action-bar, .copy-tabs, .no-print, .btn { display: none !important; }
+    .main-content { margin-left: 0 !important; }
+    .page-content { padding: 0 !important; }
+    .preview-card { box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+    .preview-wrapper { padding: 0 !important; }
+    .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+    body { background: #fff; }
+    .items-table thead th { background: #2563EB !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* ── Reduced Motion ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

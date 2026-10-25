@@ -1,0 +1,157 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Audit Logs{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('dashboard') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-1"><i data-lucide="scroll-text" class="me-2"></i>Audit Logs</h4>
+    <small class="text-muted">Track all system activities and user actions</small>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+      <i data-lucide="printer" class="me-1"></i> Print
+    </button>
+  </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for cat, msg in messages %}
+      <div class="alert alert-{{ 'success' if cat == 'success' else 'danger' if cat == 'danger' else 'info' }} alert-dismissible fade show" role="alert">
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form method="GET" action="{{ url_for('audit_logs') }}">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <div class="form-group mb-0">
+            <label class="form-label">Action Type</label>
+            <select class="form-select" name="action">
+              <option value="">All Actions</option>
+              <option value="login" {{ 'selected' if action_filter == 'login' }}>Login</option>
+              <option value="logout" {{ 'selected' if action_filter == 'logout' }}>Logout</option>
+              <option value="create" {{ 'selected' if action_filter == 'create' }}>Create</option>
+              <option value="update" {{ 'selected' if action_filter == 'update' }}>Update</option>
+              <option value="delete" {{ 'selected' if action_filter == 'delete' }}>Delete</option>
+              <option value="export" {{ 'selected' if action_filter == 'export' }}>Export</option>
+              <option value="backup" {{ 'selected' if action_filter == 'backup' }}>Backup</option>
+              <option value="settings" {{ 'selected' if action_filter == 'settings' }}>Settings Change</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary w-100">
+            <i data-lucide="search" class="me-1"></i> Filter
+          </button>
+        </div>
+        <div class="col-md-2">
+          <a href="{{ url_for('audit_logs') }}" class="btn btn-outline-secondary w-100">
+            <i data-lucide="x" class="me-1"></i> Clear
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="ps-3">Timestamp</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Details</th>
+            <th class="text-end pe-3">IP Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set log_list = logs.items if logs.items is defined and logs.items else logs %}
+          {% for log in log_list %}
+          <tr>
+            <td class="ps-3 text-muted">
+              <i data-lucide="clock" style="width:14px;height:14px;" class="me-1"></i>
+              {{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') if log.created_at else '-' }}
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-gray d-flex align-items-center justify-content-center me-2" style="width:30px;height:30px;flex-shrink:0;border:1px solid var(--border-color);">
+                  <i data-lucide="user" class="text-muted" style="width:14px;height:14px;"></i>
+                </div>
+                <span class="fw-semibold">{{ log.user.username if log.user else 'System' }}</span>
+              </div>
+            </td>
+            <td>
+              {% set action = log.action if log.action is defined else '' %}
+              <span class="badge {{ 'badge-info' if action in ['create','Create'] else 'badge-warning' if action in ['update','Update','settings','Settings'] else 'badge-danger' if action in ['delete','Delete'] else 'badge-info' if action in ['login','Login','logout','Logout'] else 'badge-success' if action in ['export','Export','backup','Backup'] else 'badge-secondary' }}">
+                {{ action }}
+              </span>
+            </td>
+            <td class="text-muted" style="max-width:350px;">
+              <span class="text-truncate d-inline-block" style="max-width:340px;">{{ log.details or '-' }}</span>
+            </td>
+            <td class="text-end pe-3 text-muted">
+              <code>{{ log.ip_address or '-' }}</code>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="text-center py-5">
+              <div class="text-muted">
+                <i data-lucide="inbox" style="width:40px;height:40px;" class="d-block mx-auto mb-2 opacity-25"></i>
+                <p class="mb-0 fw-semibold">No audit logs found</p>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if logs.pages is defined and logs.pages > 1 %}
+  <div class="card-body border-top d-flex justify-content-between align-items-center py-3">
+    <div class="text-muted small">
+      Showing page {{ logs.page }} of {{ logs.pages }}
+    </div>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        {% if logs.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('audit_logs', page=logs.prev_num, action=action_filter) }}">
+              <i data-lucide="chevron-left" style="width:14px;height:14px;"></i>
+            </a>
+          </li>
+        {% endif %}
+        {% for p in logs.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+          {% if p %}
+            <li class="page-item {{ 'active' if p == logs.page }}">
+              <a class="page-link {{ 'bg-primary border-primary text-white' if p == logs.page else '' }}" href="{{ url_for('audit_logs', page=p, action=action_filter) }}">{{ p }}</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+          {% endif %}
+        {% endfor %}
+        {% if logs.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('audit_logs', page=logs.next_num, action=action_filter) }}">
+              <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

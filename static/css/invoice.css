@@ -1,0 +1,973 @@
+/* ==========================================================================
+   GV POWERS ERP — THE CANONICAL INVOICE STYLESHEET
+   ==========================================================================
+   THE single stylesheet for the canonical standard tax invoice
+   (templates/invoices/standard_invoice.html). It is used, unchanged, by every
+   invoice output path:
+
+     invoice preview      templates/billing/invoice_preview.html
+     printable invoice    templates/billing/print_invoice.html
+     print all 3 copies   templates/billing/print_all_copies.html
+     downloaded PDF       app.py::_generate_invoice_pdf_canonical (WeasyPrint)
+
+   Because the markup and this file are shared, the browser preview, the
+   browser print and the downloaded PDF are the same document.
+
+   --------------------------------------------------------------------------
+   SCOPING CONTRACT (important — this file is loaded inside the ERP admin UI)
+   --------------------------------------------------------------------------
+   There is deliberately NO global element reset and NO `html`/`body`
+   typography here. Every rule is scoped to `.gvp-page` or `.gvp-sheet`, and the
+   @page rule lives inside @media print. That is what makes it safe to
+   <link> this file into the admin invoice-preview page: it styles the invoice
+   and nothing else, so it can never leak into the sidebar, navbar, tables or
+   modals of the rest of the ERP.
+
+   --------------------------------------------------------------------------
+   TYPOGRAPHY
+   --------------------------------------------------------------------------
+   Only TWO physical faces ship with the project: DejaVuSansCondensed Regular
+   and DejaVuSansCondensed Bold. The stylesheet therefore uses exactly two
+   weights, 400 and 700, and every rule picks one of them:
+
+      400 (Regular) : the item-table COLUMN HEADERS
+      700 (Bold)    : body copy, product data, headings, totals
+
+   That split is what satisfies "table headers must not be heavier than the
+   product data": headers are 400 (Regular), data is 700 (Bold). Section
+   headings are 700 (Bold) AND set larger, uppercase, letter-spaced, navy and
+   ruled, so they still read as clearly stronger than the surrounding copy.
+
+   NOTE: the faces are declared with DISCRETE weights, not CSS Fonts 4 ranges
+   ("400 549"). WeasyPrint does not implement weight ranges, silently drops
+   them, and then both faces register as weight 400 -- which makes the
+   Regular-vs-Bold split depend on declaration order. Discrete weights render
+   identically and identically in the browser and in the PDF.
+
+   --------------------------------------------------------------------------
+   ITEM TABLE
+   --------------------------------------------------------------------------
+   A real <table> with <colgroup> + table-layout:fixed. The 13 percentages sum
+   to exactly 100%. Every numeric cell is white-space:nowrap and is given
+   enough width for the longest realistic value ("1,23,45,678.90"), so a money
+   figure, an HSN code or a percentage can NEVER break onto a second line.
+   Only the description column is allowed to wrap.
+   ========================================================================== */
+
+/* ---------- Project fonts (relative to /static/css/) ---------- */
+@font-face {
+    font-family: "GVDejaVu";
+    src: url("../fonts/DejaVuSansCondensed.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: block;
+}
+@font-face {
+    font-family: "GVDejaVu";
+    src: url("../fonts/DejaVuSansCondensed-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: block;
+}
+@font-face {
+    font-family: "GVDejaVu";
+    src: url("../fonts/DejaVuSansCondensed-Oblique.ttf") format("truetype");
+    font-weight: 400;
+    font-style: italic;
+    font-display: block;
+}
+
+/* ---------- Design tokens (scoped, never :root) ---------- */
+.gvp-page,
+.gvp-sheet {
+    --gvp-navy: #0f2447;
+    --gvp-navy-2: #1d3a6e;
+    --gvp-ink: #1c2430;
+    --gvp-muted: #5b6672;
+    --gvp-line: #c9d2de;
+    --gvp-line-soft: #e2e8f0;
+    --gvp-bg-soft: #f3f6fa;
+    --gvp-green: #1d8a4e;
+    --gvp-white: #ffffff;
+    --gvp-sans: "GVDejaVu", "DejaVu Sans", Arial, sans-serif;
+    --gvp-mono: "GVDejaVu", "DejaVu Sans", Arial, sans-serif;
+
+    /* Base body text: readable, moderately bold, never excessively heavy. */
+    --gvp-font: 11.4px;
+    --gvp-weight: 700;
+    --gvp-leading: 1.42;
+    /* Major section headings: the Bold face at a larger size. */
+    --gvp-head-font: 13px;
+    --gvp-head-weight: 700;
+    /* Table column headers: the REGULAR face, i.e. lighter than the data. */
+    --gvp-th-weight: 400;
+    /* Product / item data: Bold face, sized to stay readable in print. */
+    --gvp-td-weight: 700;
+
+    --gvp-pad-x: 9mm;
+    --gvp-pad-top: 10mm;
+    /* Room reserved at the foot of the sheet for the signature block. */
+    --gvp-bottom-zone: 24mm;
+    /* Gap between the footer note and the trimmed page edge. */
+    --gvp-bottom-gap: 6mm;
+}
+
+/* ==========================================================================
+   PAGE + SHEET
+   ========================================================================== */
+.gvp-sheet {
+    box-sizing: border-box;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 14px auto;
+    padding: var(--gvp-pad-top) var(--gvp-pad-x) var(--gvp-bottom-zone);
+    background: var(--gvp-white);
+    color: var(--gvp-ink);
+    font-family: var(--gvp-sans);
+    font-size: var(--gvp-font);
+    font-weight: var(--gvp-weight);
+    line-height: var(--gvp-leading);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    /* Flex column so .gvp-filler absorbs the leftover height and pushes the
+       signature block onto the foot of the sheet. */
+    display: flex;
+    flex-direction: column;
+}
+.gvp-sheet *,
+.gvp-sheet *::before,
+.gvp-sheet *::after { box-sizing: border-box; }
+.gvp-main { flex: 0 0 auto; min-width: 0; }
+.gvp-filler { flex: 1 1 auto; min-height: 0; }
+
+/* ==========================================================================
+   STANDALONE PRINT DOCUMENT
+   The frame for the two print views (print_invoice.html, print_all_copies.html).
+   Scoped to body.gvp-print-doc, a class that exists ONLY on those two
+   documents, so loading this file inside the ERP admin preview cannot affect
+   the surrounding application chrome.
+   The grey "desk" colour is SCREEN ONLY: WeasyPrint renders with
+   media_type="print", so the downloaded PDF can never pick up a grey band
+   around the sheet.
+   ========================================================================== */
+@media screen {
+    body.gvp-print-doc {
+        margin: 0;
+        padding: 0;
+        background: #eef1f5;
+        font-family: var(--gvp-sans);
+        font-size: var(--gvp-font);
+        font-weight: var(--gvp-weight);
+        line-height: var(--gvp-leading);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+.gvp-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8mm;
+    padding-bottom: 5px;
+    border-bottom: 2.5px solid var(--gvp-navy);
+}
+.gvp-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+/* img.png is 1536x1024 with transparent margins, so a 130x86 box shows ~93% of
+   its height as actual artwork. The box keeps the file's 3:2 ratio so
+   object-fit:contain never distorts it. */
+.gvp-logo {
+    width: 130px;
+    height: 86px;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.gvp-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+.gvp-brand-text { min-width: 0; }
+/* GV POWERS: slightly larger than the header text around it. */
+.gvp-brand-name {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: 0.02em;
+    color: var(--gvp-navy);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+.gvp-brand-contact {
+    font-size: 10.2px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--gvp-ink);
+}
+/* One fact per line, block-level, so nothing ever wraps unpredictably. */
+.gvp-brand-contact .gvp-line { display: block; margin: 0; }
+.gvp-brand-contact .gvp-em { font-weight: 700; }
+.gvp-brand-contact .gvp-line-navy { color: var(--gvp-navy); font-weight: 700; }
+
+.gvp-title-cell { flex: 0 0 auto; text-align: right; padding-top: 2px; }
+.gvp-doc-title {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.06em;
+    color: var(--gvp-navy);
+    text-transform: uppercase;
+}
+/* The copy label is the ONLY element that differs between the three copies.
+   Plain text: no box, no fill, no border. */
+.gvp-copy-label {
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    color: var(--gvp-navy-2);
+    text-transform: uppercase;
+    border: 0;
+    background: none;
+    padding: 0;
+    white-space: nowrap;
+}
+
+/* Small customer-access QR: deliberately placed under Tax Invoice/copy label.
+   The existing invoice typography and header geometry are otherwise untouched. */
+.gvp-header-qr {
+    margin-top: 3px;
+    width: 18mm;
+    height: 18mm;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.gvp-header-qr img {
+    width: 18mm;
+    height: 18mm;
+    display: block;
+    object-fit: contain;
+}
+
+/* ==========================================================================
+   SECTIONS — BILL TO / INVOICE DETAILS / PAYMENT / SUMMARY
+   Bold heading + rule. Deliberately unboxed: no decorative cards.
+   ========================================================================== */
+.gvp-sections {
+    display: flex;
+    gap: 8mm;
+    margin-top: 2.5mm;
+}
+.gvp-sections > .gvp-sec { flex: 1 1 0; min-width: 0; }
+.gvp-sec { min-width: 0; }
+
+.gvp-sec-head {
+    font-size: var(--gvp-head-font);
+    font-weight: var(--gvp-head-weight);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gvp-navy);
+    padding-bottom: 2.5px;
+    margin-bottom: 4px;
+    border-bottom: 1.2px solid var(--gvp-navy);
+}
+.gvp-sec-body { padding: 0; }
+.gvp-cust-name {
+    font-size: 13.4px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--gvp-navy);
+    margin-bottom: 3px;
+}
+.gvp-kv {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 1.2px 0;
+    font-size: 11px;
+    line-height: 1.34;
+}
+.gvp-kv-first { padding-top: 0; }
+.gvp-kv .k { flex: 0 0 auto; color: var(--gvp-muted); font-weight: 700; }
+.gvp-kv .v { color: var(--gvp-ink); font-weight: 700; text-align: right; }
+/* Long free text (address / email) wraps; it is not right-ragged. */
+.gvp-kv .v-wrap { text-align: right; font-weight: 700; overflow-wrap: anywhere; }
+.gvp-kv .v-mono { font-family: var(--gvp-mono); font-weight: 700; }
+.gvp-kv .v-strong { font-weight: 700; }
+.gvp-kv .v-paid { color: var(--gvp-green); font-weight: 700; }
+
+/* ==========================================================================
+   ITEM TABLE — 13 fixed columns, real HTML table
+   ========================================================================== */
+.gvp-items-wrap { margin-top: 2.5mm; border: 1px solid var(--gvp-line); }
+table.gvp-items {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+/* Fixed widths for the 13 columns. Sums to exactly 100%.
+   c-amt / c-tax carry the longest strings (11 characters, e.g. "1,52,300.00"
+   or "12,34,56,789.00") and are sized for them, so no money figure wraps. */
+/* Column widths.
+   These are NOT hand-tuned guesses. They were fitted against the widest
+   invoice line this layout supports -- an 11-character money figure
+   ("11,30,000.00", i.e. 10 lakh per line, which is wider than any real
+   observed value), an 8-digit HSN/SAC code, a 3-digit quantity and a
+   "100.00%" discount -- by measuring the actual glyph bounding boxes in the
+   rendered PDF and giving every numeric column ~1pt of headroom, so ink
+   never touches or crosses a cell border.
+
+   The description column is the single elastic one: it absorbs whatever the
+   numeric columns do not need, and is floored at 15% of the table so it can
+   never be squeezed out by a long value. At the sizing target it settles
+   around 22% (~41mm). Every other column is also kept just wide enough for its
+   own header label to sit on one line -- only the description header is
+   deliberately two lines. The percentages total exactly 100%.
+
+   Every numeric cell is nowrap, so a value beyond the supported bound is
+   visibly clipped rather than silently wrapped onto a second line. */
+table.gvp-items col.c-si   { width: 4.49%; }
+table.gvp-items col.c-desc { width: 21.87%; }
+table.gvp-items col.c-hsn  { width: 7.65%; }
+table.gvp-items col.c-qty  { width: 3.22%; }
+table.gvp-items col.c-unit { width: 3.31%; }
+table.gvp-items col.c-rate { width: 7.73%; }
+table.gvp-items col.c-disc { width: 6.75%; }
+table.gvp-items col.c-gst  { width: 5.86%; }
+table.gvp-items col.c-tax  { width: 9.98%; }
+table.gvp-items col.c-cgst { width: 7.73%; }
+table.gvp-items col.c-sgst { width: 7.73%; }
+table.gvp-items col.c-igst { width: 3.70%; }
+table.gvp-items col.c-amt  { width: 9.98%; }
+
+/* Column headers: Regular face (500) -> strictly lighter than the data (700). */
+table.gvp-items th {
+    background: var(--gvp-navy);
+    color: #fff;
+    font-size: 8.8px;
+    font-weight: var(--gvp-th-weight);
+    letter-spacing: 0.02em;
+    line-height: 1.18;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 4px 1.2px;
+    border: 0.5px solid #33517f;
+    vertical-align: middle;
+    overflow-wrap: break-word;
+    hyphens: none;
+}
+table.gvp-items th.r { text-align: right; }
+table.gvp-items th.c { text-align: center; }
+
+table.gvp-items td {
+    font-size: 10px;
+    font-weight: var(--gvp-td-weight);
+    line-height: 1.28;
+    color: var(--gvp-ink);
+    padding: 3.4px 1.2px;
+    border-bottom: 0.5px solid var(--gvp-line-soft);
+    border-right: 0.5px solid var(--gvp-line-soft);
+    vertical-align: top;
+}
+table.gvp-items tbody tr:last-child td { border-bottom: none; }
+table.gvp-items td.r { text-align: right; }
+table.gvp-items td.c { text-align: center; }
+
+/* THE anti-collapse guarantee: a number, code or percentage is a single
+   unbreakable token. Combined with the colgroup widths above, no cell can
+   ever degrade into a wrapped fragment. */
+table.gvp-items td.num,
+table.gvp-items td.v-mono,
+table.gvp-gst td.num,
+table.gvp-gst td.v-mono,
+table.gvp-totals td.num,
+table.gvp-pay-history-tbl td.num {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: normal;
+    word-break: keep-all;
+}
+
+/* The description is the ONLY cell allowed to wrap. */
+table.gvp-items td.gvp-desc {
+    padding-left: 4px;
+    padding-right: 4px;
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+table.gvp-items td .gvp-prod { font-weight: var(--gvp-td-weight); color: var(--gvp-ink); }
+table.gvp-items td.gvp-amt { font-weight: 700; }
+
+table.gvp-items tfoot td {
+    background: var(--gvp-bg-soft);
+    border-top: 1.1px solid var(--gvp-navy);
+    border-bottom: none;
+    font-size: 9.6px;
+    font-weight: 700;
+    color: var(--gvp-navy);
+    padding: 3.4px 1.2px;
+}
+table.gvp-items tfoot td.gvp-total-label {
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding-right: 4px;
+}
+
+.gvp-currency-note {
+    margin-top: 2px;
+    font-size: 8.8px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--gvp-muted);
+    text-align: right;
+}
+
+/* ==========================================================================
+   HSN / GST SUMMARY
+   ========================================================================== */
+.gvp-band-head {
+    font-size: var(--gvp-head-font);
+    font-weight: var(--gvp-head-weight);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gvp-navy);
+    padding-bottom: 3px;
+    margin: 3mm 0 0;
+    border-bottom: 1.2px solid var(--gvp-navy);
+}
+.gvp-gst-wrap { border: 1px solid var(--gvp-line); border-top: 0; }
+table.gvp-gst {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+table.gvp-gst col.g-hsn   { width: 16%; }
+table.gvp-gst col.g-tax   { width: 21%; }
+table.gvp-gst col.g-rate  { width: 13%; }
+table.gvp-gst col.g-cgst  { width: 12.5%; }
+table.gvp-gst col.g-sgst  { width: 12.5%; }
+table.gvp-gst col.g-igst  { width: 12.5%; }
+table.gvp-gst col.g-total { width: 12.5%; }
+table.gvp-gst th {
+    background: var(--gvp-bg-soft);
+    color: var(--gvp-navy);
+    font-size: 8.8px;
+    font-weight: var(--gvp-th-weight);
+    letter-spacing: 0.02em;
+    line-height: 1.18;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 3.5px 3px;
+    border-bottom: 1px solid var(--gvp-line);
+}
+table.gvp-gst th.r { text-align: right; }
+table.gvp-gst td {
+    font-size: 10px;
+    font-weight: var(--gvp-td-weight);
+    line-height: 1.28;
+    text-align: center;
+    color: var(--gvp-ink);
+    padding: 3.2px 3px;
+    border-bottom: 0.5px solid var(--gvp-line-soft);
+}
+table.gvp-gst td.r { text-align: right; }
+table.gvp-gst td.v-mono { font-family: var(--gvp-mono); font-weight: 700; }
+table.gvp-gst td.gvp-amt { font-weight: 700; }
+table.gvp-gst tfoot td {
+    font-size: 9.6px;
+    font-weight: 700;
+    color: var(--gvp-navy);
+    background: var(--gvp-bg-soft);
+    border-top: 1.1px solid var(--gvp-navy);
+    border-bottom: none;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+table.gvp-gst tfoot td.num { text-transform: none; letter-spacing: 0; }
+
+/* ==========================================================================
+   PAYMENT INFORMATION + INVOICE SUMMARY
+   ========================================================================== */
+.gvp-lower {
+    display: flex;
+    gap: 8mm;
+    margin-top: 3mm;
+}
+.gvp-lower > .gvp-sec:first-child { flex: 0 0 47%; }
+.gvp-lower > .gvp-sec:last-child { flex: 1 1 auto; min-width: 0; }
+.gvp-pay-grid { display: flex; flex-wrap: wrap; gap: 0 10px; }
+.gvp-pay-grid .gvp-kv { flex: 1 1 45%; min-width: 0; padding: 1.1px 0; }
+.gvp-pay-grid .gvp-kv-wide { flex: 1 1 100%; }
+.gvp-pay-history {
+    margin-top: 3px;
+    padding-top: 3px;
+    border-top: 0.8px dashed var(--gvp-line);
+}
+.gvp-pay-history .gvp-ph-title {
+    font-size: 8.6px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gvp-navy);
+    margin-bottom: 2px;
+}
+table.gvp-pay-history-tbl { width: 100%; border-collapse: collapse; }
+table.gvp-pay-history-tbl td { font-size: 8.8px; font-weight: 700; color: var(--gvp-ink); padding: 1px 0; }
+table.gvp-pay-history-tbl td.muted { color: var(--gvp-muted); }
+table.gvp-pay-history-tbl td.r { text-align: right; }
+table.gvp-pay-history-tbl td.num { font-weight: 700; }
+
+table.gvp-totals { width: 100%; border-collapse: collapse; }
+table.gvp-totals td { padding: 2px 0; font-size: 10.4px; }
+table.gvp-totals td.l { color: var(--gvp-muted); font-weight: 700; }
+table.gvp-totals td.v {
+    text-align: right;
+    font-weight: 700;
+    color: var(--gvp-ink);
+    font-variant-numeric: tabular-nums;
+    padding-right: 2px;
+}
+table.gvp-totals td.v-credit { color: var(--gvp-green); }
+/* GRAND TOTAL: the strongest element on the sheet. */
+table.gvp-totals tr.gvp-grand td {
+    border-top: 2px solid var(--gvp-navy);
+    background: var(--gvp-bg-soft);
+    padding: 3.4px 4px 3.4px 0;
+}
+table.gvp-totals tr.gvp-grand td.gvp-grand-label {
+    color: var(--gvp-navy);
+    font-size: var(--gvp-head-font);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding-left: 4px;
+}
+table.gvp-totals tr.gvp-grand td.gvp-grand-value {
+    color: var(--gvp-navy);
+    font-size: 15px;
+    font-weight: 700;
+    padding-right: 4px;
+}
+
+/* ==========================================================================
+   AMOUNT IN WORDS
+   ========================================================================== */
+.gvp-words {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 2.5mm;
+    padding: 3.5px 0;
+    font-size: 10.4px;
+    line-height: 1.4;
+    border-top: 0.9px solid var(--gvp-line);
+    border-bottom: 0.9px solid var(--gvp-line);
+}
+.gvp-words-head {
+    font-size: var(--gvp-head-font);
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--gvp-navy);
+    margin-right: 6px;
+}
+.gvp-words-value { color: var(--gvp-navy); font-weight: 700; font-size: 11px; }
+
+/* ==========================================================================
+   TERMS
+   ========================================================================== */
+.gvp-terms { margin-top: 3mm; }
+.gvp-terms .gvp-sec-body {
+    font-size: 9.2px;
+    font-weight: 700;
+    line-height: 1.34;
+    color: var(--gvp-muted);
+    white-space: pre-wrap;
+}
+
+/* ==========================================================================
+   SIGNATURES + FOOTER — bottom of the A4 sheet
+   Two aligned columns, no horizontal rules, generous blank signing space.
+   align-items:flex-start keeps both headings on one baseline even though the
+   right column carries the extra AUTHORIZED SIGNATORY row.
+   ========================================================================== */
+.gvp-bottom { flex: 0 0 auto; }
+.gvp-sigs {
+    display: flex;
+    gap: 14mm;
+    align-items: flex-start;
+    padding-bottom: 6mm;
+    min-height: 20mm;
+}
+.gvp-sig { flex: 1 1 0; min-width: 0; }
+.gvp-sig-right { text-align: right; }
+.gvp-sig .gvp-sig-label {
+    font-size: var(--gvp-head-font);
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--gvp-ink);
+}
+.gvp-sig .gvp-sig-sub {
+    margin-top: 3px;
+    font-size: 10.2px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gvp-muted);
+}
+.gvp-foot {
+    padding-top: 2px;
+    font-size: 8.6px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--gvp-muted);
+    text-align: center;
+}
+
+/* ==========================================================================
+   SCREEN-ONLY TOOLBAR (never printed) — used by the two print templates
+   ========================================================================== */
+.gvp-toolbar {
+    max-width: 210mm;
+    margin: 0 auto 4px;
+    text-align: right;
+}
+.gvp-toolbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.gvp-btn {
+    display: inline-block;
+    font-family: var(--gvp-sans);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #fff;
+    background: var(--gvp-navy);
+    border: none;
+    border-radius: 6px;
+    padding: 9px 18px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.gvp-btn.pdf { background: #1d8a4e; }
+.gvp-btn.close { background: #b91c1c; margin-left: 6px; }
+
+/* ==========================================================================
+   PRINT
+   ==========================================================================
+   The dedicated @media print layer.
+
+    @page carries the real page box, so the sheet drops its own page-sized width
+    and horizontal padding and keeps only the bottom reserve for the signature
+    block. Its print min-height sits 3mm under the 297mm page, because a sheet of
+    exactly page height has no tolerance for sub-pixel rounding: 297mm is
+    1122.52px at 96dpi, and rounding that up spills the sheet onto a second page.
+    The body margin is zeroed to match, so nothing is inset into the page box.
+    That definite height is what lets the .gvp-filler flex item absorb the
+    leftover space and pin the signature block to the foot of the page.
+
+    The SAME flex mechanism is used by the browser and by WeasyPrint — there is
+    no separate absolute-positioning hack for the PDF, so the two cannot drift.
+    A long invoice simply grows past min-height, paginates normally, and carries
+    the signature block with it onto the final page.
+   ========================================================================== */
+@media print {
+    /* ZERO page margin, deliberately.
+       Browsers draw their own "Headers and footers" (the date and time, the
+       page title, the page number, and the URL -- which carries the invoice id
+       such as /invoices/12/print/owner) INSIDE the @page margin box. With a
+       non-zero margin there is room for them, so they print. Setting the page
+       margin to 0 removes the box, which is what stops the browser from adding
+       anything to the invoice.
+
+       The visible inset is unchanged: the 10mm/9mm/7mm the page margin used to
+       provide is applied to the sheet's own padding below, so the ink still
+       lands exactly where the downloaded PDF puts it and the printed page
+       matches the download pixel for pixel. */
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    /* The UA stylesheet's 8px body margin is STILL in force in print: the reset
+       further up is inside @media screen only. With @page margin:0 that 2.12mm
+       inset pushed the sheet down, so a page-height sheet no longer fit the
+       page and Chrome broke the sheet, stranding the signature/footer on page 2.
+       The sheet carries its own padding, so nothing visible moves. */
+    body.gvp-print-doc { margin: 0; padding: 0; }
+
+    .gvp-page,
+    .gvp-sheet {
+        background: #fff;
+        color: var(--gvp-ink);
+        font-family: var(--gvp-sans);
+        font-size: 11px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Never print ERP chrome: the action panels, tab strip, modals and the
+       screen toolbar. */
+    .gvp-page .no-print,
+    .gvp-page .gvp-toolbar { display: none !important; }
+
+    .gvp-sheet {
+        width: auto;
+        /* Block flow is required for correct pagination. A flex container
+           cannot split its flex items across pages reliably in WeasyPrint; the
+           one-page fill mode below is the only place a grid is used. */
+        display: block;
+        /* 3mm SHORT of the 297mm page.
+           A sheet of exactly page height has no tolerance: 297mm is 1122.52px at
+           96dpi, and rounding that up spills the box onto a second page. The
+           slack makes a single-page invoice provably one page.
+           The bottom padding drops by the same 3mm, so the content box stays at
+           exactly 256mm and a long invoice paginates precisely as it did before. */
+        min-height: 294mm;
+        margin: 0;
+        /* Top/sides are the old @page margins. The bottom inset is the printed
+           safety margin: the signature/footer row is anchored by the fill-page
+           grid, so it does not need a large reserved footer zone. */
+        padding: 10mm 9mm 20mm;
+    }
+
+    /* Repeat the column headings and the totals row on every continuation
+       page, and never split a row across a page break. */
+    table.gvp-items thead { display: table-header-group; }
+    table.gvp-items tfoot { display: table-footer-group; }
+    table.gvp-gst thead { display: table-header-group; }
+    table.gvp-gst tfoot { display: table-footer-group; }
+    thead, tfoot { break-inside: avoid; }
+    table.gvp-items tr,
+    table.gvp-gst tr,
+    table.gvp-totals tr { page-break-inside: avoid; break-inside: avoid; }
+
+    /* Keep each major section whole. */
+    .gvp-head,
+    .gvp-sections,
+    .gvp-band-head,
+    .gvp-gst-wrap,
+    .gvp-lower,
+    .gvp-words,
+    /* .gvp-bottom is the signature pair PLUS the computer-generated footer, so
+       it can never be split apart from itself on a multi-page invoice. */
+    .gvp-bottom,
+    .gvp-sigs { page-break-inside: avoid; break-inside: avoid; }
+
+    .gvp-page-break { page-break-before: always; break-before: page; }
+}
+
+/* ---------- Multi-copy document ("print all 3 copies") ----------
+   One A4 page per copy. Only the copy label differs between the pages. */
+.gvp-copies .gvp-sheet { page-break-after: always; break-after: page; }
+.gvp-copies .gvp-sheet:last-child { page-break-after: auto; break-after: auto; }
+@media print {
+    .gvp-copies .gvp-sheet { page-break-after: always; break-after: page; }
+    .gvp-copies .gvp-sheet:last-child { page-break-after: auto; break-after: auto; }
+}
+
+/* ==========================================================================\n   FINAL PRINT SAFETY OVERRIDE — keep the computer-generated footer on the\n   same page as the signature area in Chrome print.\n\n   This is intentionally ADDITIVE. Existing invoice styling is preserved.\n   The signature block itself remains unbroken; only the tiny footer is allowed\n   to follow it without the parent .gvp-bottom forcing the entire footer onto\n   a new page when Chrome calculates the remaining print space.\n   ========================================================================== */
+@media print {
+    .gvp-bottom {
+        page-break-inside: auto;
+        break-inside: auto;
+    }
+    .gvp-sigs {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    .gvp-foot {
+        page-break-before: avoid;
+        break-before: avoid;
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+}
+
+/* ==========================================================================
+   CANONICAL DOCUMENT STRUCTURE
+   Real tables are used for every alignment-critical block. Unlike flexbox or
+   grid, their column widths are resolved identically by Chrome and WeasyPrint,
+   and a long value can only wrap inside its own cell.
+   ========================================================================== */
+
+/* Product description: directly under the name, regular weight, muted. */
+.gvp-item-desc {
+    display: block;
+    margin-top: 1.2px;
+    font-size: 9.2px;
+    line-height: 1.2;
+    font-weight: 400;
+    color: var(--gvp-muted);
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* ---------- Bill To | Invoice Details ---------- */
+table.gvp-party-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-top: 2.5mm;
+}
+table.gvp-party-table col.gvp-party-col { width: 50%; }
+table.gvp-party-table > tbody > tr > td.gvp-party-cell {
+    padding: 0;
+    vertical-align: top;
+}
+table.gvp-party-table > tbody > tr > td.gvp-party-left {
+    padding-right: 8mm;
+}
+table.gvp-party-table .gvp-sec-head { margin-bottom: 4px; }
+
+table.gvp-kv-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+table.gvp-kv-table col.gvp-kv-col-k { width: 25mm; }
+table.gvp-kv-table td {
+    padding: 1px 0;
+    vertical-align: top;
+    font-size: 10.4px;
+    line-height: 1.3;
+}
+table.gvp-kv-table td.k {
+    padding-right: 5px;
+    color: var(--gvp-muted);
+    font-weight: 700;
+    white-space: nowrap;
+}
+table.gvp-kv-table td.v {
+    color: var(--gvp-ink);
+    font-weight: 700;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+table.gvp-kv-table td.v-mono {
+    font-family: var(--gvp-mono);
+    font-weight: 700;
+}
+table.gvp-kv-table td.gvp-cust-name {
+    padding: 0 0 3px;
+    color: var(--gvp-navy);
+    font-size: 13.4px;
+    font-weight: 700;
+    line-height: 1.22;
+    text-align: left;
+}
+
+/* ---------- Payment Information | Invoice Summary ---------- */
+.gvp-sheet table.bottom-sections-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-top: 3mm;
+}
+.gvp-sheet table.bottom-sections-table col.bottom-col-payment { width: 50%; }
+.gvp-sheet table.bottom-sections-table col.bottom-col-summary { width: 50%; }
+.gvp-sheet table.bottom-sections-table > tbody > tr > td {
+    padding: 0;
+    vertical-align: top;
+}
+.gvp-sheet table.bottom-sections-table > tbody > tr > td.payment-section {
+    padding-right: 8mm;
+}
+.gvp-sheet table.bottom-sections-table .gvp-sec-head { margin-bottom: 4px; }
+
+.gvp-sheet table.payment-info-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: inherit;
+}
+.gvp-sheet table.payment-info-table col.payment-col-label { width: 25%; }
+.gvp-sheet table.payment-info-table col.payment-col-value { width: 25%; }
+.gvp-sheet table.payment-info-table td {
+    padding: 2.2px 0;
+    vertical-align: baseline;
+    font-size: 10.1px;
+    line-height: 1.3;
+}
+.gvp-sheet table.payment-info-table td.payment-label {
+    padding-right: 5px;
+    color: var(--gvp-muted);
+    font-weight: 700;
+    white-space: nowrap;
+}
+.gvp-sheet table.payment-info-table td.payment-value {
+    padding-right: 8px;
+    color: var(--gvp-ink);
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+.gvp-sheet table.payment-info-table tr td.payment-value[colspan] {
+    padding-right: 0;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* ---------- Fill-page grid (single-page print/PDF only) ----------
+   WeasyPrint does not stretch flex items from a min-height, so a short invoice
+   would leave the signatures in the middle of the page. When the renderer has
+   already proved the document is exactly one page, the extra .gvp-fill-page
+   class turns the sheet into a definite-height grid: header/content row,
+   collapsible filler, signature/footer row. The height is 294mm (3mm below the
+   A4 page) so sub-pixel rounding can never spill onto a blank second page. */
+@media print {
+    table.gvp-party-table,
+    table.gvp-kv-table,
+    .gvp-sheet table.bottom-sections-table,
+    .gvp-sheet table.payment-info-table {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .gvp-sheet.gvp-fill-page {
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        height: 294mm;
+        min-height: 294mm;
+    }
+    .gvp-sheet.gvp-fill-page .gvp-main { min-height: 0; }
+    .gvp-sheet.gvp-fill-page .gvp-filler { min-height: 0; }
+    .gvp-sheet.gvp-fill-page .gvp-bottom { align-self: end; }
+
+    .gvp-sheet .gvp-sigs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 14mm;
+        align-items: start;
+        min-height: 18mm;
+        padding-bottom: 4mm;
+    }
+    .gvp-sheet .gvp-sig-left { text-align: left; }
+    .gvp-sheet .gvp-sig-right { text-align: right; }
+}

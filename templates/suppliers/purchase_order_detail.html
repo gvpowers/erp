@@ -1,0 +1,117 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}{{ order.po_number }}{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('purchases_list') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Purchases</a>
+{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h1><i data-lucide="file-text" class="me-2"></i>{{ order.po_number }}</h1>
+        <p>Purchase Order Details</p>
+    </div>
+    <div class="page-header-actions">
+        {% set badge_classes = {'draft': 'badge-secondary', 'pending': 'badge-warning', 'confirmed': 'badge-info', 'received': 'badge-success', 'cancelled': 'badge-danger', 'partial': 'badge-secondary'} %}
+        <span class="badge {{ badge_classes.get(order.status, 'badge-secondary') }} text-14" style="padding:8px 16px;">{{ order.status|upper }}</span>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h6 class="mb-0"><i data-lucide="info" class="me-2"></i>Order Details</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-16">
+                    <span class="text-12 text-muted fw-600 d-block mb-4">Order Number</span>
+                    <span class="fw-600 text-14">{{ order.po_number }}</span>
+                </div>
+                <div class="mb-16">
+                    <span class="text-12 text-muted fw-600 d-block mb-4">Supplier</span>
+                    <span class="fw-500 text-14">{{ order.supplier.name if order.supplier else 'N/A' }}</span>
+                </div>
+                <div class="mb-16">
+                    <span class="text-12 text-muted fw-600 d-block mb-4">Order Date</span>
+                    <span class="fw-500 text-14">{{ order.order_date.strftime('%d-%b-%Y') if order.order_date else '-' }}</span>
+                </div>
+                {% if order.expected_date %}
+                <div class="mb-16">
+                    <span class="text-12 text-muted fw-600 d-block mb-4">Expected Date</span>
+                    <span class="fw-500 text-14">{{ order.expected_date.strftime('%d-%b-%Y') }}</span>
+                </div>
+                {% endif %}
+                {% if order.notes %}
+                <div class="mb-0">
+                    <span class="text-12 text-muted fw-600 d-block mb-4">Notes</span>
+                    <span class="text-secondary text-14">{{ order.notes }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header">
+                <h6 class="mb-0"><i data-lucide="list" class="me-2"></i>Order Items</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:40px;">#</th>
+                                <th>Product</th>
+                                <th class="text-end">Qty</th>
+                                <th class="text-end">Price</th>
+                                <th class="text-end">GST%</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items %}
+                            <tr>
+                                <td class="text-muted">{{ loop.index }}</td>
+                                <td class="fw-500">{{ item.product_name }}</td>
+                                <td class="text-end">{{ item.qty }}</td>
+                                <td class="text-end">{{ format_currency(item.price) }}</td>
+                                <td class="text-end text-secondary">{{ item.gst_rate }}%</td>
+                                <td class="text-end text-success fw-600">{{ format_currency(item.total) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4"></td>
+                                <td class="text-end text-secondary fw-500">Subtotal</td>
+                                <td class="text-end fw-600">{{ format_currency(order.subtotal) }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"></td>
+                                <td class="text-end text-secondary fw-500">Tax</td>
+                                <td class="text-end fw-600">{{ format_currency(order.total_tax) }}</td>
+                            </tr>
+                            <tr style="border-top:2px solid var(--border-color);">
+                                <td colspan="4"></td>
+                                <td class="text-end fw-700">Grand Total</td>
+                                <td class="text-end text-success fw-700" style="font-size:1.05rem;">{{ format_currency(order.grand_total) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

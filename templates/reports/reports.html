@@ -1,0 +1,131 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}Reports{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('dashboard') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}?v=3">
+{% endblock %}
+{% block content %}
+<div class="rpt-wrapper rpt-page">
+
+  <div class="rpt-hero">
+    <div>
+      <div class="rpt-crumb">Analytics</div>
+      <h4>Reports</h4>
+      <p>Business analytics, financial insights and operational reports</p>
+    </div>
+    <div class="rpt-actions">
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='sales') }}"><i data-lucide="file-down"></i> Sales PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='sales') }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='sales') }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}{% for cat, msg in messages %}
+      <div class="alert alert-{{ 'success' if cat=='success' else 'danger' if cat=='danger' else 'info' }} alert-dismissible fade show mb-3" style="background:var(--surface);border:1px solid var(--border);color:var(--erp-text)">
+        <i data-lucide="{{ 'check-circle' if cat=='success' else 'alert-circle' }}" style="width:18px;height:18px;margin-right:.5rem"></i>{{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    {% endfor %}{% endif %}
+  {% endwith %}
+
+  <div class="rpt-section-label"><i data-lucide="layout-dashboard"></i> Business Overview</div>
+  <div class="rpt-stats">
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="sun"></i></span></div><div class="rpt-stat-value">{{ stats.today_invoices }}</div><div class="rpt-stat-label">Invoices Today</div><div class="rpt-stat-sub">{{ format_currency(stats.today_sales) }}</div></div>
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="calendar"></i></span></div><div class="rpt-stat-value">{{ format_currency(stats.week_sales) }}</div><div class="rpt-stat-label">This Week</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="calendar-check"></i></span></div><div class="rpt-stat-value">{{ format_currency(stats.month_sales) }}</div><div class="rpt-stat-label">This Month</div><div class="rpt-stat-sub">{{ stats.month_invoices }} invoices</div></div>
+    <div class="rpt-stat purple"><div class="rpt-stat-row"><span class="rpt-stat-ico purple"><i data-lucide="calendar-range"></i></span></div><div class="rpt-stat-value">{{ format_currency(stats.year_sales) }}</div><div class="rpt-stat-label">This Year</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="hand-coins"></i></span></div><div class="rpt-stat-value">{{ format_currency(stats.paid_amount) }}</div><div class="rpt-stat-label">Collected</div></div>
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="wallet"></i></span></div><div class="rpt-stat-value">{{ format_currency(stats.outstanding) }}</div><div class="rpt-stat-label">Outstanding</div></div>
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="users"></i></span></div><div class="rpt-stat-value">{{ stats.active_customers }}/{{ stats.total_customers }}</div><div class="rpt-stat-label">Active Customers</div></div>
+    {% if stats.top_product %}<div class="rpt-stat purple"><div class="rpt-stat-row"><span class="rpt-stat-ico purple"><i data-lucide="package"></i></span></div><div class="rpt-stat-value">{{ stats.top_product.qty }}</div><div class="rpt-stat-label">Top: {{ stats.top_product.name }}</div></div>{% endif %}
+    <div class="rpt-stat red"><div class="rpt-stat-row"><span class="rpt-stat-ico red"><i data-lucide="alert-triangle"></i></span></div><div class="rpt-stat-value">{{ stats.low_stock_count }}</div><div class="rpt-stat-label">Low Stock</div></div>
+  </div>
+
+  <div class="rpt-section-label"><i data-lucide="file-text"></i> Report Types</div>
+  <div class="rpt-grid">
+    <a href="{{ url_for('sales_report') }}" class="rpt-card rpt-nav-card">
+      <div class="rpt-card-icon blue"><i data-lucide="trending-up"></i></div>
+      <div class="rpt-card-cat">Sales</div>
+      <div class="rpt-card-title">Sales Report</div>
+      <div class="rpt-card-desc">Detailed breakdown of all sales with daily trends, invoice summaries, tax calculations, and discount analysis.</div>
+      <div class="rpt-card-action">View Report <i data-lucide="arrow-right"></i></div>
+    </a>
+    <a href="{{ url_for('gst_report') }}" class="rpt-card rpt-nav-card">
+      <div class="rpt-card-icon indigo"><i data-lucide="receipt"></i></div>
+      <div class="rpt-card-cat">Taxation</div>
+      <div class="rpt-card-title">GST Report</div>
+      <div class="rpt-card-desc">GST summary with HSN-wise breakdown, CGST/SGST/IGST details, and invoice-wise tax computation for filing.</div>
+      <div class="rpt-card-action">View Report <i data-lucide="arrow-right"></i></div>
+    </a>
+    <a href="{{ url_for('inventory_report') }}" class="rpt-card rpt-nav-card">
+      <div class="rpt-card-icon orange"><i data-lucide="package"></i></div>
+      <div class="rpt-card-cat">Inventory</div>
+      <div class="rpt-card-title">Inventory Report</div>
+      <div class="rpt-card-desc">Complete stock levels, low stock alerts, stock valuations, and product-wise inventory summaries.</div>
+      <div class="rpt-card-action">View Report <i data-lucide="arrow-right"></i></div>
+    </a>
+    <a href="{{ url_for('profit_report') }}" class="rpt-card rpt-nav-card">
+      <div class="rpt-card-icon green"><i data-lucide="wallet"></i></div>
+      <div class="rpt-card-cat">Profitability</div>
+      <div class="rpt-card-title">Profit Report</div>
+      <div class="rpt-card-desc">Revenue vs cost analysis, profit margins, and detailed item-wise profit breakdown for the selected period.</div>
+      <div class="rpt-card-action">View Report <i data-lucide="arrow-right"></i></div>
+    </a>
+    <a href="{{ url_for('customer_report') }}" class="rpt-card rpt-nav-card">
+      <div class="rpt-card-icon purple"><i data-lucide="users"></i></div>
+      <div class="rpt-card-cat">Customers</div>
+      <div class="rpt-card-title">Customer Report</div>
+      <div class="rpt-card-desc">Top customers by purchase volume, customer-wise revenue breakdown, and purchase frequency analysis.</div>
+      <div class="rpt-card-action">View Report <i data-lucide="arrow-right"></i></div>
+    </a>
+    <a href="{{ url_for('payments_report') }}" class="rpt-card rpt-nav-card">
+      <div class="rpt-card-icon teal"><i data-lucide="hand-coins"></i></div>
+      <div class="rpt-card-cat">Collections</div>
+      <div class="rpt-card-title">Collection Report</div>
+      <div class="rpt-card-desc">Payments received by date and method, with a cash / UPI / card breakdown and collected-by details.</div>
+      <div class="rpt-card-action">View Report <i data-lucide="arrow-right"></i></div>
+    </a>
+    <a href="{{ url_for('outstanding_report') }}" class="rpt-card rpt-nav-card">
+      <div class="rpt-card-icon amber"><i data-lucide="receipt-text"></i></div>
+      <div class="rpt-card-cat">Receivables</div>
+      <div class="rpt-card-title">Outstanding Report</div>
+      <div class="rpt-card-desc">Invoices with unpaid balances, overdue tracking, and total money still to be collected.</div>
+      <div class="rpt-card-action">View Report <i data-lucide="arrow-right"></i></div>
+    </a>
+    <a href="{{ url_for('low_stock_report') }}" class="rpt-card rpt-nav-card">
+      <div class="rpt-card-icon red"><i data-lucide="triangle-alert"></i></div>
+      <div class="rpt-card-cat">Inventory</div>
+      <div class="rpt-card-title">Low Stock Report</div>
+      <div class="rpt-card-desc">Products at or below minimum stock with suggested reorder quantities and one-click purchase orders.</div>
+      <div class="rpt-card-action">View Report <i data-lucide="arrow-right"></i></div>
+    </a>
+  </div>
+
+  <div class="rpt-section-label"><i data-lucide="clock"></i> Recent Invoices</div>
+  <div class="rpt-card">
+    <div class="rpt-scroll no-h"><table class="rpt-table">
+      <thead><tr><th>Invoice #</th><th>Date</th><th>Customer</th><th class="tar">Total</th><th>Payment</th></tr></thead>
+      <tbody>
+      {% for inv in stats.recent_invoices %}
+      <tr><td><a href="{{ url_for('view_invoice', iid=inv.id) }}" class="rpt-strong" style="color:var(--erp-primary);text-decoration:none">{{ inv.invoice_number }}</a></td><td>{{ inv.invoice_date.strftime('%d %b %Y') if inv.invoice_date else '' }}</td><td>{{ inv.customer_name or 'Walk-in' }}</td><td class="tar">{{ format_currency(inv.grand_total or 0) }}</td><td>{% if inv.status=='cancelled' %}<span class="rpt-badge gray">Cancelled</span>{% elif (inv.grand_total or 0) <= (inv.amount_paid or 0) %}<span class="rpt-badge green">Paid</span>{% else %}<span class="rpt-badge amber">Partial</span>{% endif %}</td></tr>
+      {% else %}<tr class="empty-row"><td colspan="5">No recent invoices.</td></tr>{% endfor %}
+      </tbody></table></div>
+  </div>
+
+  <div class="rpt-section-label"><i data-lucide="download"></i> Quick Exports</div>
+  <div class="export-grid">
+    <a href="{{ url_for('report_export', fmt='excel', report_type='sales') }}" class="rpt-export"><span class="rpt-export-ico excel"><i data-lucide="file-spreadsheet"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Sales Excel</div><div class="rpt-export-sub">Workbook export (.xlsx)</div></div></a>
+    <a href="{{ url_for('report_export', fmt='csv', report_type='sales') }}" class="rpt-export"><span class="rpt-export-ico csv"><i data-lucide="file-text"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Sales CSV</div><div class="rpt-export-sub">Comma separated values</div></div></a>
+    <a href="{{ url_for('report_export', fmt='excel', report_type='inventory') }}" class="rpt-export"><span class="rpt-export-ico excel"><i data-lucide="file-spreadsheet"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Inventory Excel</div><div class="rpt-export-sub">Workbook export (.xlsx)</div></div></a>
+    <a href="{{ url_for('report_export', fmt='csv', report_type='inventory') }}" class="rpt-export"><span class="rpt-export-ico csv"><i data-lucide="file-text"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Inventory CSV</div><div class="rpt-export-sub">Comma separated values</div></div></a>
+    <a href="{{ url_for('report_export', fmt='excel', report_type='customers') }}" class="rpt-export"><span class="rpt-export-ico excel"><i data-lucide="file-spreadsheet"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Customers Excel</div><div class="rpt-export-sub">Workbook export (.xlsx)</div></div></a>
+    <a href="{{ url_for('report_export', fmt='csv', report_type='customers') }}" class="rpt-export"><span class="rpt-export-ico csv"><i data-lucide="file-text"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Customers CSV</div><div class="rpt-export-sub">Comma separated values</div></div></a>
+    <a href="{{ url_for('report_export', fmt='excel', report_type='payments') }}" class="rpt-export"><span class="rpt-export-ico excel"><i data-lucide="file-spreadsheet"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Collection Excel</div><div class="rpt-export-sub">Workbook export (.xlsx)</div></div></a>
+    <a href="{{ url_for('report_export', fmt='csv', report_type='payments') }}" class="rpt-export"><span class="rpt-export-ico csv"><i data-lucide="file-text"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Collection CSV</div><div class="rpt-export-sub">Comma separated values</div></div></a>
+    <a href="{{ url_for('report_export', fmt='excel', report_type='outstanding') }}" class="rpt-export"><span class="rpt-export-ico excel"><i data-lucide="file-spreadsheet"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Outstanding Excel</div><div class="rpt-export-sub">Workbook export (.xlsx)</div></div></a>
+    <a href="{{ url_for('report_export', fmt='csv', report_type='outstanding') }}" class="rpt-export"><span class="rpt-export-ico csv"><i data-lucide="file-text"></i></span><div class="rpt-export-body"><div class="rpt-export-title">Outstanding CSV</div><div class="rpt-export-sub">Comma separated values</div></div></a>
+  </div>
+</div>
+{% endblock %}

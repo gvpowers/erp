@@ -1,0 +1,1792 @@
+{% extends "layouts/admin_layout.html" %}
+{% from "partials/logo.html" import gv_logo with context %}
+{% block page_title %}{{ 'Edit Invoice' if edit_mode else 'New Invoice' }}{% endblock %}
+{% block back_link %}<a href="{{ url_for('invoice_history') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Invoice History</a>{% endblock %}
+{% block content %}
+
+<div id="invWrapper" data-company-state-code="{{ company.state_code }}" class="inv-workspace">
+    <div id="toastMsg" class="bw-toast"></div>
+
+    <!-- ========== PAGE HEADER ========== -->
+    <div class="inv-header">
+        <div class="inv-header__title">
+            <span class="inv-header__ico"><i data-lucide="file-edit"></i></span>
+            <div class="inv-header__text">
+                <h1>{{ 'Edit Invoice' if edit_mode else 'New Invoice' }}</h1>
+                <p>{{ 'Update the tax invoice and its items' if edit_mode else 'Create a new tax invoice for your customer' }}</p>
+            </div>
+        </div>
+
+        <div class="inv-header__meta">
+            <div class="inv-meta">
+                <span class="inv-meta__label">Status</span>
+                <span class="inv-meta__badge inv-meta__badge--draft">{{ invoice.status | upper if edit_mode else 'Draft' }}</span>
+            </div>
+            <div class="inv-meta inv-meta--split">
+                <div class="inv-meta">
+                    <span class="inv-meta__label">Invoice No.</span>
+                    <span class="inv-meta__value inv-meta__value--mono" id="invoiceNumber">{{ invoice_number }}</span>
+                </div>
+                {{ gv_logo(alt="GV Powers", class="inv-meta__logo") }}
+            </div>
+            <div class="inv-meta inv-meta--date">
+                <span class="inv-meta__label">Invoice Date</span>
+                <input type="date" class="form-control inv-meta__date-input" id="invoiceDate" value="{{ invoice_data.invoice_date if edit_mode else today }}">
+            </div>
+            <div class="inv-meta">
+                <span class="inv-meta__label">Cashier</span>
+                <span class="inv-meta__value">{{ current_user.full_name }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 12-COL MAIN GRID (8 / 4) ========== -->
+    <div class="inv-layout">
+
+        <!-- ————————————— LEFT PANEL (8/12) ————————————— -->
+        <div class="inv-col">
+
+            <!-- Invoice Details -->
+            <section class="inv-card">
+                <header class="inv-card__head"><span class="inv-card__ico"><i data-lucide="file-text"></i></span><span>Invoice Details</span></header>
+                <div class="inv-card__body">
+                    <div class="inv-grid inv-grid--3">
+                        <div class="inv-field">
+                            <label class="inv-field__label">Invoice Number</label>
+                            <input type="text" class="form-control" id="invoiceNumberInput" value="{{ invoice_number }}" readonly style="background:var(--bg-gray);color:var(--text-muted);font-family:var(--font-mono);font-weight:600;">
+                        </div>
+                        <div class="inv-field">
+                            <label class="inv-field__label">Invoice Date</label>
+                            <input type="date" class="form-control" id="invoiceDate2" value="{{ invoice_data.invoice_date if edit_mode else today }}">
+                        </div>
+                        <div class="inv-field">
+                            <label class="inv-field__label">Due Date</label>
+                            <input type="date" class="form-control" id="dueDate" value="{{ invoice_data.due_date if edit_mode else '' }}">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customer Details -->
+            <section class="inv-card">
+                <header class="inv-card__head"><span class="inv-card__ico"><i data-lucide="user"></i></span><span>Customer Details</span></header>
+                <div class="inv-card__body">
+                    <div class="autocomplete-wrap inv-search">
+                        <i data-lucide="search" class="inv-search__icon"></i>
+                        <input type="text" class="form-control" id="customerSearch" placeholder="Search customer by name, mobile, or GSTIN..." autocomplete="off">
+                        <div class="autocomplete-dropdown" id="customerDropdown"></div>
+                    </div>
+
+                    <div id="existingCustomerInfo" class="cust-info" style="display:none;margin-bottom:16px;"></div>
+
+                    <div id="customerFields" class="inv-cust-grid">
+                        <div class="inv-field">
+                            <label class="inv-field__label">Customer Name <span class="inv-req">*</span></label>
+                            <input type="text" class="form-control" id="custName" placeholder="Enter customer name" required>
+                        </div>
+                        <div class="inv-field">
+                            <label class="inv-field__label">Mobile</label>
+                            <input type="text" class="form-control" id="custMobile" placeholder="10-digit mobile">
+                        </div>
+                        <div class="inv-field">
+                            <label class="inv-field__label">Email</label>
+                            <input type="email" class="form-control" id="custEmail" placeholder="customer@email.com">
+                        </div>
+                        <div class="inv-field">
+                            <label class="inv-field__label">GSTIN</label>
+                            <input type="text" class="form-control" id="custGstin" placeholder="22AAAAA0000A1Z5" maxlength="15" style="text-transform:uppercase;font-family:var(--font-mono);">
+                        </div>
+                        <div class="inv-field inv-field--span2">
+                            <label class="inv-field__label">Address</label>
+                            <input type="text" class="form-control" id="custAddress" placeholder="Full address">
+                        </div>
+                        <div class="inv-field">
+                            <label class="inv-field__label">State <span class="inv-req">*</span></label>
+                            <select class="form-select" id="custState">
+                                <option value="">Select State</option>
+                                <option value="01">01 - Jammu &amp; Kashmir</option>
+                                <option value="02">02 - Himachal Pradesh</option>
+                                <option value="03">03 - Punjab</option>
+                                <option value="04">04 - Chandigarh</option>
+                                <option value="05">05 - Uttarakhand</option>
+                                <option value="06">06 - Haryana</option>
+                                <option value="07">07 - Delhi</option>
+                                <option value="08">08 - Rajasthan</option>
+                                <option value="09">09 - Uttar Pradesh</option>
+                                <option value="10">10 - Bihar</option>
+                                <option value="11">11 - Sikkim</option>
+                                <option value="12">12 - Arunachal Pradesh</option>
+                                <option value="13">13 - Nagaland</option>
+                                <option value="14">14 - Manipur</option>
+                                <option value="15">15 - Mizoram</option>
+                                <option value="16">16 - Tripura</option>
+                                <option value="17">17 - Meghalaya</option>
+                                <option value="18">18 - Assam</option>
+                                <option value="19">19 - West Bengal</option>
+                                <option value="20">20 - Jharkhand</option>
+                                <option value="21">21 - Odisha</option>
+                                <option value="22">22 - Chhattisgarh</option>
+                                <option value="23">23 - Madhya Pradesh</option>
+                                <option value="24">24 - Gujarat</option>
+                                <option value="26">26 | Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+                                <option value="27">27 - Maharashtra</option>
+                                <option value="29">29 - Karnataka</option>
+                                <option value="30">30 - Goa</option>
+                                <option value="31">31 - Lakshadweep</option>
+                                <option value="32">32 - Kerala</option>
+                                <option value="33">33 - Tamil Nadu</option>
+                                <option value="34">34 - Puducherry</option>
+                                <option value="35">35 - Andaman &amp; Nicobar Islands</option>
+                                <option value="36">36 - Telangana</option>
+                                <option value="37">37 - Andhra Pradesh</option>
+                                <option value="38">38 - Ladakh</option>
+                                <option value="97">97 - Other Territory</option>
+                            </select>
+                        </div>
+                        <div class="inv-field">
+                            <label class="inv-field__label">State Code</label>
+                            <input type="text" class="form-control" id="custStateCode" placeholder="Auto" readonly style="background:var(--bg-gray);color:var(--text-muted);font-family:var(--font-mono);">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Product Search -->
+            <section class="inv-card">
+                <header class="inv-card__head"><span class="inv-card__ico"><i data-lucide="package-search"></i></span><span>Add Items</span></header>
+                <div class="inv-card__body">
+                    <div style="display:flex;align-items:stretch;gap:10px;margin-bottom:12px;">
+                        <div class="autocomplete-wrap inv-item-search" style="flex:1;min-width:0;">
+                            <i data-lucide="search" class="inv-search__icon"></i>
+                            <input type="text" class="form-control" id="productSearch" placeholder="Search product name, SKU, HSN, brand..." autocomplete="off" style="width:100%;">
+                            <div class="autocomplete-dropdown" id="productDropdown"></div>
+                        </div>
+                        <div class="inv-barcode-section">
+                            <input type="text" class="form-control inv-barcode-input" id="barcodeInput" placeholder="Barcode" autocomplete="off">
+                            <button type="button" class="inv-btn inv-btn--outline inv-barcode-scan-btn" id="btnCameraScan" title="Scan with Camera">
+                                <i data-lucide="camera" style="width:16px;height:16px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <label style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:0.8rem;cursor:pointer;">
+                        <input type="checkbox" id="allowOutOfStock">
+                        <span>Allow Out of Stock</span>
+                    </label>
+                    {% if current_user.is_admin or current_user.role == 'sales' %}
+                    <button type="button" class="inv-btn inv-btn--outline" id="btnAddNewProduct" style="width:auto;padding:0 16px;height:36px;margin-left:14px;white-space:nowrap;vertical-align:middle;">
+                        <i data-lucide="plus" style="width:15px;height:15px;"></i><span>Add New Product</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Items Table -->
+            <section class="inv-card inv-card--flush">
+                <header class="inv-card__head"><span class="inv-card__ico"><i data-lucide="list-checks"></i></span><span>Invoice Items</span></header>
+                <div class="inv-card__body">
+                    <div class="inv-table-wrap">
+                        <table class="inv-items-table" id="itemsTable" width="100%">
+                            <thead>
+                                <tr>
+                                    <th data-w="w-prod">Description of Goods and Services</th>
+                                    <th data-w="w-hsn">HSN/SAC</th>
+                                    <th data-w="w-qty">Qty</th>
+                                    <th data-w="w-unit">Unit</th>
+                                    <th data-w="w-price">Price</th>
+                                    <th data-w="w-disc">Disc.</th>
+                                    <th data-w="w-gst">GST</th>
+                                    <th data-w="w-tax">Taxable</th>
+                                    <th data-w="w-tax2">CGST</th>
+                                    <th data-w="w-tax2">SGST</th>
+                                    <th data-w="w-total">Total</th>
+                                    <th class="w-del"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="emptyState" class="inv-empty">
+                        <div class="inv-empty__icon"><i data-lucide="package-open"></i></div>
+                        <div class="inv-empty__title">No items added yet</div>
+                        <div class="inv-empty__sub">Search for products above to add them to this invoice</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notes & Terms -->
+            <section class="inv-card">
+                <div class="inv-card__body inv-notes-grid">
+                    <div class="inv-field">
+                        <label class="inv-field__label">Notes</label>
+                        <textarea class="form-control" id="invoiceNotes" rows="3" placeholder="Internal notes..."></textarea>
+                    </div>
+                    <div class="inv-field">
+                        <label class="inv-field__label">Terms &amp; Conditions</label>
+                        <textarea class="form-control" id="invoiceTerms" rows="3">{{ terms }}</textarea>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ————————————— RIGHT: SUMMARY SIDEBAR (4/12) ————————————— -->
+        <aside class="inv-side">
+
+            <!-- Invoice Summary -->
+            <section class="inv-card">
+                <header class="inv-card__head"><span class="inv-card__ico"><i data-lucide="calculator"></i></span><span>Invoice Summary</span></header>
+                <div class="inv-card__body inv-summary">
+                    <div class="inv-sum__row">
+                        <span>Subtotal</span>
+                        <span class="inv-sum__value" id="totSubtotal">Rs. 0.00</span>
+                    </div>
+                    <div class="inv-sum__row">
+                        <span>Discount</span>
+                        <span class="inv-sum__value inv-sum__value--positive" id="totDiscount">-Rs. 0.00</span>
+                    </div>
+                    <div class="inv-sum__divider"></div>
+                    <div class="inv-sum__row">
+                        <span>Taxable Amount</span>
+                        <span class="inv-sum__value" id="totTaxable">Rs. 0.00</span>
+                    </div>
+                    <div class="inv-sum__tax" id="taxBlock">
+                        <div class="inv-sum__row inv-sum__row--sm" id="cgstRow">
+                            <span>CGST</span>
+                            <span class="inv-sum__value" id="totCgst">Rs. 0.00</span>
+                        </div>
+                        <div class="inv-sum__row inv-sum__row--sm" id="sgstRow">
+                            <span>SGST</span>
+                            <span class="inv-sum__value" id="totSgst">Rs. 0.00</span>
+                        </div>
+                    </div>
+                    <div class="inv-sum__row">
+                        <span>Round Off</span>
+                        <span class="inv-sum__value" id="totRoundOff">Rs. 0.00</span>
+                    </div>
+                    <div class="inv-sum__grand">
+                        <span>Grand Total</span>
+                        <span class="inv-sum__grand-value" id="totGrand">Rs. 0.00</span>
+                    </div>
+                    <div class="inv-sum__row">
+                        <span>Amount in Words</span>
+                        <span class="inv-sum__value" id="totWords" style="text-align:right;font-size:0.72rem;line-height:1.4;">Rupees Zero Only</span>
+                    </div>
+                    <div class="inv-sum__divider"></div>
+                    <div class="inv-sum__row">
+                        <span>Amount Paid</span>
+                        <span class="inv-sum__value" id="totAmountPaid">Rs. 0.00</span>
+                    </div>
+                    <div class="inv-sum__row inv-sum__row--balance">
+                        <span>Balance</span>
+                        <span class="inv-sum__value" id="totBalance">Rs. 0.00</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payment -->
+            <section class="inv-card">
+                <header class="inv-card__head"><span class="inv-card__ico"><i data-lucide="credit-card"></i></span><span>Payment</span></header>
+                <div class="inv-card__body">
+                    <label class="inv-field__label">Payment Method</label>
+                    <div class="inv-pay" role="radiogroup">
+                        <input type="radio" name="payMethod" id="pmCash" value="cash" class="bw-pay-radio" {% if edit_mode and invoice_data.payment_method == 'cash' %}checked{% elif not edit_mode %}checked{% endif %}>
+                        <label for="pmCash" class="inv-pay__chip"><i data-lucide="indian-rupee"></i> Cash</label>
+                        <input type="radio" name="payMethod" id="pmUpi" value="upi" class="bw-pay-radio" {% if edit_mode and invoice_data.payment_method == 'upi' %}checked{% endif %}>
+                        <label for="pmUpi" class="inv-pay__chip"><i data-lucide="smartphone"></i> UPI</label>
+                        <input type="radio" name="payMethod" id="pmCard" value="card" class="bw-pay-radio" {% if edit_mode and invoice_data.payment_method == 'card' %}checked{% endif %}>
+                        <label for="pmCard" class="inv-pay__chip"><i data-lucide="credit-card"></i> Card</label>
+                        <input type="radio" name="payMethod" id="pmSplit" value="split" class="bw-pay-radio" {% if edit_mode and invoice_data.payment_method == 'split' %}checked{% endif %}>
+                        <label for="pmSplit" class="inv-pay__chip"><i data-lucide="split"></i> Split</label>
+                    </div>
+
+                    {% if edit_mode %}
+                    <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+                        <div style="flex:1;min-width:120px;padding:10px 14px;background:var(--color-success-light);border-radius:10px;">
+                            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);">Currently Paid</div>
+                            <div style="font-size:1.1rem;font-weight:800;font-family:var(--font-mono);color:var(--color-success);margin-top:2px;" id="editCurrentPaid">Rs. {{ "%.2f"|format(invoice_data.amount_paid) }}</div>
+                        </div>
+                        <div style="flex:1;min-width:120px;padding:10px 14px;background:var(--color-danger-light);border-radius:10px;">
+                            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);">Balance Due</div>
+                            <div style="font-size:1.1rem;font-weight:800;font-family:var(--font-mono);color:var(--color-danger);margin-top:2px;" id="editBalanceDue">Rs. 0.00</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="inv-grid inv-grid--2">
+                        <div class="inv-field">
+                            <label class="inv-field__label">Amount Paid</label>
+                            <input type="number" class="form-control" id="amountPaid" placeholder="0.00" step="0.01" min="0" value="{{ invoice_data.amount_paid if edit_mode else '0' }}" style="font-family:var(--font-mono);">
+                        </div>
+                        <div class="inv-field">
+                            <label class="inv-field__label">Payment Ref</label>
+                            <input type="text" class="form-control" id="payRef" placeholder="UTR / Transaction No" value="{{ invoice_data.payment_reference if edit_mode else '' }}">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- E-Way Bill -->
+            <section class="inv-card">
+                <header class="inv-card__head"><span class="inv-card__ico"><i data-lucide="truck"></i></span><span>E-Way Bill Details</span></header>
+                <div class="inv-card__body">
+                    <div class="inv-field">
+                        <label class="inv-field__label" for="ewayBillNumber">E-Way Bill No. <span style="font-weight:500;color:var(--text-muted);text-transform:none;letter-spacing:0;">(Optional)</span></label>
+                        <input type="text" class="form-control" id="ewayBillNumber" maxlength="32" inputmode="numeric" autocomplete="off" placeholder="Enter E-Way Bill number" value="{{ invoice_data.eway_bill_number if edit_mode else '' }}">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <section class="inv-card">
+                <header class="inv-card__head"><span class="inv-card__ico"><i data-lucide="circle-check"></i></span><span>Actions</span></header>
+                <div class="inv-card__body inv-actions">
+                    <button class="inv-btn inv-btn--primary" id="btnGenerate" onclick="generateInvoice()">
+                        <i data-lucide="check-circle"></i><span>{{ 'Update Invoice' if edit_mode else 'Generate Invoice' }}</span>
+                    </button>
+                    <button class="inv-btn inv-btn--reset" onclick="resetForm()">
+                        <i data-lucide="rotate-ccw"></i><span>Reset</span>
+                    </button>
+                </div>
+            </section>
+        </aside>
+    </div>
+</div>
+
+<!-- Camera Barcode Scanner Modal -->
+<div id="cameraScanModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;width:90%;max-width:440px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E5E7EB;">
+            <div style="font-weight:700;font-size:1rem;display:flex;align-items:center;gap:8px;">
+                <i data-lucide="camera" style="width:18px;height:18px;color:var(--color-primary);"></i>
+                <span>Scan Barcode</span>
+            </div>
+            <button type="button" id="closeCameraScan" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;color:var(--text-muted);font-size:1.2rem;">&times;</button>
+        </div>
+        <div style="padding:16px 20px;text-align:center;">
+            <div id="cameraScanRegion" style="width:100%;max-width:360px;margin:0 auto;border-radius:8px;overflow:hidden;background:#000;min-height:240px;"></div>
+            <p style="margin-top:10px;font-size:0.82rem;color:var(--text-muted);">Align barcode inside the scanning area</p>
+        </div>
+    </div>
+</div>
+
+<!-- Add Item Confirmation (product not found) -->
+<div id="confirmAddItemModal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.45);backdrop-filter:blur(2px);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:14px;width:90%;max-width:360px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="padding:22px 22px 8px;text-align:center;">
+            <div style="width:44px;height:44px;margin:0 auto 12px;background:var(--color-primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <i data-lucide="package-plus" style="width:20px;height:20px;color:var(--color-primary);"></i>
+            </div>
+            <div id="confirmAddItemMsg" style="font-size:0.95rem;font-weight:700;color:var(--text-primary);">Item not found. Want to add?</div>
+            <div id="confirmAddItemSub" style="font-size:0.76rem;color:var(--text-muted);margin-top:4px;word-break:break-word;">It will be saved to Products and added to this invoice.</div>
+        </div>
+        <div style="display:flex;gap:10px;padding:18px 22px;">
+            <button type="button" class="inv-btn inv-btn--ghost" id="confirmAddNo" style="width:auto;flex:1;height:44px;">
+                <span>No</span>
+            </button>
+            <button type="button" class="inv-btn inv-btn--primary" id="confirmAddYes" style="width:auto;flex:1;height:44px;">
+                <i data-lucide="check-circle"></i><span>Yes, Add Item</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- == Add New Product Modal ============================================== -->
+{% if current_user.is_admin %}
+<div id="addProductModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.45);backdrop-filter:blur(2px);align-items:center;justify-content:center;overflow-y:auto;padding:20px;">
+    <div style="background:#fff;border-radius:14px;width:100%;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,0.3);margin:auto;">
+        <div style="display:flex;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid #EEF0F4;">
+            <div style="flex:1;font-size:1rem;font-weight:700;color:var(--text-primary);"><i data-lucide="package-plus" style="width:18px;height:18px;color:var(--color-primary);vertical-align:-3px;margin-right:8px;"></i>Add New Product</div>
+            <button type="button" id="addProductClose" style="background:none;border:none;cursor:pointer;color:var(--text-muted);padding:4px;display:flex;" title="Close"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+        </div>
+        <div style="padding:18px 22px;max-height:calc(100vh - 200px);overflow-y:auto;">
+            <div id="addProductError" style="display:none;background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA;border-radius:10px;padding:10px 12px;font-size:0.8rem;margin-bottom:14px;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div style="grid-column:1 / -1;">
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Product Name <span style="color:var(--color-danger);">*</span></label>
+                    <input type="text" id="np_name" class="form-control" placeholder="Enter product name" autocomplete="off" required>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">SKU / Product Code</label>
+                    <input type="text" id="np_sku" class="form-control" placeholder="SKU" autocomplete="off">
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">HSN Code</label>
+                    <input type="text" id="np_hsn" class="form-control" placeholder="HSN" autocomplete="off">
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Brand</label>
+                    <input type="text" id="np_brand" class="form-control" placeholder="Brand name" autocomplete="off">
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Unit</label>
+                    <select id="np_unit" class="form-select">
+                        <option value="pcs" selected>Pcs</option>
+                        <option value="kg">Kg</option>
+                        <option value="g">Gram</option>
+                        <option value="ltr">Litre</option>
+                        <option value="m">Metre</option>
+                        <option value="sqft">Sq Ft</option>
+                        <option value="box">Box</option>
+                        <option value="set">Set</option>
+                        <option value="pair">Pair</option>
+                        <option value="roll">Roll</option>
+                        <option value="bag">Bag</option>
+                        <option value="bundle">Bundle</option>
+                        <option value="lot">Lot</option>
+                        <option value="nos">Nos</option>
+                        <option value="unit">Unit</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Purchase Price</label>
+                    <input type="number" id="np_purchase_price" class="form-control" min="0" step="0.01" value="0" autocomplete="off">
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Selling Price <span style="color:var(--color-danger);">*</span></label>
+                    <input type="number" id="np_selling_price" class="form-control" min="0" step="0.01" value="0" autocomplete="off" required>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">GST %</label>
+                    <select id="np_gst_rate" class="form-select">
+                        <option value="0">0%</option>
+                        <option value="5">5%</option>
+                        <option value="12">12%</option>
+                        <option value="18" selected>18%</option>
+                        <option value="28">28%</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Opening Stock</label>
+                    <input type="number" id="np_opening_stock" class="form-control" min="0" step="1" value="0" autocomplete="off">
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Min Stock / Reorder Level</label>
+                    <input type="number" id="np_min_stock" class="form-control" min="0" step="1" value="5" autocomplete="off">
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Max Stock</label>
+                    <input type="number" id="np_max_stock" class="form-control" min="0" step="1" value="500" autocomplete="off">
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Location</label>
+                    <input type="text" id="np_location" class="form-control" placeholder="Warehouse / Shelf / Bin" autocomplete="off">
+                </div>
+                <div style="grid-column:1 / -1;">
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Warranty</label>
+                    <input type="text" id="np_warranty" class="form-control" placeholder="e.g. 12 months" autocomplete="off">
+                </div>
+                <div style="grid-column:1 / -1;">
+                    <label style="display:block;font-size:0.76rem;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Description</label>
+                    <textarea id="np_description" class="form-control" rows="2" placeholder="Product description (optional)"></textarea>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;padding:16px 22px;border-top:1px solid #EEF0F4;">
+            <button type="button" class="inv-btn inv-btn--ghost" id="addProductCancel" style="width:auto;flex:1;height:44px;">Cancel</button>
+            <button type="button" class="inv-btn inv-btn--primary" id="addProductSave" style="width:auto;flex:1;height:44px;">
+                <i data-lucide="check-circle"></i><span>Save Product</span>
+            </button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- =======================================================
+     SCOPED STYLES — layout & spacing only (no logic changed)
+     ======================================================= -->
+<style>
+.inv-workspace{
+    max-width:1600px; width:100%; margin:0 auto;
+    filter:drop-shadow(0 0 0 transparent);
+}
+/* Header */
+.inv-header{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:20px;}
+.inv-header__title{display:flex;align-items:center;gap:14px;min-width:0;}
+.inv-header__text h1{font-size:1.6rem;font-weight:800;color:var(--text-primary);letter-spacing:-0.03em;margin:0;line-height:1.15;}
+.inv-header__text p{font-size:0.82rem;color:var(--text-muted);margin:2px 0 0;}
+.inv-header__ico{width:44px;height:44px;border-radius:12px;background:var(--color-primary-light);color:var(--color-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.inv-header__ico svg{width:20px;height:20px;}
+.inv-header__meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 18px;background:#fff;border:1px solid #E5E7EB;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.05);}
+.inv-meta{display:flex;flex-direction:column;gap:3px;}
+.inv-meta__label{font-size:0.62rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;}
+.inv-meta__value{font-size:0.82rem;font-weight:600;color:var(--text-primary);white-space:nowrap;}
+.inv-meta__value--mono{font-family:var(--font-mono);}
+.inv-meta__badge{font-size:0.68rem;font-weight:700;letter-spacing:0.03em;padding:4px 10px;border-radius:999px;white-space:nowrap;width:fit-content;}
+.inv-meta__badge--draft{background:#FEF3C7;color:#B45309;}
+.inv-meta__date-input{height:32px;padding:0 10px;font-size:0.8rem;min-width:150px;}
+.inv-meta--split{display:flex;flex-direction:row;align-items:center;gap:12px;}
+.inv-meta__logo{width:34px;height:34px;object-fit:contain;}
+
+/* 12/8/4 grid */
+.inv-layout{display:grid;grid-template-columns:minmax(0,8fr) minmax(340px,4fr);gap:24px;align-items:start;}
+.inv-col{display:flex;flex-direction:column;gap:24px;min-width:0;}
+.inv-side{position:sticky;top:calc(var(--navbar-height) + 20px);display:flex;flex-direction:column;gap:24px;align-self:start;}
+
+/* Cards */
+.inv-card{background:#fff;border:1px solid #E5E7EB;border-radius:18px;box-shadow:0 8px 30px rgba(0,0,0,.05);overflow:visible;position:relative;}
+.inv-card__head{display:flex;align-items:center;gap:10px;padding:16px 24px;border-bottom:1px solid #EEF0F3;font-weight:700;font-size:0.95rem;color:var(--text-primary);border-radius:18px 18px 0 0;}
+.inv-card__ico{width:32px;height:32px;border-radius:9px;background:var(--color-primary-light);color:var(--color-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.inv-card__ico svg{width:17px;height:17px;}
+.inv-card__body{padding:24px;}
+
+/* Fields */
+.inv-field{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.inv-field__label{font-size:0.68rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;}
+.inv-req{color:var(--color-danger);}
+.inv-grid{display:grid;gap:18px;}
+.inv-grid--2{grid-template-columns:repeat(2,1fr);}
+.inv-grid--3{grid-template-columns:repeat(3,1fr);}
+.inv-field--span2{grid-column:1 / -1;}
+.inv-cust-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;}
+.cust-info{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border:1px solid #D6E4FF;background:#F2F7FF;border-radius:12px;font-size:0.8rem;}
+.cust-info .ic-badge{background:var(--color-primary);color:#fff;font-weight:700;font-size:0.72rem;padding:4px 10px;border-radius:999px;}
+.cust-info .ic-item{color:var(--text-secondary);}
+.cust-info .ic-item b{color:var(--text-primary);font-family:var(--font-mono);font-weight:600;}
+.cust-info .ic-clear{margin-left:auto;border:1px solid #C7DBFF;background:#fff;color:var(--color-primary);border-radius:8px;padding:6px 12px;font-size:0.76rem;font-weight:700;cursor:pointer;}
+.cust-info .ic-clear:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary);}
+
+/* Search bars */
+.autocomplete-wrap{position:relative;}
+.inv-search,.inv-item-search{position:relative;}
+.inv-search .form-control,.inv-item-search .form-control{padding-left:44px;height:46px;font-size:0.88rem;border-radius:12px;border:1px solid #E5E7EB;background:#fff;}
+.inv-search .form-control:focus,.inv-item-search .form-control:focus{border-color:var(--color-primary);box-shadow:var(--shadow-focus);}
+.inv-search__icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-muted);pointer-events:none;}
+.inv-item-search .inv-search__icon{left:16px;}
+/* Barcode section — separate input + camera button alongside search */
+.inv-barcode-section{display:flex;align-items:stretch;gap:6px;flex-shrink:0;}
+.inv-barcode-input{width:140px;min-width:100px;height:46px;padding:0 10px;font-size:0.88rem;border:1px solid #E5E7EB;border-radius:12px;background:#fff;text-align:center;font-family:var(--font-mono);letter-spacing:0.04em;}
+.inv-barcode-input:focus{border-color:var(--color-primary);box-shadow:var(--shadow-focus);}
+.inv-barcode-scan-btn{height:46px;width:46px;min-width:46px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--color-primary);background:#fff;color:var(--color-primary);cursor:pointer;}
+.inv-barcode-scan-btn:hover{background:var(--color-primary-light);}
+
+/* Autocomplete dropdowns */
+.autocomplete-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #E5E7EB;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.18);max-height:420px;overflow-y:auto;overflow-x:hidden;z-index:99999;display:none;margin-top:6px;}
+.autocomplete-dropdown .autocomplete-dropdown-flush{margin:0;}
+.autocomplete-dropdown .inv-ac--active{background:#2563EB;color:#fff;}
+
+/* Items table */
+.inv-table-wrap{overflow-x:auto;border:1px solid #E5E7EB;border-radius:12px;}
+.inv-items-table{width:100%;border-collapse:collapse;min-width:1080px;}
+.inv-items-table thead th{
+    background:#F8FAFC;color:var(--text-muted);font-weight:700;font-size:0.62rem;
+    text-transform:uppercase;letter-spacing:0.05em;padding:13px 12px;border-bottom:1px solid #E5E7EB;
+    white-space:nowrap;text-align:left;height:48px;position:sticky;top:0;z-index:1;
+}
+.inv-items-table thead th[data-w="w-prod"]{white-space:normal;line-height:1.25;}
+.inv-items-table tbody td{padding:12px;border-bottom:1px solid #F3F4F6;font-size:0.8rem;vertical-align:middle;text-align:left;}
+.inv-items-table tbody tr:last-child td{border-bottom:none;}
+.inv-items-table tbody tr:hover{background:#F8FAFF;}
+.inv-items-table [data-w="w-prod"]{width:30%;}
+.inv-items-table [data-w="w-hsn"]{width:7%;}
+.inv-items-table [data-w="w-qty"]{width:7%;}
+.inv-items-table [data-w="w-unit"]{width:6%;}
+.inv-items-table [data-w="w-price"]{width:8%;}
+.inv-items-table [data-w="w-disc"]{width:7%;}
+.inv-items-table [data-w="w-gst"]{width:6%;}
+.inv-items-table [data-w="w-tax"]{width:9%;}
+.inv-items-table [data-w="w-tax2"]{width:6%;}
+.inv-items-table .w-del{width:34px;text-align:center;}
+.inv-items-table td.tc{text-align:center;}
+.inv-items-table td.tr{text-align:right;}
+.inv-items-table .inv-prod{display:flex;align-items:center;gap:10px;min-width:0;}
+.inv-items-table .inv-prod__thumb{width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--color-primary-light);color:var(--color-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.72rem;}
+.inv-items-table .inv-prod__name{font-weight:600;color:var(--text-primary);font-size:0.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;}
+.inv-items-table .inv-prod__sub{font-size:0.68rem;color:var(--text-muted);white-space:nowrap;}
+.inv-items-table .inv-cell-num{font-family:var(--font-mono);color:var(--text-primary);font-weight:500;}
+.inv-items-table .inv-cell-total{font-family:var(--font-mono);font-weight:700;color:var(--color-primary);}
+.inv-items-table .inv-edit{
+    border:1px solid #E5E7EB;border-radius:8px;padding:5px 7px;font-size:0.8rem;
+    font-family:var(--font-mono);background:#fff;text-align:right;width:78px;
+    transition:border-color 150ms ease;
+}
+.inv-items-table .inv-edit:focus{border-color:var(--color-primary);outline:none;box-shadow:var(--shadow-focus);}
+.inv-items-table .inv-edit--sm{width:54px;}
+.inv-items-table .inv-edit--m{width:64px;}
+.inv-items-table .inv-select{border:1px solid #E5E7EB;border-radius:8px;padding:5px 6px;font-size:0.74rem;background:#fff;color:var(--text-primary);cursor:pointer;width:72px;}
+.inv-items-table .inv-del{width:30px;height:30px;border-radius:8px;border:none;background:none;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 150ms ease;}
+.inv-items-table .inv-del:hover{background:var(--color-danger-light);color:var(--color-danger);}
+.inv-empty{padding:40px 24px;text-align:center;color:var(--text-muted);}
+.inv-empty__icon{width:60px;height:60px;margin:0 auto 14px;background:var(--bg-gray);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.inv-empty__icon svg{width:26px;height:26px;color:var(--border-color);}
+.inv-empty__title{font-size:0.95rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;}
+.inv-empty__sub{font-size:0.8rem;color:var(--text-muted);}
+
+/* Notes & Terms */
+.inv-grid.notes-terms > *{margin-top:0;}
+
+/* Summary sidebar */
+.inv-summary{display:flex;flex-direction:column;gap:4px;}
+.inv-sum__row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:0.86rem;}
+.inv-sum__row > span:first-child{color:var(--text-muted);}
+.inv-sum__row--sm{padding:6px 0;}
+.inv-sum__value{font-weight:600;font-family:var(--font-mono);color:var(--text-primary);}
+.inv-sum__value--positive{color:var(--color-success);}
+.inv-sum__divider{border-top:1px solid #EEF0F3;margin:8px 0;}
+.inv-sum__tax{background:#F8FAFC;border:1px solid #E5E7EB;border-radius:12px;padding:4px 14px;margin:8px 0;}
+.inv-sum__grand{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 0 8px;border-top:2px solid var(--color-primary);margin-top:8px;
+}
+.inv-sum__grand > span:first-child{font-weight:800;color:var(--text-primary);font-size:1rem;}
+.inv-sum__grand-value{font-weight:800;font-size:1.5rem;color:var(--color-primary);font-family:var(--font-mono);letter-spacing:-0.02em;}
+.inv-sum__row--balance{background:#F8FAFC;border-radius:10px;padding:10px 14px;}
+.inv-sum__row--balance > span:first-child{font-weight:700;color:var(--text-primary);}
+
+/* Payment chips */
+.inv-pay{display:flex;gap:8px;flex-wrap:wrap;}
+.inv-pay .bw-pay-radio{display:none;}
+.inv-pay__chip{
+    display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;
+    border:1px solid #E5E7EB;background:#fff;color:var(--text-secondary);font-size:0.78rem;font-weight:600;
+    cursor:pointer;transition:all 150ms ease;
+}
+.inv-pay__chip svg{width:14px;height:14px;}
+.inv-pay__chip:hover{border-color:var(--color-primary);color:var(--color-primary);}
+.inv-pay .bw-pay-radio:checked + .inv-pay__chip{background:var(--color-primary);border-color:var(--color-primary);color:#fff;}
+
+/* Actions */
+.inv-actions{display:flex;flex-direction:column;gap:12px;}
+.inv-btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    height:48px;width:100%;border-radius:12px;font-size:0.86rem;font-weight:700;
+    cursor:pointer;transition:all 150ms ease;
+}
+.inv-btn svg{width:18px;height:18px;}
+.inv-btn--primary{background:var(--color-primary);border:1px solid var(--color-primary);color:#fff;}
+.inv-btn--primary:hover{background:var(--color-primary-hover);border-color:var(--color-primary-hover);}
+.inv-btn--primary:disabled{opacity:.6;cursor:not-allowed;}
+.inv-btn--ghost{background:#fff;border:1px solid #E5E7EB;color:var(--text-primary);}
+.inv-btn--ghost:hover{border-color:var(--color-primary);color:var(--color-primary);}
+.inv-btn--outline{background:#fff;border:1px solid var(--color-primary);color:var(--color-primary);}
+.inv-btn--outline:hover{background:var(--color-primary-light);}
+.inv-btn--reset{background:#fff;border:1px solid #E5E7EB;color:var(--text-muted);}
+.inv-btn--reset:hover{border-color:var(--border-color);background:var(--bg-gray);color:var(--text-primary);}
+.inv-actions__pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* Toast override to sit above header */
+.bw-toast{z-index:1000;}
+
+/* Responsive */
+@media (max-width:1100px){
+    .inv-layout{grid-template-columns:minmax(0,1fr);}
+    .inv-side{position:static;order:2;}
+    .inv-header__meta{width:100%;}
+}
+@media (max-width:760px){
+    .inv-grid--3{grid-template-columns:1fr 1fr;}
+    .inv-grid--2{grid-template-columns:1fr 1fr;}
+    .inv-cust-grid{grid-template-columns:1fr;}
+    .inv-field--span2{grid-column:auto;}
+    .inv-header__meta{width:100%;}
+    .inv-items-table thead th,
+    .inv-items-table tbody td{padding:9px 8px;font-size:0.74rem;}
+    .inv-items-table [data-w="w-hsn"],
+    .inv-items-table [data-w="w-unit"],
+    .inv-items-table [data-w="w-tax2"]{display:none;}
+}
+@media (max-width:640px){
+    .inv-barcode-section{width:100%;}
+    .inv-barcode-input{flex:1;width:auto;min-width:0;}
+}
+@media (max-width:520px){
+    .inv-header{flex-direction:column;align-items:flex-start;}
+    .inv-header__meta{width:100%;gap:12px;}
+    .inv-cust-grid{grid-template-columns:1fr;}
+    .inv-grid--2,.inv-grid--3{grid-template-columns:1fr;}
+    .inv-items-table [data-w="w-disc"],
+    .inv-items-table [data-w="w-price"]{display:none;}
+    .inv-items-table .inv-edit{width:60px;}
+    .inv-btn{height:46px;font-size:.82rem;}
+    .inv-sum__grand-value{font-size:1.3rem;}
+}
+</style>
+
+<!-- =======================================================
+     JAVASCRIPT — All logic preserved; the item table
+     render string shows the CGST/SGST display columns.
+     Inter-state tax is still calculated into the line
+     total, but is never rendered to the user.
+     ======================================================= -->
+<script>
+(function(){
+    const companyStateCode = "{{ company.state_code }}";
+    const companyState = "{{ company.state }}";
+    let items = [];
+    let itemIdCounter = 0;
+    let selectedCustomerId = null;
+    let customerSearchTimeout;
+    let productSearchTimeout;
+    let prodCursor = -1;
+    const IS_EDIT = {{ 'true' if edit_mode else 'false' }};
+    const SUBMIT_URL = {% if edit_mode %}'{{ url_for("edit_invoice", iid=invoice.id) }}'{% else %}'/invoices/create'{% endif %};
+
+    function showToast(msg, type) {
+        const t = document.getElementById('toastMsg');
+        t.textContent = msg;
+        t.className = 'bw-toast bw-toast-' + type + ' bw-toast-show';
+        setTimeout(() => { t.className = 'bw-toast'; }, 3000);
+    }
+
+    /* —— State Change ———————————————————————————————————— */
+    document.getElementById('custState').addEventListener('change', function() {
+        document.getElementById('custStateCode').value = this.value;
+        const newIsInter = this.value && this.value !== companyStateCode && this.value !== '';
+        items.forEach(item => { item.is_inter_state = newIsInter; });
+        renderItems();
+        recalcTotals();
+    });
+
+    /* —— Customer Search ————————————————————————————————— */
+    const cs = document.getElementById('customerSearch');
+    cs.addEventListener('input', function() {
+        clearTimeout(customerSearchTimeout);
+        const q = this.value.trim();
+        if (q.length < 1) { hideDropdown('customerDropdown'); return; }
+        customerSearchTimeout = setTimeout(() => {
+            fetch('/api/customers/search?q=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(data => {
+                    const dd = document.getElementById('customerDropdown');
+                    if (!data.length) { dd.style.display = 'none'; return; }
+                    dd.innerHTML = data.map((c, i) => `
+                        <div class="inv-ac" data-idx="${i}" onclick="selectCustomer(${i})">
+                            <div class="inv-ac__av">${esc((c.name||'?')[0]).toUpperCase()}</div>
+                            <div class="inv-ac__body">
+                                <div class="inv-ac__name">${esc(c.name)}</div>
+                                <div class="inv-ac__sub">${esc(c.mobile||'')}${c.gstin ? ' &middot; ' + esc(c.gstin) : ''}</div>
+                            </div>
+                            <div class="inv-ac__side">
+                                ${c.outstanding > 0 ? '<div class="inv-ac__stock" style="color:var(--color-danger)">Due Rs. ' + fmtInr(c.outstanding) + '</div>' : '<div class="inv-ac__gst">' + (c.invoice_count || 0) + ' invoices</div>'}
+                            </div>
+                        </div>
+                    `).join('');
+                    dd.style.display = 'block';
+                    window._custData = data;
+                }).catch(err => {
+                    console.error('Customer search error:', err);
+                });
+        }, 150);
+    });
+
+    window.selectCustomer = function(idx) {
+        const c = window._custData[idx];
+        selectedCustomerId = c.id;
+        document.getElementById('custName').value = c.name || '';
+        document.getElementById('custMobile').value = c.mobile || '';
+        document.getElementById('custEmail').value = c.email || '';
+        document.getElementById('custAddress').value = c.address || '';
+        document.getElementById('custGstin').value = c.gstin || '';
+        if (c.state_code) {
+            document.getElementById('custState').value = c.state_code;
+            document.getElementById('custStateCode').value = c.state_code;
+        }
+        cs.value = c.name;
+        showCustomerInfo(c);
+        hideDropdown('customerDropdown');
+        showToast('Customer selected: ' + c.name, 'success');
+    };
+
+    function showCustomerInfo(c) {
+        const box = document.getElementById('existingCustomerInfo');
+        if (!box) return;
+        box.style.display = c ? 'flex' : 'none';
+        if (!c) return;
+        box.innerHTML = `
+            <span class="ic-badge">Existing customer · ID ${c.id}</span>
+            <span class="ic-item">Invoices <b>${c.invoice_count || 0}</b></span>
+            <span class="ic-item">Purchases <b>Rs. ${fmtInr(c.total_purchases || 0)}</b></span>
+            <span class="ic-item" style="color:${(c.outstanding||0)>0?'var(--color-danger)':'var(--color-success)'}">Outstanding <b>Rs. ${fmtNum(c.outstanding||0)}</b></span>
+            <span class="ic-item">Last Invoice ${c.last_invoice_number ? '<b>'+esc(c.last_invoice_number)+'</b>' : '<b>—</b>'}</span>
+            <button type="button" class="ic-clear" onclick="clearCustomerSelection()">Clear</button>`;
+    }
+
+    window.clearCustomerSelection = function() {
+        selectedCustomerId = null;
+        ['custMobile','custEmail','custAddress','custGstin','custState','custStateCode'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.value = '';
+        });
+        const st = document.getElementById('custState'); if (st) st.value = '';
+        const box = document.getElementById('existingCustomerInfo'); if (box) box.style.display = 'none';
+        cs.value = '';
+        cs.focus();
+    };
+
+    /* Reset the existing-customer banner whenever details are typed manually */
+    ['custName','custMobile','custEmail','custGstin'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', function() {
+            const box = document.getElementById('existingCustomerInfo');
+            if (box) box.style.display = 'none';
+        });
+    });
+
+    /* —— Product Search —————————————————————————————————— */
+    const ps = document.getElementById('productSearch');
+    ps.addEventListener('input', function() {
+        clearTimeout(productSearchTimeout);
+        const q = this.value.trim();
+        if (q.length < 1) { hideDropdown('productDropdown'); return; }
+        productSearchTimeout = setTimeout(() => {
+            const allowOutOfStock = document.getElementById('allowOutOfStock')?.checked || false;
+            fetch('/api/products/search?q=' + encodeURIComponent(q) + '&allow_out_of_stock=' + allowOutOfStock)
+                .then(r => r.json())
+                .then(data => {
+                    const dd = document.getElementById('productDropdown');
+                    if (!data.length) {
+                        hideDropdown('productDropdown');
+                        if (window.CAN_CREATE_PRODUCTS && window.promptAddItem) window.promptAddItem(q);
+                        return;
+                    }
+                    dd.innerHTML = data.map((p, i) => {
+                        const stock = parseFloat(p.stock || p.current_stock || 0);
+                        const stockColor = stock <= 0 ? 'var(--color-danger)' : stock <= 5 ? 'var(--color-warning)' : 'var(--color-success)';
+                        const stockText = stock <= 0 ? 'Out of Stock' : stock + ' in stock';
+                        const price = parseFloat(p.selling_price || p.price) || 0;
+                        const gst = parseFloat(p.gst_rate) || 0;
+                        const unit = p.unit || 'pcs';
+                        const imgHtml = p.image || p.image_url
+                            ? `<img src="${esc(p.image || p.image_url)}" class="inv-ac__thumb inv-ac__thumb--img" alt="">`
+                            : `<div class="inv-ac__thumb">${(p.name || '?')[0].toUpperCase()}</div>`;
+                        return `
+                        <div class="inv-ac" data-idx="${i}" onclick="addProduct('${i}')">
+                            ${imgHtml}
+                            <div class="inv-ac__body">
+                                <div class="inv-ac__name">${esc(p.name)}</div>
+                                <div class="inv-ac__sub">
+                                    ${p.sku ? '<span>SKU: ' + esc(p.sku) + '</span>' : ''}
+                                    ${p.hsn ? '<span>HSN: ' + esc(p.hsn) + '</span>' : ''}
+                                    <span>${esc(unit)}</span>
+                                    ${p.brand ? '<span>' + esc(p.brand) + '</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="inv-ac__side">
+                                <div class="inv-ac__price">Rs. ${fmtInr(price)}</div>
+                                <div class="inv-ac__gst">${gst}% GST</div>
+                                <div class="inv-ac__stock" style="color:${stockColor}">${stockText}</div>
+                            </div>
+                        </div>`;
+                    }).join('');
+                    dd.style.display = 'block';
+                    window._prodData = data;
+                    prodCursor = -1;
+                }).catch(err => {
+                    console.error('Product search error:', err);
+                    showToast('Product search failed. Check connection.', 'error');
+                });
+        }, 200);
+    });
+
+    window.addProduct = function(idx) {
+        const p = window._prodData[idx];
+        const custState = document.getElementById('custState').value;
+        const isInterState = custState && custState !== companyStateCode && custState !== '';
+        const allowOos = document.getElementById('allowOutOfStock')?.checked || false;
+        const stock = parseFloat(p.current_stock || p.stock || 0);
+
+        /* Duplicate handling: if product already in invoice, increment qty */
+        const existing = items.find(it => it.product_id === p.id);
+        if (existing) {
+            if (!allowOos && stock > 0 && existing.qty >= stock) {
+                showToast('Insufficient stock for ' + p.name + '. Available: ' + stock, 'error');
+                return;
+            }
+            existing.qty += 1;
+            renderItems();
+            recalcTotals();
+            ps.value = '';
+            hideDropdown('productDropdown');
+            showToast(p.name + ' — Qty updated to ' + existing.qty, 'success');
+            return;
+        }
+
+        /* Stock validation for new item */
+        if (!allowOos && stock <= 0) {
+            showToast(p.name + ' is out of stock. Enable "Allow Out of Stock" to add.', 'error');
+            return;
+        }
+
+        items.push({
+            id: ++itemIdCounter,
+            product_id: p.id || null,
+            product_name: p.name || '',
+            hsn: p.hsn || '',
+            qty: 1,
+            unit: p.unit || 'pcs',
+            price: parseFloat(p.selling_price || p.price) || 0,
+            discount: 0,
+            gst_rate: parseFloat(p.gst_rate) || 18,
+            is_inter_state: isInterState,
+            sku: p.sku || '',
+            brand: p.brand || '',
+            description: p.description || '',
+            image: p.image || p.image_url || ''
+        });
+        renderItems();
+        recalcTotals();
+        ps.value = '';
+        hideDropdown('productDropdown');
+        showToast('Added: ' + p.name, 'success');
+    };
+
+    /* —— Barcode Scanner Support ——————————————————————— */
+    let barcodeBuffer = '';
+    let barcodeTimer = null;
+    const SCANNER_TIMEOUT = 100;
+    const SCANNER_MIN_LENGTH = 8;
+
+    /* Add product by barcode data (from exact API lookup) */
+    window.addProductByData = function(p) {
+        const custState = document.getElementById('custState').value;
+        const isInterState = custState && custState !== companyStateCode && custState !== '';
+        const allowOos = document.getElementById('allowOutOfStock')?.checked || false;
+        const stock = parseFloat(p.current_stock || p.stock || 0);
+
+        /* Check if product already in invoice — increment qty */
+        const existing = items.find(it => it.product_id === p.id);
+        if (existing) {
+            if (!allowOos && stock > 0 && existing.qty >= stock) {
+                showToast('Insufficient stock for ' + p.name + '. Available: ' + stock, 'error');
+                return;
+            }
+            existing.qty += 1;
+            renderItems();
+            recalcTotals();
+            showToast(p.name + ' — Qty updated to ' + existing.qty, 'success');
+            return;
+        }
+
+        /* Stock validation for new item */
+        if (!allowOos && stock <= 0) {
+            showToast(p.name + ' is out of stock. Enable "Allow Out of Stock" to add.', 'error');
+            return;
+        }
+
+        items.push({
+            id: ++itemIdCounter,
+            product_id: p.id || null,
+            product_name: p.name || '',
+            hsn: p.hsn || '',
+            qty: 1,
+            unit: p.unit || 'pcs',
+            price: parseFloat(p.selling_price || p.price) || 0,
+            discount: 0,
+            gst_rate: parseFloat(p.gst_rate) || 18,
+            is_inter_state: isInterState,
+            sku: p.sku || '',
+            brand: p.brand || '',
+            description: p.description || '',
+            image: p.image || p.image_url || ''
+        });
+        renderItems();
+        recalcTotals();
+showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
+    };
+
+    /* —— Add-Item confirmation popup (product not found) ———————————————————————————————— */
+    var CAN_CREATE_PRODUCTS = {% if current_user.is_admin or current_user.role == 'sales' %}true{% else %}false{% endif %};
+    const confirmAddItemModal = document.getElementById('confirmAddItemModal');
+    const confirmAddItemMsg = document.getElementById('confirmAddItemMsg');
+    const confirmAddItemSub = document.getElementById('confirmAddItemSub');
+    let pendingAddName = null;
+    const closeConfirmAddItem = function() {
+        pendingAddName = null;
+        if (confirmAddItemModal) confirmAddItemModal.style.display = 'none';
+    };
+
+    window.promptAddItem = function(name) {
+        pendingAddName = (name || '').trim();
+        if (!pendingAddName || !confirmAddItemModal) return;
+        if (confirmAddItemMsg) confirmAddItemMsg.textContent = 'Item not found. Want to add?';
+        if (confirmAddItemSub) confirmAddItemSub.textContent = 'It will be saved to Products and added to this invoice.';
+        confirmAddItemModal.style.display = 'flex';
+    };
+
+    const confirmAddYes = document.getElementById('confirmAddYes');
+    if (confirmAddYes) confirmAddYes.addEventListener('click', function() {
+        const name = pendingAddName;
+        closeConfirmAddItem();
+        if (!name) return;
+        confirmAddYes.disabled = true;
+        const origHtml = confirmAddYes.innerHTML;
+        confirmAddYes.innerHTML = '<span class="bw-spinner"></span> Adding...';
+        fetch('/api/invoice/product', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+            body: JSON.stringify({ name: name })
+        })
+        .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+        .then(({ ok, data }) => {
+            confirmAddYes.disabled = false;
+            confirmAddYes.innerHTML = origHtml;
+            if (data.product) {
+                window.addProductByData(data.product);
+                showToast(ok ? 'Product created & added: ' + data.product.name : 'Found existing product: ' + data.product.name, 'success');
+            } else {
+                showToast(data.error || 'Failed to create product', 'error');
+            }
+        })
+        .catch(() => {
+            confirmAddYes.disabled = false;
+            confirmAddYes.innerHTML = origHtml;
+            showToast('Network error. Please try again.', 'error');
+        });
+    });
+
+    const confirmAddNo = document.getElementById('confirmAddNo');
+    if (confirmAddNo) confirmAddNo.addEventListener('click', closeConfirmAddItem);
+    if (confirmAddItemModal) confirmAddItemModal.addEventListener('click', function(e) {
+        if (e.target === confirmAddItemModal) closeConfirmAddItem();
+    });
+    window.closeConfirmAddItem = closeConfirmAddItem;
+
+    /* —— Add New Product modal —————————————————————————————————— */
+    const addProductModal = document.getElementById('addProductModal');
+    const addProductError = document.getElementById('addProductError');
+    const addProductSave = document.getElementById('addProductSave');
+
+    function openAddProductModal() {
+        if (!addProductModal || !CAN_CREATE_PRODUCTS) return;
+        ['np_name','np_sku','np_hsn','np_brand','np_location','np_warranty','np_description'].forEach(function(id){
+            const el = document.getElementById(id); if (el) el.value = '';
+        });
+        document.getElementById('np_purchase_price').value = '0';
+        document.getElementById('np_selling_price').value = '0';
+        document.getElementById('np_opening_stock').value = '0';
+        document.getElementById('np_min_stock').value = '5';
+        document.getElementById('np_max_stock').value = '500';
+        if (addProductError) { addProductError.style.display = 'none'; addProductError.textContent = ''; }
+        addProductModal.style.display = 'flex';
+        setTimeout(function(){ const n = document.getElementById('np_name'); if (n) n.focus(); }, 50);
+    }
+    function closeAddProductModal() {
+        if (addProductModal) addProductModal.style.display = 'none';
+        if (addProductError) { addProductError.style.display = 'none'; addProductError.textContent = ''; }
+    }
+    window.openAddProductModal = openAddProductModal;
+    window.closeAddProductModal = closeAddProductModal;
+
+    const btnAddNewProduct = document.getElementById('btnAddNewProduct');
+    if (btnAddNewProduct) btnAddNewProduct.addEventListener('click', openAddProductModal);
+    const addProductClose = document.getElementById('addProductClose');
+    if (addProductClose) addProductClose.addEventListener('click', closeAddProductModal);
+    const addProductCancel = document.getElementById('addProductCancel');
+    if (addProductCancel) addProductCancel.addEventListener('click', closeAddProductModal);
+    if (addProductModal) addProductModal.addEventListener('click', function(e) {
+        if (e.target === addProductModal) closeAddProductModal();
+    });
+
+    function showAddProductError(msg) {
+        if (addProductError) { addProductError.textContent = msg; addProductError.style.display = 'block'; }
+    }
+
+    function saveNewProduct() {
+        if (!addProductSave || addProductSave.disabled) return;
+        addProductSave.disabled = true;
+        const origHtml = addProductSave.innerHTML;
+        addProductSave.innerHTML = '<span class="bw-spinner"></span> Saving...';
+        const payload = {
+            name: (document.getElementById('np_name').value || '').trim(),
+            sku: (document.getElementById('np_sku').value || '').trim(),
+            hsn: (document.getElementById('np_hsn').value || '').trim(),
+            brand: (document.getElementById('np_brand').value || '').trim(),
+            unit: document.getElementById('np_unit').value,
+            purchase_price: document.getElementById('np_purchase_price').value,
+            selling_price: document.getElementById('np_selling_price').value,
+            gst_rate: document.getElementById('np_gst_rate').value,
+            opening_stock: document.getElementById('np_opening_stock').value,
+            min_stock: document.getElementById('np_min_stock').value,
+            max_stock: document.getElementById('np_max_stock').value,
+            location: (document.getElementById('np_location').value || '').trim(),
+            warranty: (document.getElementById('np_warranty').value || '').trim(),
+            description: (document.getElementById('np_description').value || '').trim(),
+            is_active: 'on'
+        };
+        if (!payload.name) { showAddProductError('Product name is required.'); addProductSave.disabled = false; addProductSave.innerHTML = origHtml; return; }
+        fetch('/api/invoice/product', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+        .then(({ ok, data }) => {
+            addProductSave.disabled = false;
+            addProductSave.innerHTML = origHtml;
+            if (ok && data.product) {
+                const psr = document.getElementById('productSearch');
+                if (psr) { psr.value = ''; }
+                closeAddProductModal();
+                window.addProductByData(data.product);
+                showToast('Product added successfully', 'success');
+            } else if (data.product) {
+                closeAddProductModal();
+                window.addProductByData(data.product);
+                showToast('Found existing product: ' + data.product.name, 'success');
+            } else {
+                showAddProductError(data.error || 'Failed to create product');
+            }
+        })
+        .catch(() => {
+            addProductSave.disabled = false;
+            addProductSave.innerHTML = origHtml;
+            showAddProductError('Network error. Please try again.');
+        });
+    }
+    if (addProductSave) addProductSave.addEventListener('click', saveNewProduct);
+    window.saveNewProduct = saveNewProduct;
+
+    /* —— Exact barcode lookup via API —————————————————————————————— */
+    function lookupBarcode(code) {
+        const allowOos = document.getElementById('allowOutOfStock')?.checked || false;
+        fetch('/api/products/barcode/' + encodeURIComponent(code))
+            .then(r => r.json().then(d => ({ok: r.ok, data: d})))
+            .then(({ok, data}) => {
+                if (ok && data.found) {
+                    window.addProductByData(data.product);
+                } else {
+                    showToast('Product not found for barcode: ' + code, 'error');
+                }
+                ps.value = '';
+                ps.focus();
+            })
+            .catch(() => {
+                showToast('Network error during barcode lookup', 'error');
+                ps.focus();
+            });
+    }
+
+    /* Keyboard buffer: detect rapid keystroke sequences (scanner input) */
+    ps.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const buffered = barcodeBuffer.trim();
+            barcodeBuffer = '';
+            clearTimeout(barcodeTimer);
+
+            /* If buffer looks like a barcode (8+ chars, all alphanumeric), do exact lookup */
+            if (buffered.length >= SCANNER_MIN_LENGTH && /^[A-Za-z0-9]+$/.test(buffered)) {
+                lookupBarcode(buffered);
+                return;
+            }
+
+            /* Otherwise let normal dropdown selection happen */
+            var pdd = document.getElementById('productDropdown');
+            if (pdd && pdd.style.display !== 'none') {
+                var dropdownItems = pdd.querySelectorAll('.inv-ac');
+                if (dropdownItems.length) {
+                    if (prodCursor < 0) prodCursor = 0;
+                    pasteProdCursor(dropdownItems);
+                }
+            }
+            return;
+        }
+
+        /* Buffer characters for scanner detection */
+        if (e.key.length === 1) {
+            barcodeBuffer += e.key;
+            clearTimeout(barcodeTimer);
+            barcodeTimer = setTimeout(() => { barcodeBuffer = ''; }, SCANNER_TIMEOUT);
+        }
+    });
+
+    /* —— Dedicated Barcode Input ——————————————————————— */
+    const barcodeInput = document.getElementById('barcodeInput');
+    if (barcodeInput) {
+        barcodeInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const code = this.value.trim();
+                if (code) {
+                    lookupBarcode(code);
+                    this.value = '';
+                }
+            }
+        });
+        /* Auto-focus on page load */
+        setTimeout(() => { barcodeInput.focus(); }, 200);
+    }
+
+    /* —— Camera Barcode Scanning ——————————————————————— */
+    const cameraScanBtn = document.getElementById('btnCameraScan');
+    const cameraScanModal = document.getElementById('cameraScanModal');
+    const closeCameraBtn = document.getElementById('closeCameraScan');
+    const cameraScanRegion = document.getElementById('cameraScanRegion');
+    let html5QrScanner = null;
+
+    if (cameraScanBtn) {
+        cameraScanBtn.addEventListener('click', function() {
+            cameraScanModal.style.display = 'flex';
+            startCameraScanner();
+        });
+    }
+    if (closeCameraBtn) {
+        closeCameraBtn.addEventListener('click', function() {
+            stopCameraScanner();
+            cameraScanModal.style.display = 'none';
+        });
+    }
+    if (cameraScanModal) {
+        cameraScanModal.addEventListener('click', function(e) {
+            if (e.target === cameraScanModal) {
+                stopCameraScanner();
+                cameraScanModal.style.display = 'none';
+            }
+        });
+    }
+
+    function startCameraScanner() {
+        if (typeof Html5Qrcode === 'undefined') {
+            /* Dynamically load html5-qrcode library */
+            var script = document.createElement('script');
+            script.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+            script.onload = function() { initCameraScanner(); };
+            script.onerror = function() {
+                showToast('Failed to load barcode scanner library', 'error');
+                cameraScanModal.style.display = 'none';
+            };
+            document.head.appendChild(script);
+        } else {
+            initCameraScanner();
+        }
+    }
+
+    function initCameraScanner() {
+        if (html5QrScanner) { try { html5QrScanner.clear(); } catch(e) {} }
+        html5QrScanner = new Html5Qrcode('cameraScanRegion');
+        html5QrScanner.start(
+            { facingMode: 'environment' },
+            { fps: 10, qrbox: { width: 280, height: 150 }, aspectRatio: 1.5 },
+            function onScanSuccess(decodedText) {
+                stopCameraScanner();
+                cameraScanModal.style.display = 'none';
+                if (barcodeInput) { barcodeInput.value = ''; barcodeInput.focus(); }
+                lookupBarcode(decodedText);
+            },
+            function onScanFailure() {}
+        ).catch(function(err) {
+            showToast('Camera access denied or not available', 'error');
+            cameraScanModal.style.display = 'none';
+        });
+    }
+
+    function stopCameraScanner() {
+        if (html5QrScanner) {
+            try { html5QrScanner.stop(); } catch(e) {}
+            try { html5QrScanner.clear(); } catch(e) {}
+            html5QrScanner = null;
+        }
+    }
+
+    /* —— Render Items ———————————————————————————————————— */
+    function renderItems() {
+        const body = document.getElementById('itemsBody');
+        const empty = document.getElementById('emptyState');
+        if (!items.length) { body.innerHTML = ''; empty.style.display = ''; return; }
+        empty.style.display = 'none';
+        body.innerHTML = items.map((item, i) => {
+            const cgst_rate = item.is_inter_state ? 0 : item.gst_rate / 2;
+            const sgst_rate = item.is_inter_state ? 0 : item.gst_rate / 2;
+            const igst_rate = item.is_inter_state ? item.gst_rate : 0;
+            const lineDisc = item.price * item.qty * (item.discount / 100);
+            const taxable = item.price * item.qty - lineDisc;
+            const cgst = taxable * cgst_rate / 100;
+            const sgst = taxable * sgst_rate / 100;
+            const igst = taxable * igst_rate / 100;
+            const total = taxable + cgst + sgst + igst;
+
+            const thumbHtml = item.image
+                ? `<img src="${esc(item.image)}" class="inv-prod__thumb inv-prod__thumb--img" alt="">`
+                : `<div class="inv-prod__thumb">${(item.product_name[0] || '').toUpperCase()}</div>`;
+
+            return `<tr data-id="${item.id}">
+                <td>
+                    <div class="inv-prod">
+                        ${thumbHtml}
+                        <div class="inv-prod__meta">
+                            <div class="inv-prod__name">${esc(item.product_name)}</div>
+                            <div class="inv-prod__sub">${item.sku ? 'SKU: ' + esc(item.sku) : ''}${item.brand ? ' &middot; ' + esc(item.brand) : ''}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="inv-cell-num">${esc(item.hsn || '—')}</td>
+                <td>
+                    <div class="inv-qty">
+                        <button type="button" class="inv-qty__btn" onclick="stepQty(${item.id}, -1)" title="Decrease quantity" aria-label="Decrease quantity"><i data-lucide="minus"></i></button>
+                        <input type="number" class="inv-qty__val" value="${item.qty}" min="1" step="1" onchange="updateItem(${item.id},'qty',this.value)" aria-label="Quantity">
+                        <button type="button" class="inv-qty__btn" onclick="stepQty(${item.id}, 1)" title="Increase quantity" aria-label="Increase quantity"><i data-lucide="plus"></i></button>
+                    </div>
+                </td>
+                <td>
+                    <select onchange="updateItem(${item.id},'unit',this.value)" class="inv-select">
+                        ${['pcs','kg','g','ltr','m','sqft','box','set','pair','roll','bag','bundle','lot','nos','unit'].map(u => `<option value="${u}" ${u===item.unit?'selected':''}>${u}</option>`).join('')}
+                    </select>
+                </td>
+                <td>
+                    <div class="inv-price">
+                        <span class="inv-price__sym">Rs. </span>
+                        <input type="number" class="inv-edit" value="${item.price}" min="0" step="0.01" onchange="updateItem(${item.id},'price',this.value)">
+                    </div>
+                </td>
+                <td>
+                    <div class="inv-disc">
+                        <input type="number" class="inv-edit inv-edit--sm" value="${item.discount}" min="0" max="100" step="0.01" onchange="updateItem(${item.id},'discount',this.value)">
+                        <span class="inv-disc__pct">%</span>
+                    </div>
+                </td>
+                <td>
+                    <select onchange="updateItem(${item.id},'gst_rate',this.value)" class="inv-select">
+                        ${[0,5,12,18,28].map(r => `<option value="${r}" ${r==item.gst_rate?'selected':''}>${r}%</option>`).join('')}
+                    </select>
+                </td>
+                <td class="inv-cell-num tr">Rs. ${fmtNum(taxable)}</td>
+                <td class="inv-cell-num tr">Rs. ${fmtNum(cgst)}</td>
+                <td class="inv-cell-num tr">Rs. ${fmtNum(sgst)}</td>
+                <td class="inv-cell-total tr">Rs. ${fmtNum(total)}</td>
+                <td class="text-center">
+                    <button class="inv-del" onclick="removeItem(${item.id})" title="Remove item">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function normalizeQty(val) {
+        const n = Math.round(parseFloat(val));
+        return isFinite(n) && n > 0 ? n : 1;
+    }
+
+    window.stepQty = function(id, delta) {
+        const item = items.find(x => x.id === id);
+        if (!item) return;
+        item.qty = normalizeQty(item.qty + delta);
+        renderItems();
+        recalcTotals();
+    };
+
+    window.updateItem = function(id, field, val) {
+        const item = items.find(x => x.id === id);
+        if (!item) return;
+        if (field === 'qty') item.qty = normalizeQty(val);
+        else if (['price','discount','gst_rate'].includes(field)) item[field] = parseFloat(val) || 0;
+        else item[field] = val;
+        renderItems();
+        recalcTotals();
+    };
+
+    window.removeItem = function(id) {
+        items = items.filter(x => x.id !== id);
+        renderItems();
+        recalcTotals();
+    };
+
+    /* —— Recalc Totals ——————————————————————————————————— */
+    function recalcTotals() {
+        let subtotal = 0, totalDiscount = 0, totalTaxable = 0, totalCgst = 0, totalSgst = 0, totalIgst = 0;
+        items.forEach(item => {
+            const lineTotal = item.price * item.qty;
+            const disc = lineTotal * (item.discount / 100);
+            const taxable = lineTotal - disc;
+            const cgst = item.is_inter_state ? 0 : taxable * (item.gst_rate / 2) / 100;
+            const sgst = item.is_inter_state ? 0 : taxable * (item.gst_rate / 2) / 100;
+            const igst = item.is_inter_state ? taxable * item.gst_rate / 100 : 0;
+            subtotal += lineTotal;
+            totalDiscount += disc;
+            totalTaxable += taxable;
+            totalCgst += cgst;
+            totalSgst += sgst;
+            totalIgst += igst;
+        });
+        const netBeforeRound = totalTaxable + totalCgst + totalSgst + totalIgst;
+        const rounded = Math.round(netBeforeRound);
+        const roundOff = rounded - netBeforeRound;
+        const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
+        const balance = rounded - amountPaid;
+
+        document.getElementById('totSubtotal').textContent = 'Rs. ' + fmtNum(subtotal);
+        document.getElementById('totDiscount').textContent = '-Rs. ' + fmtNum(totalDiscount);
+        document.getElementById('totTaxable').textContent = 'Rs. ' + fmtNum(totalTaxable);
+        document.getElementById('totCgst').textContent = 'Rs. ' + fmtNum(totalCgst);
+        document.getElementById('totSgst').textContent = 'Rs. ' + fmtNum(totalSgst);
+        document.getElementById('totRoundOff').textContent = 'Rs. ' + fmtNum(roundOff);
+        document.getElementById('totGrand').textContent = 'Rs. ' + fmtNum(rounded);
+        document.getElementById('totAmountPaid').textContent = 'Rs. ' + fmtNum(amountPaid);
+        document.getElementById('totBalance').textContent = 'Rs. ' + fmtNum(balance);
+        document.getElementById('totWords').textContent = inrWords(rounded);
+
+        const balEl = document.getElementById('totBalance');
+        balEl.style.color = balance > 0 ? 'var(--color-danger)' : balance < 0 ? 'var(--color-warning)' : 'var(--color-success)';
+
+        const editPaidEl = document.getElementById('editCurrentPaid');
+        const editBalEl = document.getElementById('editBalanceDue');
+        if (editPaidEl) editPaidEl.textContent = 'Rs. ' + fmtNum(amountPaid);
+        if (editBalEl) {
+            editBalEl.textContent = 'Rs. ' + fmtNum(balance);
+            editBalEl.style.color = balance > 0 ? 'var(--color-danger)' : 'var(--color-success)';
+        }
+
+        const isInter = items.length > 0 && items[0].is_inter_state;
+        document.getElementById('cgstRow').style.display = isInter ? 'none' : 'flex';
+        document.getElementById('sgstRow').style.display = isInter ? 'none' : 'flex';
+    }
+
+    document.getElementById('amountPaid').addEventListener('input', recalcTotals);
+
+    /* —— Amount in words (Indian numbering) —————————————— */
+    const WORDS_ONES = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    const WORDS_TENS = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    function chunkWords(n) {
+        if (n === 0) return "";
+        if (n < 20) return WORDS_ONES[n];
+        if (n < 100) return (WORDS_TENS[Math.floor(n / 10)] + " " + WORDS_ONES[n % 10]).trim();
+        return WORDS_ONES[Math.floor(n / 100)] + " Hundred " + chunkWords(n % 100);
+    }
+    function rupeesWords(n) {
+        let words = "";
+        if (n >= 10000000) { words += chunkWords(Math.floor(n / 10000000)) + " Crore "; n %= 10000000; }
+        if (n >= 100000) { words += chunkWords(Math.floor(n / 100000)) + " Lakh "; n %= 100000; }
+        if (n >= 1000) { words += chunkWords(Math.floor(n / 1000)) + " Thousand "; n %= 1000; }
+        if (n > 0) words += chunkWords(n) + " ";
+        return words.trim();
+    }
+    function inrWords(amount) {
+        if (amount == null || isNaN(amount)) return "Rupees Zero Only";
+        const neg = amount < 0;
+        amount = Math.abs(amount);
+        const totalPaise = Math.round(amount * 100);
+        const rupees = Math.floor(totalPaise / 100);
+        const paise = totalPaise % 100;
+        let out;
+        if (totalPaise === 0) {
+            out = "Rupees Zero Only";
+        } else {
+            const rw = rupeesWords(rupees);
+            if (paise === 0) {
+                out = rupees === 1 ? "Rupee One Only" : "Rupees " + rw + " Only";
+            } else {
+                const pw = rupeesWords(paise);
+                out = rupees === 0 ? "Rupees " + pw + " Paise Only" : "Rupees " + rw + " and " + pw + " Paise Only";
+            }
+        }
+        return neg ? "Minus " + out : out;
+    }
+
+    /* —— Generate Invoice ———————————————————————————————— */
+    window.generateInvoice = function() {
+        const name = document.getElementById('custName').value.trim();
+        if (!name) { showToast('Please enter customer name', 'error'); return; }
+        if (!items.length) { showToast('Please add at least one item', 'error'); return; }
+        const stateVal = document.getElementById('custState').value;
+        const payload = {
+            customer_id: selectedCustomerId,
+            customer_name: name,
+            customer_mobile: document.getElementById('custMobile').value.trim(),
+            customer_email: document.getElementById('custEmail')?.value?.trim() || '',
+            customer_address: document.getElementById('custAddress').value.trim(),
+            customer_state: document.getElementById('custState').selectedOptions[0]?.text.replace(/^\d+\s*[-|\s]\s*/, '') || '',
+            customer_state_code: stateVal,
+            customer_gstin: document.getElementById('custGstin').value.trim().toUpperCase(),
+            payment_method: document.querySelector('input[name="payMethod"]:checked').value,
+            payment_reference: document.getElementById('payRef').value.trim(),
+            eway_bill_number: document.getElementById('ewayBillNumber')?.value?.trim() || null,
+            amount_paid: parseFloat(document.getElementById('amountPaid').value) || 0,
+            notes: document.getElementById('invoiceNotes').value.trim(),
+            terms: document.getElementById('invoiceTerms').value.trim(),
+            invoice_date: document.getElementById('invoiceDate').value || document.getElementById('invoiceDate2').value,
+            due_date: document.getElementById('dueDate').value,
+            allow_out_of_stock: document.getElementById('allowOutOfStock')?.checked || false,
+            items: items.map(item => ({
+                product_id: item.product_id, product_name: item.product_name, description: item.description || '', hsn: item.hsn,
+                qty: item.qty, unit: item.unit, price: item.price, discount: item.discount, gst_rate: item.gst_rate
+            }))
+        };
+        const btn = document.getElementById('btnGenerate');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="bw-spinner"></span> Generating...';
+        fetch(SUBMIT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+        .then(({ ok, data }) => {
+            if (ok && data.redirect) {
+                showToast(IS_EDIT ? 'Invoice updated successfully!' : 'Invoice created successfully!', 'success');
+                window.location.href = data.redirect;
+            } else {
+                showToast(data.error || (IS_EDIT ? 'Failed to update invoice' : 'Failed to create invoice'), 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="check-circle"></i><span>' + (IS_EDIT ? 'Update Invoice' : 'Generate Invoice') + '</span>';
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        })
+        .catch(() => {
+            showToast('Network error. Please try again.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="check-circle"></i><span>' + (IS_EDIT ? 'Update Invoice' : 'Generate Invoice') + '</span>';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    };
+
+    window.resetForm = function() {
+        if (!confirm('Reset all fields?')) return;
+        items = []; itemIdCounter = 0; selectedCustomerId = null;
+        const ib = document.getElementById('existingCustomerInfo'); if (ib) ib.style.display = 'none';
+        ['customerSearch','custName','custMobile','custEmail','custGstin','custAddress','custState','custStateCode','payRef','invoiceNotes','invoiceTerms'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        document.getElementById('amountPaid').value = {% if edit_mode %}{{ invoice_data.amount_paid }}{% else %}'0'{% endif %};
+        document.getElementById('invoiceDate').value = {% if edit_mode %}'{{ invoice_data.invoice_date }}'{% else %}''{% endif %};
+        document.getElementById('invoiceDate2').value = {% if edit_mode %}'{{ invoice_data.invoice_date }}'{% else %}'{{ today }}'{% endif %};
+        document.getElementById('dueDate').value = {% if edit_mode %}'{{ invoice_data.due_date }}'{% else %}''{% endif %};
+        document.getElementById('pmCash').checked = true;
+        renderItems(); recalcTotals();
+    };
+
+    function hideDropdown(id) { const dd = document.getElementById(id); if (dd) dd.style.display = 'none'; if (id === 'productDropdown') { prodCursor = -1; } }
+    function fmtNum(n) { return n.toFixed(2); }
+    function fmtInr(n) { return Number(n).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0}); }
+    function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    /* —— Sync duplicated invoice-date inputs ————————————— */
+    const idDate = document.getElementById('invoiceDate');
+    const idDate2 = document.getElementById('invoiceDate2');
+    if (idDate2) {
+        idDate2.addEventListener('change', function(){ idDate.value = this.value; recalcTotals(); });
+    }
+    if (idDate) {
+        idDate.addEventListener('change', function(){ if (idDate2) idDate2.value = this.value; });
+    }
+
+    {% if current_user.is_admin and not edit_mode %}
+    /* Admin-only: keep the provisional invoice number in sync with Invoice Date. */
+    const invoiceNumberDisplay = document.getElementById('invoiceNumber');
+    const invoiceNumberInput = document.getElementById('invoiceNumberInput');
+    const NEXT_INVOICE_NUMBER_URL = '{{ url_for("preview_invoice_number") }}';
+    let invoiceNumberRequestId = 0;
+    let invoiceNumberController = null;
+
+    function setInvoiceNumber(number) {
+        if (invoiceNumberDisplay) invoiceNumberDisplay.textContent = number;
+        if (invoiceNumberInput) invoiceNumberInput.value = number;
+    }
+
+    function refreshInvoiceNumber(selectedDate) {
+        if (!selectedDate) return;
+        const requestId = ++invoiceNumberRequestId;
+        if (invoiceNumberController) invoiceNumberController.abort();
+        invoiceNumberController = new AbortController();
+        fetch(NEXT_INVOICE_NUMBER_URL + '?date=' + encodeURIComponent(selectedDate), {
+            signal: invoiceNumberController.signal,
+            cache: 'no-store',
+            headers: { 'Accept': 'application/json' }
+        })
+            .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+            .then(function(result) {
+                if (requestId !== invoiceNumberRequestId) return;
+                if (!result.ok || !result.data || !result.data.success || !result.data.invoice_number) {
+                    if (result.data && result.data.error) showToast(result.data.error, 'error');
+                    return;
+                }
+                setInvoiceNumber(result.data.invoice_number);
+            })
+            .catch(function(err) {
+                if (err && err.name === 'AbortError') return;
+                if (requestId === invoiceNumberRequestId) {
+                    showToast('Could not update the invoice number. Please try again.', 'error');
+                }
+            });
+    }
+
+    function handleInvoiceDateChange(event) {
+        const selectedDate = event && event.target ? event.target.value : '';
+        if (!selectedDate) return;
+        refreshInvoiceNumber(selectedDate);
+    }
+
+    if (idDate) {
+        idDate.addEventListener('change', handleInvoiceDateChange);
+        idDate.addEventListener('input', handleInvoiceDateChange);
+    }
+    if (idDate2) {
+        idDate2.addEventListener('change', handleInvoiceDateChange);
+        idDate2.addEventListener('input', handleInvoiceDateChange);
+    }
+    {% endif %}
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.autocomplete-wrap')) {
+            hideDropdown('customerDropdown');
+            hideDropdown('productDropdown');
+        }
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if (window.closeConfirmAddItem) window.closeConfirmAddItem();
+            if (window.closeAddProductModal) window.closeAddProductModal();
+            hideDropdown('customerDropdown'); hideDropdown('productDropdown'); return;
+        }
+        /* Skip product dropdown navigation when barcode input is focused */
+        if (document.activeElement && document.activeElement.id === 'barcodeInput') return;
+        var pdd = document.getElementById('productDropdown');
+        if (pdd && pdd.style.display !== 'none') {
+            var items = pdd.querySelectorAll('.inv-ac');
+            if (items.length) {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    prodCursor = (prodCursor + 1) % items.length;
+                    paintProdCursor(items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    prodCursor = (prodCursor - 1 + items.length) % items.length;
+                    paintProdCursor(items);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (prodCursor < 0) prodCursor = 0;
+                    pasteProdCursor(items);
+                }
+            }
+        }
+    });
+
+    function paintProdCursor(items){
+        items.forEach(function(it, idx){
+            it.classList.toggle('inv-ac--active', idx === prodCursor);
+            if (idx === prodCursor) it.scrollIntoView({ block: 'nearest' });
+        });
+    }
+    function pasteProdCursor(items){
+        items.forEach(function(it){ it.classList.remove('inv-ac--active'); });
+        items[prodCursor].click();
+    }
+
+    renderItems();
+    recalcTotals();
+
+    {% if quotation_data %}
+    (function() {
+        var qd = {{ quotation_data|tojson }};
+        if (qd.customer_name) document.getElementById('custName').value = qd.customer_name;
+        if (qd.customer_mobile) document.getElementById('custMobile').value = qd.customer_mobile;
+        if (qd.customer_id) selectedCustomerId = qd.customer_id;
+        if (qd.customer_state_code) {
+            document.getElementById('custStateCode').value = qd.customer_state_code;
+            var stateSelect = document.getElementById('custState');
+            if (stateSelect) stateSelect.value = qd.customer_state_code;
+        }
+        if (qd.customer_gstin) document.getElementById('custGstin').value = qd.customer_gstin;
+        var qIsInterState = qd.customer_state_code && String(qd.customer_state_code) !== companyStateCode;
+        if (qd.items && qd.items.length) {
+            qd.items.forEach(function(qi) {
+                items.push({
+                    id: ++itemIdCounter,
+                    product_id: qi.product_id || null,
+                    product_name: qi.product_name || '',
+                    hsn: qi.hsn || '',
+                    qty: normalizeQty(qi.qty),
+                    unit: qi.unit || 'Pcs',
+                    price: parseFloat(qi.price) || 0,
+                    discount: parseFloat(qi.discount) || 0,
+                    gst_rate: parseFloat(qi.gst_rate) || 18,
+                    is_inter_state: qIsInterState
+                });
+            });
+            renderItems();
+            recalcTotals();
+            showToast('Loaded ' + qd.items.length + ' items from quotation', 'success');
+        }
+    })();
+    {% endif %}
+
+    {% if edit_mode %}
+    (function() {
+        var d = {{ invoice_data|tojson }};
+        if (d.customer_id) selectedCustomerId = d.customer_id;
+        if (d.customer_name) document.getElementById('custName').value = d.customer_name;
+        if (d.customer_mobile) document.getElementById('custMobile').value = d.customer_mobile;
+        if (d.customer_email) document.getElementById('custEmail').value = d.customer_email;
+        if (d.customer_gstin) document.getElementById('custGstin').value = d.customer_gstin;
+        if (d.customer_address) document.getElementById('custAddress').value = d.customer_address;
+        if (d.customer_state_code) {
+            document.getElementById('custStateCode').value = d.customer_state_code;
+            var stateSelect = document.getElementById('custState');
+            if (stateSelect) stateSelect.value = d.customer_state_code;
+        }
+        var editIsInter = d.customer_state_code && String(d.customer_state_code) !== String(companyStateCode);
+        if (d.items && d.items.length) {
+            d.items.forEach(function(ei) {
+                items.push({
+                    id: ++itemIdCounter,
+                    product_id: ei.product_id || null,
+                    product_name: ei.product_name || '',
+                    hsn: ei.hsn || '',
+                    qty: normalizeQty(ei.qty),
+                    unit: ei.unit || 'pcs',
+                    price: parseFloat(ei.price) || 0,
+                    discount: parseFloat(ei.discount) || 0,
+                    gst_rate: parseFloat(ei.gst_rate) || 18,
+                    is_inter_state: editIsInter
+                });
+            });
+            renderItems();
+            recalcTotals();
+        }
+    })();
+    {% endif %}
+})();
+</script>
+
+<style>
+/* Rendered-item control styles (component classes used by the JS above) */
+.inv-ac{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;transition:background 150ms ease;border-bottom:1px solid #F3F4F6;}
+.inv-ac:last-child{border-bottom:none;}
+.inv-ac:hover{background:#F8FAFF;}
+.inv-ac-empty{padding:18px 16px;text-align:center;color:var(--text-muted);font-size:0.84rem;}
+.inv-ac__av{width:34px;height:34px;border-radius:50%;background:var(--color-primary-light);color:var(--color-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.75rem;flex-shrink:0;}
+.inv-ac__thumb{width:38px;height:38px;border-radius:9px;background:var(--color-primary-light);color:var(--color-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;flex-shrink:0;}
+.inv-ac__thumb--img{object-fit:cover;}
+.inv-ac__body{flex:1;min-width:0;}
+.inv-ac__name{font-weight:500;color:var(--text-primary);font-size:0.86rem;}
+.inv-ac__sub{font-size:0.7rem;color:var(--text-muted);display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;}
+.inv-ac__side{text-align:right;flex-shrink:0;}
+.inv-ac__price{font-weight:700;font-family:var(--font-mono);font-size:0.86rem;color:var(--text-primary);}
+.inv-ac__gst{font-size:0.72rem;color:var(--text-muted);}
+.inv-ac__stock{font-size:0.7rem;font-weight:600;margin-top:1px;}
+
+/* Product autocomplete results — professional ERP hover (blue bg, white text) */
+.inv-item-search .inv-ac{border-radius:10px;margin:4px 6px;padding:11px 12px;background:#fff;}
+.inv-item-search .inv-ac:hover,
+.inv-item-search .inv-ac.inv-ac--active{background:#2563EB;color:#fff;cursor:pointer;}
+.inv-item-search .inv-ac:hover .inv-ac__name,
+.inv-item-search .inv-ac:hover .inv-ac__sub,
+.inv-item-search .inv-ac:hover .inv-ac__price,
+.inv-item-search .inv-ac:hover .inv-ac__gst,
+.inv-item-search .inv-ac:hover .inv-ac__stock,
+.inv-item-search .inv-ac.inv-ac--active .inv-ac__name,
+.inv-item-search .inv-ac.inv-ac--active .inv-ac__sub,
+.inv-item-search .inv-ac.inv-ac--active .inv-ac__price,
+.inv-item-search .inv-ac.inv-ac--active .inv-ac__gst,
+.inv-item-search .inv-ac.inv-ac--active .inv-ac__stock{color:#fff !important;}
+.inv-item-search .inv-ac:hover .inv-ac__thumb,
+.inv-item-search .inv-ac.inv-ac--active .inv-ac__thumb{background:rgba(255,255,255,.22);color:#fff;}
+.inv-no-empty{padding:18px;text-align:center;color:var(--text-muted);font-size:0.84rem;}
+
+.inv-prod__meta{min-width:0;}
+.inv-prod__thumb--img{object-fit:cover;}
+.inv-qty{display:inline-flex;align-items:center;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;background:#fff;}
+.inv-qty__btn{width:30px;height:30px;border:none;background:#F1F5F9;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 150ms ease,color 150ms ease;}
+.inv-qty__btn svg{width:14px;height:14px;stroke-width:2.5;pointer-events:none;}
+.inv-qty__btn:hover{background:var(--color-primary-light);color:var(--color-primary);}
+.inv-qty__btn:focus-visible{outline:2px solid var(--color-primary);outline-offset:-2px;background:var(--color-primary-light);color:var(--color-primary);}
+.inv-qty__val{width:46px;height:30px;border:none;text-align:center;font-size:0.82rem;font-weight:600;background:#fff;color:var(--text-primary);}
+.inv-qty__val:focus{outline:none;}
+.inv-price{display:inline-flex;align-items:center;gap:2px;}
+.inv-price__sym{color:var(--text-muted);font-size:0.8rem;}
+.inv-price .inv-edit{text-align:right;}
+.inv-disc{display:inline-flex;align-items:center;gap:3px;}
+.inv-disc__pct{color:var(--text-muted);font-size:0.72rem;}
+.inv-input-edit{width:80px;}
+.inv-del svg{width:14px;height:14px;}
+.text-center{text-align:center;}
+</style>
+{% endblock %}

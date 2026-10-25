@@ -1,0 +1,207 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}GST Report{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('reports_page') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Reports</a>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="rpt-page">
+  <div class="rpt-hero">
+    <div>
+      <div class="rpt-crumb">Analytics / GST</div>
+      <h4>GST Report — {{ month }}/{{ year }}</h4>
+      <p>Tax computation summary, HSN-wise and state-wise breakdown for GST filing.</p>
+    </div>
+    <div class="rpt-actions">
+      <button class="rpt-btn print" onclick="RP.printPage()"><i data-lucide="printer"></i> Print</button>
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='sales', month=month, year=year) }}"><i data-lucide="file-down"></i> PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='sales', month=month, year=year) }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='sales', month=month, year=year) }}"><i data-lucide="file-text"></i> CSV</a>
+    </div>
+  </div>
+
+  <form method="GET" class="rpt-filters">
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Month</label>
+      <select class="rpt-select" name="month">
+        {% for m in range(1, 13) %}<option value="{{ m }}" {{ 'selected' if m==month }}>{{ '%02d'|format(m) }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Year</label>
+      <select class="rpt-select" name="year">
+        {% for y in range(now.year, now.year-4, -1) %}<option value="{{ y }}" {{ 'selected' if y==year }}>{{ y }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">GST Type</label>
+      <select class="rpt-select" name="gst_type">
+        <option value="">All</option>
+        <option value="intra" {{ 'selected' if filters.get('gst_type')=='intra' }}>Intra-state</option>
+        <option value="inter" {{ 'selected' if filters.get('gst_type')=='inter' }}>Inter-state</option>
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <label class="rpt-flabel">Customer</label>
+      <select class="rpt-select" name="customer_id">
+        <option value="">All</option>
+        {% for c in customers %}<option value="{{ c.id }}" {{ 'selected' if filters.get('customer_id')==c.id }}>{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="rpt-fgroup">
+      <button type="submit" class="rpt-btn rpt-btn-filter"><i data-lucide="filter"></i> Generate</button>
+    </div>
+    <div class="rpt-fgroup">
+      <a href="{{ url_for('gst_report') }}" class="rpt-btn rpt-btn-reset"><i data-lucide="rotate-ccw"></i> Reset</a>
+    </div>
+  </form>
+
+  <div class="rpt-stats">
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="receipt"></i></span></div><div class="rpt-stat-value">{{ inv_count }}</div><div class="rpt-stat-label">Invoices</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="indian-rupee"></i></span></div><div class="rpt-stat-value">{{ format_currency(total_taxable) }}</div><div class="rpt-stat-label">Taxable Value</div></div>
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="trending-up"></i></span></div><div class="rpt-stat-value">{{ format_currency(total_cgst) }}</div><div class="rpt-stat-label">CGST</div></div>
+    <div class="rpt-stat blue"><div class="rpt-stat-row"><span class="rpt-stat-ico blue"><i data-lucide="trending-up"></i></span></div><div class="rpt-stat-value">{{ format_currency(total_sgst) }}</div><div class="rpt-stat-label">SGST</div></div>
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="globe"></i></span></div><div class="rpt-stat-value">{{ format_currency(total_igst) }}</div><div class="rpt-stat-label">IGST</div></div>
+    <div class="rpt-stat purple"><div class="rpt-stat-row"><span class="rpt-stat-ico purple"><i data-lucide="landmark"></i></span></div><div class="rpt-stat-value">{{ format_currency(grand_total) }}</div><div class="rpt-stat-label">Total Value</div></div>
+    <div class="rpt-stat green"><div class="rpt-stat-row"><span class="rpt-stat-ico green"><i data-lucide="building"></i></span></div><div class="rpt-stat-value">{{ intra_count }}</div><div class="rpt-stat-label">Intra-state</div></div>
+    <div class="rpt-stat amber"><div class="rpt-stat-row"><span class="rpt-stat-ico amber"><i data-lucide="map-pin"></i></span></div><div class="rpt-stat-value">{{ inter_count }}</div><div class="rpt-stat-label">Inter-state</div></div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="circle-dollar-sign"></i> Tax Split</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="taxSplit"></canvas></div></div>
+    </div>
+    <div class="rpt-card">
+      <div class="rpt-card-head"><h3><i data-lucide="chart-bar"></i> Taxable by HSN</h3></div>
+      <div class="rpt-card-body"><div class="chart-box"><canvas id="hsnChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="rpt-card" data-report-table>
+    <div class="rpt-card-head"><h3><i data-lucide="layers"></i> HSN-wise Summary</h3><span class="rpt-count"></span></div>
+    <div class="rpt-toolbar"><div class="rpt-search"><i data-lucide="search"></i><input type="text" placeholder="Search HSN..."></div></div>
+    <div class="rpt-scroll no-h">
+      <table class="rpt-table">
+        <thead><tr><th>HSN</th><th class="tar">Rate %</th><th class="tar">Qty</th><th class="tar">Taxable</th><th class="tar">CGST</th><th class="tar">SGST</th><th class="tar">IGST</th><th class="tar">Total Tax</th><th class="tar">Invoices</th></tr></thead>
+        <tbody>
+        {% for h in hsn_summary %}
+        <tr>
+          <td>{{ h.hsn }}</td><td class="tar">{{ h.rate }}</td><td class="tar">{{ h.qty }}</td>
+          <td class="tar">{{ format_currency(h.taxable) }}</td>
+          <td class="tar">{{ format_currency(h.cgst) }}</td>
+          <td class="tar">{{ format_currency(h.sgst) }}</td>
+          <td class="tar">{{ format_currency(h.igst) }}</td>
+          <td class="tar">{{ format_currency(h.total) }}</td>
+          <td class="tar">{{ h.invoices }}</td>
+        </tr>
+        {% else %}<tr class="empty-row"><td colspan="9">No HSN data for this period.</td></tr>{% endfor %}
+        </tbody>
+        {% if hsn_summary %}
+        <tfoot><tr><td colspan="3">Totals</td>
+          <td class="tar">{{ format_currency(total_taxable) }}</td>
+          <td class="tar">{{ format_currency(total_cgst) }}</td>
+          <td class="tar">{{ format_currency(total_sgst) }}</td>
+          <td class="tar">{{ format_currency(total_igst) }}</td>
+          <td class="tar">{{ format_currency(grand_total - total_taxable) }}</td>
+          <td class="tar">{{ inv_count }}</td></tr></tfoot>
+        {% endif %}
+      </table>
+    </div>
+    <div class="rpt-pager"></div>
+  </div>
+
+  <div class="rpt-card" data-report-table>
+    <div class="rpt-card-head"><h3><i data-lucide="percent"></i> Rate-wise Summary</h3><span class="rpt-count"></span></div>
+    <div class="rpt-scroll no-h">
+      <table class="rpt-table">
+        <thead><tr><th class="tar">GST Rate %</th><th class="tar">Qty</th><th class="tar">Taxable</th><th class="tar">CGST</th><th class="tar">SGST</th><th class="tar">IGST</th><th class="tar">Total</th></tr></thead>
+        <tbody>
+        {% for r in rate_summary %}
+        <tr><td class="tar">{{ r.rate }}</td><td class="tar">{{ r.qty }}</td><td class="tar">{{ format_currency(r.taxable) }}</td><td class="tar">{{ format_currency(r.cgst) }}</td><td class="tar">{{ format_currency(r.sgst) }}</td><td class="tar">{{ format_currency(r.igst) }}</td><td class="tar">{{ format_currency(r.total) }}</td></tr>
+        {% else %}<tr class="empty-row"><td colspan="7">No data</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="rpt-grid">
+    <div class="rpt-card" data-report-table>
+      <div class="rpt-card-head"><h3><i data-lucide="map"></i> State-wise</h3><span class="rpt-count"></span></div>
+      <div class="rpt-scroll no-h">
+        <table class="rpt-table">
+          <thead><tr><th>Code</th><th>State</th><th class="tar">Invoices</th><th class="tar">Taxable</th><th class="tar">Tax</th></tr></thead>
+          <tbody>
+          {% for s in state_wise %}<tr><td>{{ s.code }}</td><td>{{ s.name }}</td><td class="tar">{{ s.count }}</td><td class="tar">{{ format_currency(s.taxable) }}</td><td class="tar">{{ format_currency(s.tax) }}</td></tr>
+          {% else %}<tr class="empty-row"><td colspan="5">No data</td></tr>{% endfor %}
+          </tbody>
+        </table></div>
+      <div class="rpt-pager"></div>
+    </div>
+    <div class="rpt-card" data-report-table>
+      <div class="rpt-card-head"><h3><i data-lucide="users"></i> Customer-wise</h3><span class="rpt-count"></span></div>
+      <div class="rpt-scroll no-h">
+        <table class="rpt-table">
+          <thead><tr><th>Customer</th><th class="tar">Invoices</th><th class="tar">Taxable</th><th class="tar">Tax</th><th class="tar">Total</th></tr></thead>
+          <tbody>
+          {% for c in customer_wise %}<tr><td>{{ c.name }}</td><td class="tar">{{ c.count }}</td><td class="tar">{{ format_currency(c.taxable) }}</td><td class="tar">{{ format_currency(c.tax) }}</td><td class="tar">{{ format_currency(c.total) }}</td></tr>
+          {% else %}<tr class="empty-row"><td colspan="5">No data</td></tr>{% endfor %}
+          </tbody>
+        </table></div>
+      <div class="rpt-pager"></div>
+    </div>
+  </div>
+
+  <div class="rpt-card" data-report-table>
+    <div class="rpt-card-head"><h3><i data-lucide="file-text"></i> GST Register (GSTIN-wise)</h3><span class="rpt-count"></span></div>
+    <div class="rpt-toolbar"><div class="rpt-search"><i data-lucide="search"></i><input type="text" placeholder="Search GSTIN..."></div></div>
+    <div class="rpt-scroll no-h">
+      <table class="rpt-table">
+        <thead><tr><th>GSTIN</th><th>Customer</th><th class="tar">Invoices</th><th class="tar">Taxable</th><th class="tar">Tax</th><th class="tar">Total</th></tr></thead>
+        <tbody>
+        {% for g in gstin_wise %}<tr><td>{{ g.gstin }}</td><td>{{ g.name }}</td><td class="tar">{{ g.count }}</td><td class="tar">{{ format_currency(g.taxable) }}</td><td class="tar">{{ format_currency(g.tax) }}</td><td class="tar">{{ format_currency(g.total) }}</td></tr>
+        {% else %}<tr class="empty-row"><td colspan="6">No data</td></tr>{% endfor %}
+        </tbody>
+        {% if gstin_wise %}<tfoot><tr><td>Total</td><td></td><td class="tar">{{ inv_count }}</td><td class="tar">{{ format_currency(total_taxable) }}</td><td class="tar">{{ format_currency(grand_total - total_taxable) }}</td><td class="tar">{{ format_currency(grand_total) }}</td></tr></tfoot>{% endif %}
+      </table></div>
+    <div class="rpt-pager"></div>
+  </div>
+
+  <div class="rpt-card" data-report-table>
+    <div class="rpt-card-head"><h3><i data-lucide="receipt"></i> Invoice-wise Tax</h3><span class="rpt-count"></span></div>
+    <div class="rpt-toolbar"><div class="rpt-search"><i data-lucide="search"></i><input type="text" placeholder="Search..."></div></div>
+    <div class="rpt-scroll">
+      <table class="rpt-table">
+        <thead><tr><th>Invoice #</th><th>Date</th><th>Customer</th><th class="tar">Taxable</th><th class="tar">CGST</th><th class="tar">SGST</th><th class="tar">IGST</th><th class="tar">Total</th></tr></thead>
+        <tbody>
+        {% for inv in invoices %}
+        <tr><td>{{ inv.invoice_number }}</td><td>{{ inv.invoice_date.strftime('%d %b %Y') if inv.invoice_date else '' }}</td><td>{{ inv.customer_name }}</td><td class="tar">{{ format_currency(inv.total_taxable or 0) }}</td><td class="tar">{{ format_currency(inv.total_cgst or 0) }}</td><td class="tar">{{ format_currency(inv.total_sgst or 0) }}</td><td class="tar">{{ format_currency(inv.total_igst or 0) }}</td><td class="tar">{{ format_currency(inv.grand_total or 0) }}</td></tr>
+        {% else %}<tr class="empty-row"><td colspan="8">No invoices</td></tr>{% endfor %}
+        </tbody>
+      </table></div>
+    <div class="rpt-pager"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/reports.js') }}?v=2"></script>
+<script>
+  var HSN = {{ hsn_summary | tojson }};
+  var pal = RP.PALETTE;
+  var tax = { cgst: {{ total_cgst }}, sgst: {{ total_sgst }}, igst: {{ total_igst }} };
+  RP.drawChart({ el: document.getElementById('taxSplit'), type:'doughnut', money:true, legend:true,
+    labels: ['CGST','SGST','IGST'], datasets:[{ data: [tax.cgst, tax.sgst, tax.igst],
+      backgroundColor: [pal[0]+'CC', pal[1]+'CC', pal[2]+'CC'], borderColor:['#fff','#fff','#fff'], borderWidth:2 }]});
+  if (HSN.length) {
+    var top = HSN.slice(0, 10).reverse();
+    RP.drawChart({ el: document.getElementById('hsnChart'), type:'bar', money:true, legend:false, categoryPercent:true,
+      labels: top.map(function(h){return h.hsn;}),
+      datasets:[{ label:'Taxable', data: top.map(function(h){return h.taxable;}), backgroundColor: top.map(function(_,i){return pal[i%pal.length]+'AA';}), borderRadius:4 }]});
+  }
+</script>
+{% endblock %}

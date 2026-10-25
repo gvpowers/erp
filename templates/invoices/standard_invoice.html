@@ -1,0 +1,369 @@
+{# ==========================================================================
+   GV POWERS ERP — THE CANONICAL STANDARD TAX INVOICE
+   ==========================================================================
+   This file is the ONE authoritative invoice layout in the whole project.
+   There is no second, third or "print specific" invoice template, and there
+   is no second invoice stylesheet. Every invoice the ERP can produce is
+   produced by this file plus static/css/invoice.css:
+
+     Invoice preview      templates/billing/invoice_preview.html
+     Printable invoice    templates/billing/print_invoice.html
+     Print all 3 copies   templates/billing/print_all_copies.html
+     Downloaded PDF       app.py::_generate_invoice_pdf_canonical (WeasyPrint)
+
+   The ONLY thing that differs between the Admin/Owner, Customer and GST Tax
+   copies is the copy label, and that is derived here from `copy_type` so the
+   three copies can never drift apart:
+
+     copy_type = owner     ->  ADMIN / OWNER COPY
+     copy_type = customer  ->  CUSTOMER COPY
+     copy_type = gst       ->  GST TAX COPY
+
+   Usage:
+     {% from "invoices/standard_invoice.html" import standard_invoice with context %}
+     {{ standard_invoice(invoice, company, copy_type, amount_words) }}
+
+   Optional kwargs (used by the PDF renderer):
+     logo_url       overrides the logo src. The PDF path passes an absolute
+                    file:// URI so WeasyPrint never needs the web server.
+     logo_disabled  set to True to suppress the logo entirely.
+   ========================================================================== #}
+{% from "partials/logo.html" import gv_logo with context %}
+
+{% macro standard_invoice(invoice, company=None, copy_type='customer',
+                          amount_words='', logo_url=None, logo_disabled=False,
+                          fill_page=False, bottom_spacer=0) -%}
+
+{# ---- The copy label is the ONLY per-copy difference. ---------------------- #}
+{%- set _GVP_COPY_LABELS = {
+      'owner':    'ADMIN / OWNER COPY',
+      'customer': 'CUSTOMER COPY',
+      'gst':      'GST TAX COPY'} -%}
+{%- set copy_type = copy_type if copy_type in _GVP_COPY_LABELS else 'customer' -%}
+{%- set copy_label = _GVP_COPY_LABELS[copy_type] -%}
+
+{# ---- Company identity. Every field carries the approved GV POWERS value as
+        a fallback so a missing config key can never drop a header line. ------- #}
+{%- set co = company or {} -%}
+{%- set brand_name = (co.name or 'GV POWERS') | upper -%}
+{%- set address = co.address or 'No. 10, Kadharkhan Street, Opp. Railway Junction, Salem - 636005, Tamil Nadu, India' -%}
+{%- set address_lines = gvp_address_lines(address, co.city or 'Salem', co.pincode or '636005') -%}
+{%- set phone = co.phone or '+91 98940 79090' -%}
+{%- set mobile = co.mobile or '+91 98940 79095' -%}
+{%- set email = co.email or 'gvpowerssalem@gmail.com' -%}
+{%- set gstin = co.gstin or '33AGEPV1534G2ZJ' -%}
+{%- set website = co.website or 'https://gvpowers.in' -%}
+
+{# ---- Invoice helpers ------------------------------------------------------ #}
+{%- set cust_state = invoice.customer_state or co.state or 'N/A' -%}
+{%- set cust_state_code = invoice.customer_state_code or co.state_code -%}
+{%- set state_str = cust_state ~ ((' (' ~ cust_state_code ~ ')') if cust_state_code else '') -%}
+{%- set payment_method_text = _payment_method_label(invoice.payment_method) if invoice.payment_method else 'N/A' -%}
+{%- set has_discount = (invoice.total_discount or 0) > 0 -%}
+{%- set has_round_off = invoice.round_off and invoice.round_off != 0 -%}
+
+<div class="gvp-sheet{% if fill_page %} gvp-fill-page{% endif %}" data-print-sheet data-copy-type="{{ copy_type }}">
+    <div class="gvp-main">
+
+    {# ===================== HEADER: logo + identity | doc title + copy label ==================== #}
+    <div class="gvp-head">
+        <div class="gvp-brand">
+            {% if not logo_disabled %}
+            <div class="gvp-logo">{{ gv_logo(alt=brand_name ~ ' Logo', src=logo_url) }}</div>
+            {% endif %}
+            <div class="gvp-brand-text">
+                <div class="gvp-brand-name">{{ brand_name }}</div>
+                <div class="gvp-brand-contact">
+                    {% for line in address_lines %}<span class="gvp-line">{{ line }}</span>{% endfor %}
+                    <span class="gvp-line">Phone: <span class="gvp-em">{{ phone }}</span></span>
+                    <span class="gvp-line">Mobile: <span class="gvp-em">{{ mobile }}</span></span>
+                    <span class="gvp-line">Email: <span class="gvp-em">{{ email }}</span></span>
+                    <span class="gvp-line gvp-line-navy">GSTIN: {{ gstin }}</span>
+                    <span class="gvp-line gvp-line-navy">{{ website }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="gvp-title-cell">
+            <div class="gvp-doc-title">Tax Invoice</div>
+            <div class="gvp-copy-label">{{ copy_label }}</div>
+            {% set _qr = invoice_qr_data_uri(invoice) %}
+            {% if _qr %}
+            <div class="gvp-header-qr">
+                <img src="{{ _qr }}" alt="Scan to view or download this invoice" />
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# ===================== BILL TO + INVOICE DETAILS ====================
+       A real HTML table (not flexbox/grid) gives WeasyPrint and the browser
+       identical column behaviour. Each side has its own nested label/value
+       table, so a long address or email can only wrap inside the Bill To
+       column and can never run into Invoice Details. #}
+    <table class="gvp-party-table">
+        <colgroup>
+            <col class="gvp-party-col"><col class="gvp-party-col">
+        </colgroup>
+        <tbody>
+            <tr>
+                <td class="gvp-party-cell gvp-party-left">
+                    <div class="gvp-sec-head">Bill To</div>
+                    <table class="gvp-kv-table">
+                        <colgroup><col class="gvp-kv-col-k"><col></colgroup>
+                        <tbody>
+                            <tr><td colspan="2" class="gvp-cust-name">{{ invoice.customer_name or '—' }}</td></tr>
+                            {% if invoice.customer_address %}
+                            <tr><td class="k">Address</td><td class="v v-wrap">{{ invoice.customer_address }}</td></tr>
+                            {% endif %}
+                            {% if invoice.customer_mobile %}
+                            <tr><td class="k">Mobile</td><td class="v">{{ invoice.customer_mobile }}</td></tr>
+                            {% endif %}
+                            {% if invoice.customer_email %}
+                            <tr><td class="k">Email</td><td class="v v-wrap">{{ invoice.customer_email }}</td></tr>
+                            {% endif %}
+                            {% if invoice.customer_gstin %}
+                            <tr><td class="k">GSTIN</td><td class="v v-mono">{{ invoice.customer_gstin }}</td></tr>
+                            {% endif %}
+                            <tr><td class="k">State</td><td class="v">{{ state_str }}</td></tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td class="gvp-party-cell gvp-party-right">
+                    <div class="gvp-sec-head">Invoice Details</div>
+                    <table class="gvp-kv-table">
+                        <colgroup><col class="gvp-kv-col-k"><col></colgroup>
+                        <tbody>
+                            <tr><td class="k">Invoice No.</td><td class="v v-mono">{{ invoice.invoice_number }}</td></tr>
+                            {% if invoice.eway_bill_number %}
+                            <tr><td class="k">E-Way Bill No.</td><td class="v v-mono">{{ invoice.eway_bill_number }}</td></tr>
+                            {% endif %}
+                            <tr><td class="k">Invoice Date</td><td class="v">{{ invoice.invoice_date.strftime('%d-%m-%Y') if invoice.invoice_date else '—' }}</td></tr>
+                            {% if invoice.due_date %}
+                            <tr><td class="k">Due Date</td><td class="v">{{ invoice.due_date.strftime('%d-%m-%Y') }}</td></tr>
+                            {% endif %}
+                            <tr><td class="k">Place of Supply</td><td class="v">{{ state_str }}</td></tr>
+                            {% if invoice.quotation %}
+                            <tr><td class="k">Reference</td><td class="v v-mono">{{ invoice.quotation.quotation_number }}</td></tr>
+                            {% endif %}
+                            <tr><td class="k">Payment Method</td><td class="v">{{ payment_method_text }}</td></tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    {# ===================== ITEM TABLE (13 real columns) ==================== #}
+    <div class="gvp-items-wrap">
+        <table class="gvp-items">
+            <colgroup>
+                <col class="c-si"><col class="c-desc"><col class="c-hsn"><col class="c-qty">
+                <col class="c-unit"><col class="c-rate"><col class="c-disc"><col class="c-gst">
+                <col class="c-tax"><col class="c-cgst"><col class="c-sgst"><col class="c-igst"><col class="c-amt">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="c">SI. NO.</th>
+                    <th>Description of Goods and Services</th>
+                    <th class="c">HSN/SAC</th>
+                    <th class="c">QTY</th>
+                    <th class="c">UNIT</th>
+                    <th class="r">RATE</th>
+                    <th class="r">DISC. %</th>
+                    <th class="r">GST %</th>
+                    <th class="r">TAXABLE</th>
+                    <th class="r">CGST</th>
+                    <th class="r">SGST</th>
+                    <th class="r">IGST</th>
+                    <th class="r">AMOUNT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set ts = {'tax': 0, 'cgst': 0, 'sgst': 0, 'igst': 0, 'amt': 0} %}
+                {% for item in invoice.items %}
+                {% set _ = ts.update(tax=ts['tax'] + item.taxable_value, cgst=ts['cgst'] + item.cgst, sgst=ts['sgst'] + item.sgst, igst=ts['igst'] + item.igst, amt=ts['amt'] + item.total) %}
+                {% set item_desc = line_item_description(item) %}
+                <tr>
+                    <td class="c">{{ loop.index }}</td>
+                    <td class="gvp-desc"><span class="gvp-prod">{{ item.product_name }}</span>{% if item_desc %}<span class="gvp-item-desc">{{ item_desc }}</span>{% endif %}</td>
+                    <td class="c num">{{ item.hsn or '—' }}</td>
+                    <td class="c num">{{ item.qty }}</td>
+                    <td class="c">{{ item.unit or 'pcs' }}</td>
+                    <td class="r num">{{ format_currency(item.price, symbol=False) }}</td>
+                    <td class="r num">{{ '%.2f'|format(item.discount or 0) }}%</td>
+                    <td class="r num">{{ '%.2f'|format(item.gst_rate or 0) }}%</td>
+                    <td class="r num">{{ format_currency(item.taxable_value, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(item.cgst, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(item.sgst, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(item.igst, symbol=False) }}</td>
+                    <td class="r num gvp-amt">{{ format_currency(item.total, symbol=False) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="8" class="r gvp-total-label">Total</td>
+                    <td class="r num">{{ format_currency(ts['tax'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(ts['cgst'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(ts['sgst'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(ts['igst'], symbol=False) }}</td>
+                    <td class="r num gvp-amt">{{ format_currency(ts['amt'], symbol=False) }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="gvp-currency-note">All amounts are expressed in Indian Rupees (Rs.).</div>
+
+    {# ===================== HSN / GST SUMMARY ==================== #}
+    <div class="gvp-band-head">HSN / GST SUMMARY</div>
+    <div class="gvp-gst-wrap">
+        <table class="gvp-gst">
+            <colgroup>
+                <col class="g-hsn"><col class="g-tax"><col class="g-rate">
+                <col class="g-cgst"><col class="g-sgst"><col class="g-igst"><col class="g-total">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>HSN/SAC</th>
+                    <th>Taxable Value</th>
+                    <th>GST Rate</th>
+                    <th class="r">CGST</th>
+                    <th class="r">SGST</th>
+                    <th class="r">IGST</th>
+                    <th class="r">Total Tax</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set ns = namespace(hsn={}) %}
+                {% for item in invoice.items %}
+                    {% set h = item.hsn or 'N/A' %}
+                    {% if h not in ns.hsn %}
+                        {% set _ = ns.hsn.update({h: {'taxable': 0, 'cgst': 0, 'sgst': 0, 'igst': 0, 'rate': item.gst_rate or 0}}) %}
+                    {% endif %}
+                    {% set _ = ns.hsn[h].update({'taxable': ns.hsn[h]['taxable'] + item.taxable_value, 'cgst': ns.hsn[h]['cgst'] + item.cgst, 'sgst': ns.hsn[h]['sgst'] + item.sgst, 'igst': ns.hsn[h]['igst'] + item.igst}) %}
+                {% endfor %}
+                {% for h, d in ns.hsn.items() %}
+                <tr>
+                    <td class="v-mono">{{ h }}</td>
+                    <td class="r num">{{ format_currency(d['taxable'], symbol=False) }}</td>
+                    <td class="c num">{{ '%.0f'|format(d['rate']) }}%</td>
+                    <td class="r num">{{ format_currency(d['cgst'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(d['sgst'], symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(d['igst'], symbol=False) }}</td>
+                    <td class="r num gvp-amt">{{ format_currency(d['cgst'] + d['sgst'] + d['igst'], symbol=False) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Total</td>
+                    <td class="r num">{{ format_currency(invoice.total_taxable, symbol=False) }}</td>
+                    <td></td>
+                    <td class="r num">{{ format_currency(invoice.total_cgst, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(invoice.total_sgst, symbol=False) }}</td>
+                    <td class="r num">{{ format_currency(invoice.total_igst, symbol=False) }}</td>
+                    <td class="r num gvp-amt">{{ format_currency(invoice.total_cgst + invoice.total_sgst + invoice.total_igst, symbol=False) }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    {# ===================== PAYMENT INFORMATION + INVOICE SUMMARY ====================
+       A real two-column table with one independent four-cell payment table.
+       Every label and value owns its own cell, so the payment block cannot
+       collide with Invoice Summary in either browser print or the PDF. #}
+    <table class="bottom-sections-table">
+        <colgroup>
+            <col class="bottom-col-payment"><col class="bottom-col-summary">
+        </colgroup>
+        <tbody>
+            <tr>
+                <td class="payment-section">
+                    <div class="gvp-sec-head">Payment Information</div>
+                    <table class="payment-info-table">
+                        <colgroup>
+                            <col class="payment-col-label"><col class="payment-col-value">
+                            <col class="payment-col-label"><col class="payment-col-value">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="payment-label">Payment Method</td>
+                                <td class="payment-value">{{ _payment_method_label(last_payment.payment_method) if last_payment and last_payment.payment_method else payment_method_text }}</td>
+                                <td class="payment-label">Payment Status</td>
+                                <td class="payment-value">{{ _payment_status_label(invoice.payment_status) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="payment-label">Amount Paid</td>
+                                <td class="payment-value">{{ format_currency(invoice.amount_paid) }}</td>
+                                <td class="payment-label">Balance Due</td>
+                                <td class="payment-value">{{ format_currency(invoice.balance_due) }}</td>
+                            </tr>
+                            {% if last_payment and _payment_display_ref(last_payment) %}
+                            <tr>
+                                <td class="payment-label">Reference</td>
+                                <td class="payment-value v-mono" colspan="3">{{ _payment_display_ref(last_payment) }}</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </td>
+
+                <td class="summary-section">
+                    <div class="gvp-sec-head">Invoice Summary</div>
+                    <table class="gvp-totals">
+                        <tr><td class="l">Subtotal</td><td class="v num">{{ format_currency(invoice.subtotal) }}</td></tr>
+                        {% if has_discount %}
+                        <tr><td class="l">Discount</td><td class="v num v-credit">-{{ format_currency(invoice.total_discount) }}</td></tr>
+                        {% endif %}
+                        <tr><td class="l">Taxable Amount</td><td class="v num">{{ format_currency(invoice.total_taxable) }}</td></tr>
+                        <tr><td class="l">CGST</td><td class="v num">{{ format_currency(invoice.total_cgst) }}</td></tr>
+                        <tr><td class="l">SGST</td><td class="v num">{{ format_currency(invoice.total_sgst) }}</td></tr>
+                        <tr><td class="l">IGST</td><td class="v num">{{ format_currency(invoice.total_igst) }}</td></tr>
+                        {% if has_round_off %}
+                        <tr><td class="l">Round Off</td><td class="v num">{{ format_currency(invoice.round_off) }}</td></tr>
+                        {% endif %}
+                        <tr class="gvp-grand">
+                            <td class="l gvp-grand-label">Grand Total</td>
+                            <td class="v num gvp-grand-value">{{ format_currency(invoice.grand_total) }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    {# ===================== AMOUNT IN WORDS ==================== #}
+    <div class="gvp-words">
+        <span class="gvp-words-head">Amount in Words</span>
+        <span class="gvp-words-value">{{ amount_words if amount_words else 'Rupees Zero Only' }}</span>
+    </div>
+
+    {# ===================== TERMS (only when the invoice carries any) ==================== #}
+    {% if invoice.terms %}
+    <div class="gvp-terms">
+        <div class="gvp-sec-head">Terms &amp; Conditions</div>
+        <div class="gvp-sec-body">{{ invoice.terms }}</div>
+    </div>
+    {% endif %}
+    </div><!-- /.gvp-main -->
+
+    {# Absorbs the leftover page height so the signature block is always pushed
+       to the foot of the A4 sheet. On a multi-page invoice the PDF renderer sets
+       an explicit spacer measured from the final page's layout. #}
+    <div class="gvp-filler"{% if bottom_spacer %} style="height: {{ '%.3f'|format(bottom_spacer) }}px; flex: 0 0 auto"{% endif %}></div>
+
+    {# ===================== SIGNATURES — bottom of the A4 sheet ==================== #}
+    <div class="gvp-bottom">
+        <div class="gvp-sigs">
+            <div class="gvp-sig gvp-sig-left">
+                <div class="gvp-sig-label">Customer Signature</div>
+            </div>
+            <div class="gvp-sig gvp-sig-right">
+                <div class="gvp-sig-label">For {{ brand_name }}</div>
+                <div class="gvp-sig-sub">Authorized Signatory</div>
+            </div>
+        </div>
+        <div class="gvp-foot">This is a computer-generated invoice.</div>
+    </div>
+</div>
+{%- endmacro %}

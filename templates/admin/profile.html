@@ -1,0 +1,180 @@
+{% extends "layouts/admin_layout.html" %}
+{% block page_title %}My Profile{% endblock %}
+{% block back_link %}
+<a href="{{ url_for('dashboard') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-xl-7">
+    <div class="d-flex align-items-center mb-4">
+      <h4 class="mb-0"><i data-lucide="user-circle" class="me-2"></i>My Profile</h4>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="alert alert-{{ 'success' if cat == 'success' else 'danger' if cat == 'danger' else 'info' }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card mb-4">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center mb-4">
+          <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3" style="width:72px;height:72px;flex-shrink:0;">
+            <span class="text-white fw-bold" style="font-size:1.5rem;">{{ (current_user.full_name or current_user.username)[0]|upper }}</span>
+          </div>
+          <div>
+            <h5 class="fw-bold mb-0">{{ current_user.full_name or current_user.username }}</h5>
+            <span class="badge badge-info mt-1">{{ current_user.role | capitalize }}</span>
+          </div>
+        </div>
+        <div class="row g-3">
+          <div class="col-sm-4">
+            <small class="text-muted d-block mb-1">Username</small>
+            <span class="fw-semibold">{{ current_user.username }}</span>
+          </div>
+          <div class="col-sm-4">
+            <small class="text-muted d-block mb-1">Email</small>
+            <span class="fw-semibold">{{ current_user.email or 'Not set' }}</span>
+          </div>
+          <div class="col-sm-4">
+            <small class="text-muted d-block mb-1">Role</small>
+            <span class="fw-semibold">{{ current_user.role | capitalize }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <i data-lucide="pencil"></i>
+        <span>Edit Profile</span>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('profile') }}">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" name="full_name" value="{{ current_user.full_name or '' }}" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" name="email" value="{{ current_user.email or '' }}">
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary">
+              <i data-lucide="save" class="me-1"></i> Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <i data-lucide="lock"></i>
+        <span>Change Password</span>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('profile') }}">
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="form-group">
+                <label class="form-label">Current Password <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i data-lucide="key" style="width:14px;height:14px;"></i></span>
+                  <input type="password" class="form-control" name="current_password" id="currentPassword" required>
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePw('currentPassword', this)">
+                    <i data-lucide="eye" style="width:14px;height:14px;"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">New Password <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i data-lucide="lock" style="width:14px;height:14px;"></i></span>
+                  <input type="password" class="form-control" name="new_password" id="newPassword" required minlength="8">
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePw('newPassword', this)">
+                    <i data-lucide="eye" style="width:14px;height:14px;"></i>
+                  </button>
+                </div>
+                <div class="form-text">Minimum 8 characters</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Confirm New Password <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i data-lucide="lock" style="width:14px;height:14px;"></i></span>
+                  <input type="password" class="form-control" name="confirm_password" id="confirmPassword" required minlength="8">
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePw('confirmPassword', this)">
+                    <i data-lucide="eye" style="width:14px;height:14px;"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="passwordMismatch" class="alert alert-danger mt-3 d-none" role="alert">
+            <i data-lucide="alert-circle" class="me-2" style="width:16px;height:16px;"></i>
+            <span>Passwords do not match</span>
+          </div>
+
+          <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-warning" id="changePwBtn" onclick="return validatePasswords()">
+              <i data-lucide="shield" class="me-1"></i> Change Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const icon = btn.querySelector('i');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.setAttribute('data-lucide', 'eye-off');
+  } else {
+    inp.type = 'password';
+    icon.setAttribute('data-lucide', 'eye');
+  }
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function validatePasswords() {
+  const newPw = document.getElementById('newPassword').value;
+  const confirmPw = document.getElementById('confirmPassword').value;
+  const msg = document.getElementById('passwordMismatch');
+  if (newPw !== confirmPw) {
+    msg.classList.remove('d-none');
+    return false;
+  }
+  msg.classList.add('d-none');
+  return true;
+}
+
+document.getElementById('confirmPassword')?.addEventListener('input', function() {
+  const msg = document.getElementById('passwordMismatch');
+  if (this.value !== document.getElementById('newPassword').value) {
+    msg.classList.remove('d-none');
+  } else {
+    msg.classList.add('d-none');
+  }
+});
+</script>
+{% endblock %}
