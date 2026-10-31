@@ -1,0 +1,39 @@
+source,table,row_count,column_count,index_count,foreign_key_count,integrity_status,notes
+candidate,audit_logs,43,8,0,1,ok,production backup data
+candidate,backup_events,0,15,5,0,ok,production backup data
+candidate,categories,0,4,1,0,ok,production backup data
+candidate,customers,2,12,0,0,ok,production backup data
+candidate,gst_master,0,7,0,0,ok,production backup data
+candidate,invoice_items,8,16,0,2,ok,production backup data; reviewed in invoice_audit.csv
+candidate,invoice_sequences,2,6,1,0,ok,production backup data
+candidate,invoices,2,34,4,3,ok,production backup data; reviewed in invoice_audit.csv
+candidate,notifications,3,7,0,1,ok,production backup data
+candidate,payments,0,14,0,2,ok,production backup data; reviewed in invoice_audit.csv
+candidate,products,8,29,2,2,ok,production backup data
+candidate,purchase_items,0,10,0,2,ok,production backup data
+candidate,purchase_orders,0,14,1,2,ok,production backup data
+candidate,quotation_items,0,16,0,2,ok,production backup data
+candidate,quotations,0,27,1,2,ok,production backup data
+candidate,settings,0,4,1,0,ok,production backup data
+candidate,stock_movements,19,9,0,2,ok,production backup data; reviewed in inventory_audit.csv
+candidate,suppliers,0,12,0,0,ok,production backup data
+candidate,users,1,10,2,0,ok,production backup data
+live_local,audit_logs,7,8,0,1,ok,separate local dataset; not proven to be production
+live_local,backup_events,0,15,5,0,ok,separate local dataset; not proven to be production
+live_local,categories,0,4,1,0,ok,separate local dataset; not proven to be production
+live_local,customers,1,12,0,0,ok,separate local dataset; not proven to be production
+live_local,gst_master,0,7,0,0,ok,separate local dataset; not proven to be production
+live_local,invoice_items,0,16,0,2,ok,separate local dataset; not proven to be production
+live_local,invoice_sequences,0,6,1,0,ok,separate local dataset; not proven to be production
+live_local,invoices,0,34,4,3,ok,separate local dataset; not proven to be production
+live_local,notifications,0,7,0,1,ok,separate local dataset; not proven to be production
+live_local,payments,0,14,0,2,ok,separate local dataset; not proven to be production
+live_local,products,2,29,2,2,ok,separate local dataset; not proven to be production
+live_local,purchase_items,0,10,0,2,ok,separate local dataset; not proven to be production
+live_local,purchase_orders,0,14,1,2,ok,separate local dataset; not proven to be production
+live_local,quotation_items,0,16,0,2,ok,separate local dataset; not proven to be production
+live_local,quotations,0,27,1,2,ok,separate local dataset; not proven to be production
+live_local,settings,0,4,1,0,ok,separate local dataset; not proven to be production
+live_local,stock_movements,0,9,0,2,ok,separate local dataset; not proven to be production
+live_local,suppliers,0,12,0,0,ok,separate local dataset; not proven to be production
+live_local,users,1,10,2,0,ok,separate local dataset; not proven to be production

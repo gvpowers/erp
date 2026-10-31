@@ -1,0 +1,373 @@
+{
+  "generated_at_utc": "2026-10-31T03:39:07.992237+00:00",
+  "generated_at_local": "2026-10-31T09:09:07.992246+05:30",
+  "scope": {
+    "candidate": "C:\\Users\\kamle\\PycharmProjects\\gvpowers\\erp\\backups\\gv_powers_erp_20261031_031122.sql.db",
+    "live_local": "C:\\Users\\kamle\\PycharmProjects\\gvpowers\\erp\\instance\\app.db",
+    "production_server": "/home/kaml/erp-new (reported); not accessed",
+    "production_unit": "erp.service (reported) / gvpowers.service (repo file)",
+    "production_domain": "erp.gvpowers.in (reported; not verified)",
+    "replacement_performed": false,
+    "database_writes_performed": false
+  },
+  "files": {
+    "candidate": {
+      "path": "C:\\Users\\kamle\\PycharmProjects\\gvpowers\\erp\\backups\\gv_powers_erp_20261031_031122.sql.db",
+      "size_bytes": 167936,
+      "mtime_local": "2026-10-31T08:41:31.514030+05:30",
+      "sha256": "A4B6382B3F6258D1F34EA876023D831F4E848E3EDE20583DD2613C03EB708C8E",
+      "integrity_check": [
+        "ok"
+      ],
+      "quick_check": [
+        "ok"
+      ],
+      "foreign_key_check": [],
+      "encoding": "UTF-8",
+      "journal_mode": "delete",
+      "page_count": 41,
+      "freelist_count": 0,
+      "user_version": 0,
+      "schema_version": 29
+    },
+    "live_local": {
+      "path": "C:\\Users\\kamle\\PycharmProjects\\gvpowers\\erp\\instance\\app.db",
+      "size_bytes": 167936,
+      "mtime_local": "2026-10-31T08:54:51.701311+05:30",
+      "sha256": "EB1EFF0EE865D4E28A99411FACA2BB56FD6B21F4D80C2E796AEB0579C2F575F1",
+      "integrity_check": [
+        "ok"
+      ],
+      "quick_check": [
+        "ok"
+      ],
+      "foreign_key_check": [],
+      "encoding": "UTF-8",
+      "journal_mode": "delete",
+      "page_count": 41,
+      "freelist_count": 0,
+      "user_version": 0,
+      "schema_version": 30
+    }
+  },
+  "table_counts": {
+    "candidate": {
+      "audit_logs": 43,
+      "backup_events": 0,
+      "categories": 0,
+      "customers": 2,
+      "gst_master": 0,
+      "invoice_items": 8,
+      "invoice_sequences": 2,
+      "invoices": 2,
+      "notifications": 3,
+      "payments": 0,
+      "products": 8,
+      "purchase_items": 0,
+      "purchase_orders": 0,
+      "quotation_items": 0,
+      "quotations": 0,
+      "settings": 0,
+      "stock_movements": 19,
+      "suppliers": 0,
+      "users": 1
+    },
+    "live_local": {
+      "audit_logs": 7,
+      "backup_events": 0,
+      "categories": 0,
+      "customers": 1,
+      "gst_master": 0,
+      "invoice_items": 0,
+      "invoice_sequences": 0,
+      "invoices": 0,
+      "notifications": 0,
+      "payments": 0,
+      "products": 2,
+      "purchase_items": 0,
+      "purchase_orders": 0,
+      "quotation_items": 0,
+      "quotations": 0,
+      "settings": 0,
+      "stock_movements": 0,
+      "suppliers": 0,
+      "users": 1
+    },
+    "candidate_minus_live": {
+      "audit_logs": 36,
+      "backup_events": 0,
+      "categories": 0,
+      "customers": 1,
+      "gst_master": 0,
+      "invoice_items": 8,
+      "invoice_sequences": 2,
+      "invoices": 2,
+      "notifications": 3,
+      "payments": 0,
+      "products": 6,
+      "purchase_items": 0,
+      "purchase_orders": 0,
+      "quotation_items": 0,
+      "quotations": 0,
+      "settings": 0,
+      "stock_movements": 19,
+      "suppliers": 0,
+      "users": 0
+    }
+  },
+  "schema": {
+    "tables_match": true,
+    "only_candidate_tables": [],
+    "only_live_tables": [],
+    "columns_match_models": true,
+    "indexes_match_live": true,
+    "candidate_schema_version": 29,
+    "live_schema_version": 30
+  },
+  "data_quality": {
+    "candidate_orphan_counts": {
+      "invoice_items.invoice_id": 0,
+      "invoice_items.product_id": 0,
+      "payments.invoice_id": 0,
+      "stock_movements.product_id": 0,
+      "invoices.customer_id": 0,
+      "notifications.user_id": 0,
+      "audit_logs.user_id": 0
+    },
+    "candidate_duplicate_key_groups": {},
+    "candidate_negative_stock_products": [],
+    "candidate_stock_movement_mismatches": [],
+    "candidate_low_stock_products": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "candidate_low_stock_without_active_alert": [
+      2,
+      5,
+      6,
+      7,
+      8
+    ],
+    "candidate_zero_purchase_price_products": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "candidate_paid_without_payment_rows": [
+      "INV-29092026-001",
+      "INV-30102026-001"
+    ],
+    "candidate_payment_total": "0.00",
+    "candidate_invoice_amount_paid_total": "1020055.00",
+    "candidate_customer_ledger_closing_total_without_payment_rows": "1020055.00",
+    "candidate_invoice_balance_due_total": "0.00",
+    "candidate_line_rounding_variance_invoices": [
+      "INV-30102026-001"
+    ],
+    "live_orphan_counts": {
+      "invoice_items.invoice_id": 0,
+      "invoice_items.product_id": 0,
+      "payments.invoice_id": 0,
+      "stock_movements.product_id": 0,
+      "invoices.customer_id": 0,
+      "notifications.user_id": 0,
+      "audit_logs.user_id": 0
+    },
+    "live_duplicate_key_groups": {}
+  },
+  "security": {
+    "candidate_users": [
+      {
+        "id": 1,
+        "username": "gvpowers@admin",
+        "email": "gvpowers@admin",
+        "full_name": "GV Powers Administrator",
+        "role": "admin",
+        "is_active": 1,
+        "last_login": "2026-10-31 03:11:08.499874",
+        "created_at": "2026-09-29 16:18:34.721063",
+        "updated_at": "2026-10-31 03:11:08.500956",
+        "password_hash_scheme": "scrypt:32768:8:1",
+        "password_hash_length": 162
+      }
+    ],
+    "live_local_users": [
+      {
+        "id": 1,
+        "username": "gvpowers@admin",
+        "email": "admin@gvpowers.in",
+        "full_name": "GV Powers Administrator",
+        "role": "admin",
+        "is_active": 1,
+        "last_login": "2026-10-31 03:23:02.171943",
+        "created_at": "2026-09-29 13:11:28.300283",
+        "updated_at": "2026-10-31 03:23:02.174579",
+        "password_hash_scheme": "scrypt:32768:8:1",
+        "password_hash_length": 162
+      }
+    ],
+    "candidate_password_matches_application_default": true,
+    "live_local_password_matches_application_default": true,
+    "candidate_backup_events": [],
+    "live_local_backup_events": [],
+    "candidate_settings_keys": [],
+    "live_local_settings_keys": [],
+    "candidate_has_pii": {
+      "customers": 2,
+      "invoices": 2,
+      "payments": 0
+    },
+    "local_env_present": false
+  },
+  "application_compatibility": {
+    "candidate_copy_startup_schema_unchanged": true,
+    "candidate_copy_startup_counts_unchanged": true,
+    "candidate_copy_invoice_template_rendered": true,
+    "candidate_copy_admin_pages": {
+      "/invoices": 200,
+      "/products": 200,
+      "/customers": 200,
+      "/reports": 200,
+      "/settings": 200,
+      "/backup": 200
+    },
+    "note": "Tests were run against a temporary copy of the candidate; the original candidate was not modified."
+  },
+  "findings": [
+    {
+      "id": "BLK-01",
+      "severity": "BLOCKER",
+      "area": "Deployment access",
+      "title": "Production server was not accessed",
+      "evidence": "Workspace is Windows; no systemctl/nginx; no production SSH/session; no verified production DATABASE_URL. No stop, copy, restore, or restart was performed.",
+      "action": "Provide approved server access or perform the replacement from the Linux server after review."
+    },
+    {
+      "id": "BLK-02",
+      "severity": "BLOCKER",
+      "area": "Database engine / deployment path",
+      "title": "SQLite candidate vs PostgreSQL service configuration",
+      "evidence": "Candidate is SQLite. gvpowers.service points to /opt/gv_powers_erp and Wants=postgresql.service; .env.example uses postgresql://. Candidate audit log says the backup was created at /home/kaml/erp-new/backups/database/.",
+      "action": "Confirm the actual production unit and DATABASE_URL. Do not install the SQLite file over PostgreSQL or into an unverified path."
+    },
+    {
+      "id": "CRIT-01",
+      "severity": "CRITICAL",
+      "area": "Security",
+      "title": "Default admin password is still in use",
+      "evidence": "The candidate admin password hash matches the application fallback ADMIN_PASSWORD. The same is true for the local live database. Password was not changed.",
+      "action": "Rotate the admin password after explicit owner approval; do not reset silently."
+    },
+    {
+      "id": "CRIT-02",
+      "severity": "CRITICAL",
+      "area": "Financial data",
+      "title": "Paid invoices have no payment rows",
+      "evidence": "Candidate invoices total 1,020,055.00 and amount_paid totals 1,020,055.00, but payments has 0 rows. Customer ledger closing totals 1,020,055.00 while invoice balance_due totals 0.00.",
+      "action": "Do not silently backfill. Owner must approve either a payment-record correction or acceptance of the reporting mismatch; fix the invoice-creation path that writes amount_paid without a Payment row."
+    },
+    {
+      "id": "HIGH-01",
+      "severity": "HIGH",
+      "area": "Freshness / replacement safety",
+      "title": "Candidate is not a newer copy of the local live database",
+      "evidence": "Candidate has 2 invoices, 2 customers, 8 products, 19 stock movements, 43 audit logs. Local live has 0 invoices, 1 customer, 2 products, 0 stock movements, 7 audit logs. Local live has activity at 2026-10-31 03:23 UTC; candidate snapshot time is 03:11:22 UTC.",
+      "action": "Do not overwrite either database based on timestamps alone. Verify the production current DB and row deltas."
+    },
+    {
+      "id": "HIGH-02",
+      "severity": "HIGH",
+      "area": "Backup/archive",
+      "title": "Remote archive sync is not evidenced",
+      "evidence": "Candidate backup_events=0 and settings=0. Only a local backup_created audit log exists. No BACKUP_API_KEY can be confirmed because .env is absent from the workspace and production is inaccessible.",
+      "action": "Verify BACKUP_API_URL, BACKUP_API_KEY, and archive delivery on the production host before relying on the backup."
+    },
+    {
+      "id": "MED-01",
+      "severity": "MEDIUM",
+      "area": "Invoice totals",
+      "title": "Invoice 2 has a 0.02 line-total rounding variance",
+      "evidence": "INV-30102026-001 line totals sum 361,055.22; taxable+CGST+SGST is 361,055.24; stored grand total is 361,055.00 after -0.24 round-off.",
+      "action": "Record as a known rounding variance; do not modify historical invoice data without approval."
+    },
+    {
+      "id": "MED-02",
+      "severity": "MEDIUM",
+      "area": "GST data quality",
+      "title": "Customer GSTIN fails the application checksum validator",
+      "evidence": "Candidate customer 1 GSTIN 33AELFS8595R1ZR returns False from the app's validate_gstIN().",
+      "action": "Verify with the customer/GST portal; do not alter the invoice or customer master automatically."
+    },
+    {
+      "id": "MED-03",
+      "severity": "MEDIUM",
+      "area": "Inventory valuation",
+      "title": "All product purchase prices are zero",
+      "evidence": "All 8 candidate products have purchase_price=0.00; profit and stock-value reports will be misleading.",
+      "action": "Owner to provide purchase costs if profit/valuation reporting is required; do not invent costs."
+    },
+    {
+      "id": "MED-04",
+      "severity": "MEDIUM",
+      "area": "Security configuration",
+      "title": "No .env in local workspace; insecure fallbacks apply locally",
+      "evidence": "Only .env.example exists. The app falls back to change-me-in-production for SECRET_KEY and the default admin credentials when variables are absent. Production environment is not accessible.",
+      "action": "Verify the production .env on the server; rotate SECRET_KEY/passwords through an approved change window."
+    },
+    {
+      "id": "LOW-01",
+      "severity": "LOW",
+      "area": "Admin identity",
+      "title": "Admin email is not a valid email address",
+      "evidence": "Candidate user email is gvpowers@admin.",
+      "action": "Correct after approval; this may affect email-based workflows."
+    },
+    {
+      "id": "LOW-02",
+      "severity": "LOW",
+      "area": "Low-stock alerts",
+      "title": "Low-stock alert metadata is incomplete",
+      "evidence": "8 of 8 candidate products are at or below min_stock; only 3 have low_stock_alert_active=1 and matching notifications. Five low-stock products have no alert metadata.",
+      "action": "Let the app run its normal low-stock check after restore, or review alert policy; do not silently fabricate notifications."
+    },
+    {
+      "id": "INFO-01",
+      "severity": "INFO",
+      "area": "Database integrity",
+      "title": "Core integrity checks passed",
+      "evidence": "Candidate integrity_check=ok, quick_check=ok, foreign_key_check=[], no orphan rows, no duplicate business keys, all stock movement sums match stock_quantity.",
+      "action": "No repair needed."
+    },
+    {
+      "id": "INFO-02",
+      "severity": "INFO",
+      "area": "Application compatibility",
+      "title": "Candidate schema matches the app models",
+      "evidence": "All 19 table definitions and indexes match the SQLAlchemy model schema. App startup on a temporary copy changed neither schema nor row counts; invoice template rendered; /invoices, /products, /customers, /reports, /settings, /backup returned HTTP 200 for an authenticated admin session.",
+      "action": "Schema compatibility is acceptable; deployment is still blocked by freshness/engine/access issues."
+    }
+  ],
+  "replacement": {
+    "status": "BLOCKED",
+    "performed": false,
+    "approved": false,
+    "reasons": [
+      "Production server was not accessed",
+      "SQLite candidate vs PostgreSQL service configuration",
+      "Default admin password is still in use",
+      "Paid invoices have no payment rows"
+    ],
+    "next_gate": "Confirm production DATABASE_URL, unit path, and server access; snapshot current production DB; compare row deltas; obtain owner approval for credential rotation and payment-ledger inconsistency."
+  }
+}

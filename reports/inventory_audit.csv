@@ -1,0 +1,11 @@
+source,product_id,name,opening_stock,stock_quantity,movement_sum,movement_count,min_stock,selling_price,purchase_price,low_stock_alert_active,last_low_stock_notification_at,flags
+candidate,1,40 KVA DG Set 3PH 3R1190ETA4G1,1,0,0,4,5,540380.00,0.00,1,2026-10-01 12:47:09.077709,low_or_out_of_stock;purchase_price_zero
+candidate,2,610W KIRLOSKER TOPCON BIFACIAL,8,0,0,2,5,12840.00,0.00,0,,low_or_out_of_stock;purchase_price_zero
+candidate,3,5KW/48V DC SINGLE PHASE SOLAR VERTER PRO,1,0,0,2,5,56652.54,0.00,1,2026-10-29 16:26:14.152272,low_or_out_of_stock;purchase_price_zero
+candidate,4,DCDB 2 IN 1,1,1,1,3,1,4110.14,0.00,1,2026-10-29 16:26:14.166340,low_or_out_of_stock;purchase_price_zero
+candidate,5,5KW GI STRUCTURE 100.00mm X 50.00mm X1.80mm GP STEEL TUBES,50,0,0,2,5,211.86,0.00,0,,low_or_out_of_stock;purchase_price_zero
+candidate,6,60.00mm X 40.00mm X 1.60mm GP STEEL TUBES,0,0,0,2,5,211.86,0.00,0,,low_or_out_of_stock;purchase_price_zero
+candidate,7,80.00mm X 2.00mm STEEL TUBES,50,0,0,2,5,211.86,0.00,0,,low_or_out_of_stock;purchase_price_zero
+candidate,8,200AH AMARAN TALL TUBULAR BATTERY,8,0,0,2,5,15254.24,0.00,0,,low_or_out_of_stock;purchase_price_zero
+live_local,3,eqweq,10,10,0,0,5,1234.00,0.00,0,,stock_vs_movements_mismatch;no_movement_history;purchase_price_zero
+live_local,4,Solar Panel 550W,20,20,0,0,5,0.00,0.00,0,,stock_vs_movements_mismatch;no_movement_history;purchase_price_zero

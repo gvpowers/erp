@@ -1,60 +1,1331 @@
-2026-10-25 16:41:15,966 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2026-10-31 08:33:19,599 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:19,629 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:19,658 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:21,118 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:21,137 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:21,174 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:22,567 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:22,625 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:22,654 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:23,923 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:23,950 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:23,981 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:25,287 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:33:25,676 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:25,703 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:25,741 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:27,539 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:27,582 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:27,614 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:29,069 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:29,096 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:29,121 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:30,340 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:30,367 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:30,392 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:31,956 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:33:36,518 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:36,541 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:36,565 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:37,654 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:37,675 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:37,704 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:39,101 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:39,126 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:39,158 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:40,220 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:40,243 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:40,269 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:41,382 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:33:43,911 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:43,928 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:43,958 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:45,066 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:45,085 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:45,107 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:46,478 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:46,537 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:46,562 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:48,186 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:48,210 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:48,235 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:49,395 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:33:49,744 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:49,777 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:49,805 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:50,934 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:50,965 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:50,992 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:52,350 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:52,376 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:52,403 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:53,480 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:53,502 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:53,535 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:54,632 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:33:54,921 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:54,940 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:54,971 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:56,036 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:56,063 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:56,088 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:57,353 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:57,372 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:57,401 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:33:58,948 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:33:58,978 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:33:59,010 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:00,240 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:34:01,772 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:01,792 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:01,818 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:02,877 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:02,902 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:02,932 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:04,352 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:04,370 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:04,396 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:05,523 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:05,548 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:05,574 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:06,658 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:34:07,999 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:08,022 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:08,048 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:09,293 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:09,317 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:09,343 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:11,184 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:11,211 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:11,240 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:12,815 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:12,847 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:12,875 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:14,595 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:14,632 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:14,662 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:15,900 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:15,924 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:15,951 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:17,347 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:17,379 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:17,403 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:18,511 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:18,533 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:18,562 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:20,038 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:20,066 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:20,096 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:21,216 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:21,232 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:21,253 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:23,057 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:23,081 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:23,112 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:24,929 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:24,948 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:24,976 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:26,301 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:26,325 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:26,356 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:27,397 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:27,418 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:27,451 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:29,121 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:29,149 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:29,183 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:30,353 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:30,376 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:30,412 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:33,284 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:33,301 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:33,326 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:34,410 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:34,432 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:34,465 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:35,755 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:35,803 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:35,831 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:37,337 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:37,364 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:37,390 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:38,558 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:34:38,904 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:38,930 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:38,960 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:40,473 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:40,494 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:40,520 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:42,396 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:42,416 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:42,438 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:43,384 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:43,404 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:43,446 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:44,583 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:34:45,933 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:45,951 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:45,978 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:47,395 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:47,420 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:47,444 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:49,359 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:49,387 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:49,420 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:50,681 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:50,704 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:50,734 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:51,934 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:34:52,316 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:52,342 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:52,370 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:53,560 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:53,592 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:53,618 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:55,037 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:55,091 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:55,113 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:56,215 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:34:56,239 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:34:56,271 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:34:57,336 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:35:00,517 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:00,538 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:00,568 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:01,701 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:01,736 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:01,756 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:03,425 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:03,448 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:03,480 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:04,725 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:04,754 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:04,788 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:06,142 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:06,165 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:06,192 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:07,402 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:07,424 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:07,448 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:08,768 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:08,790 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:08,846 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:09,862 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:09,883 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:09,901 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:11,150 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:11,173 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:11,201 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:12,263 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:12,292 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:12,311 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:13,859 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:13,879 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:13,906 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:15,175 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:15,198 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:15,225 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:16,581 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:16,612 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:16,636 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:17,664 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:17,681 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:17,705 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:19,001 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:19,020 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:19,049 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:20,142 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:20,166 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:20,190 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:22,716 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:22,739 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:22,772 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:23,820 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:23,840 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:23,862 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:25,694 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:25,719 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:25,741 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:26,797 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:26,816 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:26,842 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:27,849 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:35:28,167 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:28,187 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:28,213 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:29,279 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:29,299 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:29,343 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:30,772 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:30,801 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:30,824 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:31,880 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:31,905 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:31,929 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:32,982 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:35:34,343 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:34,363 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:34,390 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:35,456 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:35,476 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:35,499 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:37,159 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:37,179 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:37,205 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:38,289 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:38,311 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:38,337 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:39,336 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:35:39,621 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:39,644 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:39,673 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:40,779 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:40,797 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:40,819 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:42,107 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:42,131 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:42,154 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:43,117 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:43,140 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:43,180 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:44,259 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:35:45,631 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:45,653 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:45,680 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:46,693 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:46,715 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:46,748 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:48,470 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:48,491 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:48,519 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:49,534 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:49,556 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:49,576 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:50,555 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:35:50,909 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:50,931 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:50,954 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:51,979 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:52,000 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:52,019 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:53,263 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:53,315 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:53,343 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:54,348 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:54,371 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:54,395 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:55,396 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:35:56,703 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:56,728 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:56,751 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:57,896 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:58,210 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:58,234 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:35:59,632 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:35:59,660 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:35:59,688 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:00,871 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:00,892 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:00,916 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:02,124 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:36:04,533 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:04,554 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:04,578 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:05,625 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:05,650 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:05,686 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:06,968 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:06,986 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:07,008 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:08,079 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:08,102 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:08,137 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:09,164 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:36:10,436 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:10,456 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:10,482 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:11,953 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:11,976 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:11,998 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:13,236 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:13,256 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:13,281 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:14,315 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:14,337 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:14,362 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:15,401 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:36:16,741 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:16,759 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:16,785 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:17,862 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:17,884 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:17,914 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:19,212 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:19,235 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:19,262 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:20,367 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:20,392 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:20,419 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:21,530 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:36:21,940 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:21,961 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:21,988 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:23,495 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:23,526 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:23,546 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:24,889 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:24,912 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:24,935 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:26,015 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:26,037 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:26,064 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:27,213 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:36:28,476 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:28,503 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:28,528 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:29,539 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:29,557 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:29,580 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:30,892 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:30,915 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:30,936 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:31,969 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:31,991 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:32,013 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:33,098 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:36:33,395 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:33,448 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:33,471 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:34,936 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:34,961 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:34,986 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:36,300 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:36,323 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:36,347 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:37,437 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:37,457 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:37,482 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:38,556 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:36:39,914 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:39,943 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:39,969 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:41,085 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:41,104 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:41,152 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:42,514 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:42,543 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:42,573 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:43,590 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:43,615 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:43,639 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:44,774 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:36:45,520 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:45,547 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:45,581 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:46,682 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:46,698 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:46,724 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:48,141 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:48,162 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:48,191 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:49,273 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:36:49,299 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:36:49,319 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:36:50,321 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:36:52,770 [INFO] flask_wtf.csrf: The CSRF token is invalid.
+2026-10-31 08:36:53,801 [INFO] flask_wtf.csrf: The CSRF token is invalid.
+2026-10-31 08:37:16,518 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:16,530 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:16,543 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:17,199 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:17,216 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:17,233 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:17,877 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:17,887 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:17,896 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:18,375 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:18,384 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:18,394 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:18,834 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:37:19,053 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:19,060 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:19,068 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:19,497 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:19,504 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:19,515 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:20,035 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:20,042 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:20,050 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:20,458 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:20,466 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:20,473 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:21,152 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:21,161 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:21,170 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:21,606 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:21,614 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:21,622 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:22,128 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:22,135 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:22,143 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:22,567 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:22,573 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:22,585 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:23,007 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:37:23,679 [INFO] flask_wtf.csrf: The CSRF token is missing.
+2026-10-31 08:37:23,834 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:23,842 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:23,854 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:24,286 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:24,293 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:24,303 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:24,829 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:24,839 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:24,848 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:25,287 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:25,294 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:25,303 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:25,923 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:37:26,579 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:26,586 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:26,594 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:27,028 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:27,037 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:27,046 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:27,632 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:27,659 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:27,672 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:28,181 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:28,191 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:28,201 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:28,597 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:37:29,240 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:29,248 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:29,257 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:29,702 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:29,709 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:29,719 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:30,229 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:30,236 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:30,244 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:30,657 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:30,664 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:30,672 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:31,227 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:37:33,642 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:33,649 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:33,658 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:34,092 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:34,099 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:34,107 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:34,620 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:34,630 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:34,640 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:35,050 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:35,059 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:35,066 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:35,473 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:37:37,196 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:37,203 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:37,212 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:37,639 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:37,647 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:37,660 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:38,203 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:38,211 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:38,222 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:38,884 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:38,893 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:38,902 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:39,301 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:37:40,568 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:40,577 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:40,586 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:41,016 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:41,023 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:41,031 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:41,531 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:41,541 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:41,551 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:41,976 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:41,983 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:41,993 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:42,471 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:42,479 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:42,488 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:42,939 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:42,947 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:42,959 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:43,472 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:43,479 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:43,489 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:37:44,100 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:37:44,107 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:37:44,119 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:44:19,011 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2026-10-25 16:41:15,966 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
-2026-10-25 16:41:19,145 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 16:41:19] "GET /login HTTP/1.1" 200 -
-2026-10-25 17:48:56,971 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2026-10-31 08:44:19,011 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-10-31 08:44:19,015 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 08:44:22,655 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 08:44:22,671 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 08:44:22,913 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:22] "[32mGET / HTTP/1.1[0m" 302 -
+2026-10-31 08:44:22,971 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:22] "GET /login HTTP/1.1" 200 -
+2026-10-31 08:44:23,147 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "GET /static/css/app.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:44:23,154 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "GET /static/css/billing.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:44:23,158 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "GET /static/css/admin.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:44:23,164 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "GET /static/css/sales.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:44:23,174 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "GET /static/css/responsive.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:44:23,177 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "GET /static/css/themes.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:44:23,178 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "GET /static/css/erp-menu.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:44:23,179 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 08:44:23,254 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 08:44:23,256 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:44:23] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:02,209 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-10-31 08:53:02,434 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "GET /dashboard HTTP/1.1" 200 -
+2026-10-31 08:53:02,475 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[36mGET /static/css/app.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:02,477 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[36mGET /static/css/admin.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:02,480 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[36mGET /static/css/sales.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:02,482 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[36mGET /static/css/billing.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:02,487 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[36mGET /static/css/responsive.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:02,491 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[36mGET /static/css/themes.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:02,496 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[36mGET /static/css/erp-menu.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:02,498 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:02,507 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:02] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:04,385 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "GET /invoices/create HTTP/1.1" 200 -
+2026-10-31 08:53:04,427 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "[36mGET /static/css/app.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:04,433 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "[36mGET /static/css/admin.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:04,436 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "[36mGET /static/css/responsive.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:04,437 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "[36mGET /static/css/sales.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:04,448 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "[36mGET /static/css/billing.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:04,452 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "[36mGET /static/css/themes.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:04,467 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "[36mGET /static/css/erp-menu.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:04,476 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:04,479 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:04] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:10,507 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:10] "GET /api/invoices/next-number?date=2026-10-31 HTTP/1.1" 200 -
+2026-10-31 08:53:10,737 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:10] "GET /api/invoices/next-number?date=2026-10-31 HTTP/1.1" 200 -
+2026-10-31 08:53:11,126 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:11] "GET /api/invoices/next-number?date=2026-10-31 HTTP/1.1" 200 -
+2026-10-31 08:53:13,503 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:13] "GET /api/invoices/next-number?date=2026-10-31&serial=002 HTTP/1.1" 200 -
+2026-10-31 08:53:15,755 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:15] "GET /api/invoices/next-number?date=2026-10-31&serial=002 HTTP/1.1" 200 -
+2026-10-31 08:53:23,315 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:23] "GET /api/invoices/next-number?date=2026-10-31 HTTP/1.1" 200 -
+2026-10-31 08:53:24,832 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:24] "GET /api/invoices/next-number?date=2026-10-31 HTTP/1.1" 200 -
+2026-10-31 08:53:30,507 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "GET /invoices HTTP/1.1" 200 -
+2026-10-31 08:53:30,535 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "[36mGET /static/css/admin.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:30,539 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "[36mGET /static/css/app.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:30,551 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "[36mGET /static/css/sales.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:30,552 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "[36mGET /static/css/billing.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:30,557 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "[36mGET /static/css/responsive.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:30,560 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "[36mGET /static/css/themes.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:30,566 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "[36mGET /static/css/erp-menu.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:30,575 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:30,578 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:30] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:32,008 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "GET /dashboard HTTP/1.1" 200 -
+2026-10-31 08:53:32,030 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "[36mGET /static/css/app.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:32,032 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "[36mGET /static/css/admin.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:32,048 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "[36mGET /static/css/sales.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:32,049 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "[36mGET /static/css/billing.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:32,056 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "[36mGET /static/css/responsive.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:32,060 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "[36mGET /static/css/erp-menu.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:32,062 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "[36mGET /static/css/themes.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:32,067 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:32,069 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:32] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:49,373 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "GET /invoices/create HTTP/1.1" 200 -
+2026-10-31 08:53:49,394 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "[36mGET /static/css/app.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:49,399 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "[36mGET /static/css/admin.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:49,403 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "[36mGET /static/css/billing.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:49,413 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "[36mGET /static/css/responsive.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:49,413 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "[36mGET /static/css/themes.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:49,414 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "[36mGET /static/css/sales.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:49,418 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "[36mGET /static/css/erp-menu.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:49,422 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 08:53:49,423 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:53:49] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:13,680 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2026-10-25 17:48:56,972 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
-2026-10-25 17:48:56,988 [INFO] werkzeug:  * Restarting with stat
-2026-10-25 17:48:58,784 [WARNING] werkzeug:  * Debugger is active!
-2026-10-25 17:48:58,790 [INFO] werkzeug:  * Debugger PIN: 389-848-300
-2026-10-25 17:49:00,685 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "[32mGET / HTTP/1.1[0m" 302 -
-2026-10-25 17:49:00,696 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /login HTTP/1.1" 200 -
-2026-10-25 17:49:00,836 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /static/css/admin.css?v=8.0 HTTP/1.1" 200 -
-2026-10-25 17:49:00,836 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /static/css/app.css?v=10.0 HTTP/1.1" 200 -
-2026-10-25 17:49:00,846 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /logo?v=20260928 HTTP/1.1" 200 -
-2026-10-25 17:49:00,852 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /static/css/billing.css?v=8.0 HTTP/1.1" 200 -
-2026-10-25 17:49:00,854 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /static/css/responsive.css?v=9.0 HTTP/1.1" 200 -
-2026-10-25 17:49:00,857 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /static/css/themes.css?v=8.0 HTTP/1.1" 200 -
-2026-10-25 17:49:00,866 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /static/css/sales.css?v=8.0 HTTP/1.1" 200 -
-2026-10-25 17:49:00,872 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /static/css/erp-menu.css?v=1.0 HTTP/1.1" 200 -
-2026-10-25 17:49:00,950 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /static/js/app.js?v=2.0 HTTP/1.1" 200 -
-2026-10-25 17:49:00,951 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:00] "GET /static/js/erp-menu.js?v=1.1 HTTP/1.1" 200 -
-2026-10-25 17:49:25,465 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "POST /login HTTP/1.1" 200 -
-2026-10-25 17:49:25,548 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /static/css/app.css?v=10.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:25,610 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /static/css/themes.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:25,797 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /static/css/responsive.css?v=9.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:25,815 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /static/css/sales.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:25,817 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /static/css/billing.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:25,821 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /static/css/admin.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:25,824 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /static/css/erp-menu.css?v=1.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:25,835 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:25,836 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:25,843 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:25] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:44,791 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:44] "[32mPOST /login HTTP/1.1[0m" 302 -
-2026-10-25 17:49:45,862 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:45] "GET /dashboard HTTP/1.1" 200 -
-2026-10-25 17:49:45,990 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:45] "[36mGET /static/css/themes.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:46,020 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:46] "[36mGET /static/css/responsive.css?v=9.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:46,168 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:46] "[36mGET /static/css/sales.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:46,189 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:46] "[36mGET /static/css/billing.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:46,263 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:46] "[36mGET /static/css/admin.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:46,489 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:46] "[36mGET /static/css/app.css?v=10.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:46,517 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:46] "[36mGET /static/css/erp-menu.css?v=1.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:46,676 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:46] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:46,845 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:46] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:47,818 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:47] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:49,651 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:49] "GET /invoices/create HTTP/1.1" 200 -
-2026-10-25 17:49:49,705 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:49] "[36mGET /static/css/app.css?v=10.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:49,735 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:49] "[36mGET /static/css/admin.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:49,741 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:49] "[36mGET /static/css/responsive.css?v=9.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:49,762 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:49] "[36mGET /static/css/billing.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:49,778 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:49] "[36mGET /static/css/sales.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:49,900 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:49] "[36mGET /static/css/themes.css?v=8.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:49,966 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:49] "[36mGET /static/css/erp-menu.css?v=1.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:50,002 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:50] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:50,035 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:50] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:50,501 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:50] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:51,155 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:51] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
-2026-10-25 17:49:56,618 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:56] "GET /api/invoices/next-number?date=2026-10-26 HTTP/1.1" 200 -
-2026-10-25 17:49:56,622 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:49:56] "GET /api/invoices/next-number?date=2026-10-26 HTTP/1.1" 200 -
-2026-10-25 17:50:00,680 [INFO] werkzeug: 127.0.0.1 - - [25/Oct/2026 17:50:00] "GET /api/invoices/next-number?date=2026-10-27 HTTP/1.1" 200 -
+2026-10-31 08:54:13,680 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-10-31 08:54:13,682 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 08:54:23,784 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-31 08:54:23,784 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-10-31 08:54:23,786 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 08:54:28,506 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 08:54:28,511 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 08:54:29,176 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /invoices/create HTTP/1.1" 200 -
+2026-10-31 08:54:29,434 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /static/css/app.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:54:29,446 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /static/css/erp-menu.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:54:29,456 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /logo?v=20260928 HTTP/1.1" 200 -
+2026-10-31 08:54:29,459 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /static/css/sales.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:54:29,459 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /static/css/admin.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:54:29,464 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /static/css/responsive.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:54:29,468 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /static/css/billing.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:54:29,471 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /static/css/themes.css?v=20261031 HTTP/1.1" 200 -
+2026-10-31 08:54:29,489 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /static/js/app.js?v=2.0 HTTP/1.1" 200 -
+2026-10-31 08:54:29,490 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /static/js/erp-menu.js?v=1.1 HTTP/1.1" 200 -
+2026-10-31 08:54:29,669 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:29] "GET /logo?v=20260928 HTTP/1.1" 200 -
+2026-10-31 08:54:33,068 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:33] "GET /api/invoices/next-number?date=2026-10-31 HTTP/1.1" 200 -
+2026-10-31 08:54:34,769 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:34] "GET /api/invoices/next-number?date=2026-10-07 HTTP/1.1" 200 -
+2026-10-31 08:54:34,769 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:34] "GET /api/invoices/next-number?date=2026-10-07 HTTP/1.1" 200 -
+2026-10-31 08:54:37,563 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:37] "GET /api/invoices/next-number?date=2026-10-06 HTTP/1.1" 200 -
+2026-10-31 08:54:37,564 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:37] "GET /api/invoices/next-number?date=2026-10-06 HTTP/1.1" 200 -
+2026-10-31 08:54:41,347 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:41] "GET /api/invoices/next-number?date=2026-10-06 HTTP/1.1" 200 -
+2026-10-31 08:54:51,717 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:51] "[32mPOST /logout HTTP/1.1[0m" 302 -
+2026-10-31 08:54:51,743 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:51] "GET /login HTTP/1.1" 200 -
+2026-10-31 08:54:51,921 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:51] "[36mGET /static/css/app.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:51,923 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:51] "[36mGET /static/css/admin.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:51,923 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:51] "[36mGET /static/css/billing.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:51,934 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:51] "[36mGET /static/css/sales.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:51,938 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:51] "[36mGET /static/css/responsive.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:51,945 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:51] "[36mGET /static/css/erp-menu.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:52,107 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:52] "[36mGET /static/css/themes.css?v=20261031 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:52,335 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:52] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:52,499 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:52] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 08:54:52,855 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 08:54:52] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 08:59:20,651 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:20,676 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:20,702 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:21,823 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:21,844 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:21,870 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:23,106 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:23,120 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:23,138 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:24,066 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:24,088 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:24,106 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:24,989 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:59:25,251 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:25,265 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:25,283 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:26,135 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:26,150 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:26,167 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:27,254 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:27,290 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:27,306 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:28,195 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:28,210 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:28,226 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:29,359 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:59:33,248 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:33,267 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:33,283 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:34,125 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:34,141 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:34,158 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:35,079 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:35,095 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:35,119 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:35,870 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:35,882 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:35,902 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:36,708 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:59:38,809 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:38,822 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:38,837 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:39,571 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:39,591 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:39,606 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:40,472 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:40,484 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:40,504 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:41,206 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:41,219 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:41,236 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:42,342 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:59:42,562 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:42,577 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:42,595 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:43,305 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:43,318 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:43,331 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:44,082 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:44,096 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:44,109 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:44,761 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:44,778 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:44,797 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:45,538 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:59:45,761 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:45,776 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:45,796 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:46,636 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:46,651 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:46,670 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:47,738 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:47,751 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:47,765 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:48,415 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:48,427 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:48,449 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:49,485 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:59:50,452 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:50,464 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:50,480 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:51,208 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:51,251 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:51,287 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:52,383 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:52,405 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:52,426 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:53,155 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:53,168 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:53,182 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:53,836 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 08:59:54,868 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:54,892 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:54,904 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:55,572 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:55,587 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:55,601 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:56,546 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:56,557 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:56,570 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:57,407 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:57,419 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:57,431 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:58,509 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:58,527 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:58,548 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 08:59:59,362 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 08:59:59,374 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 08:59:59,389 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:00,157 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:00,174 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:00,194 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:00,911 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:00,923 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:00,939 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:01,727 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:01,748 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:01,769 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:02,491 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:02,501 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:02,514 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:03,404 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:03,418 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:03,435 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:04,412 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:04,428 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:04,441 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:05,281 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:05,293 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:05,307 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:06,018 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:06,032 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:06,050 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:07,042 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:07,054 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:07,067 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:07,789 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:07,800 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:07,814 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:09,408 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:09,420 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:09,434 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:10,095 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:10,112 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:10,125 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:11,017 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:11,040 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:11,070 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:12,082 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:12,094 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:12,112 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:12,847 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:00:13,061 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:13,078 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:13,094 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:13,780 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:13,792 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:13,804 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:14,581 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:14,591 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:14,604 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:15,251 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:15,263 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:15,278 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:15,955 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:00:16,989 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:17,018 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:17,030 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:17,660 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:17,672 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:17,685 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:18,452 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:18,464 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:18,477 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:19,343 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:19,355 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:19,369 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:19,999 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:00:20,193 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:20,205 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:20,219 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:20,865 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:20,877 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:20,890 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:21,680 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:21,694 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:21,713 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:22,370 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:22,381 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:22,397 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:23,087 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:00:24,856 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:24,870 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:24,884 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:25,550 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:25,562 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:25,575 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:26,625 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:26,639 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:26,657 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:27,370 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:27,384 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:27,398 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:28,236 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:28,247 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:28,264 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:28,971 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:28,984 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:29,000 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:29,811 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:29,827 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:29,846 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:30,539 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:30,566 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:30,587 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:31,483 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:31,494 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:31,506 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:32,250 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:32,261 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:32,281 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:33,409 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:33,424 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:33,439 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:34,184 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:34,197 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:34,219 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:35,095 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:35,106 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:35,136 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:35,797 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:35,811 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:35,825 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:36,664 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:36,689 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:36,706 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:37,686 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:37,705 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:37,728 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:40,260 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:40,274 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:40,292 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:41,096 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:41,113 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:41,129 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:42,159 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:42,171 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:42,190 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:42,872 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:42,885 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:42,899 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:43,572 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:00:43,797 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:43,808 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:43,821 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:44,499 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:44,514 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:44,528 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:45,465 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:45,478 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:45,498 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:46,244 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:46,259 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:46,275 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:47,181 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:47,195 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:47,210 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:47,835 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:47,845 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:47,861 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:48,988 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:49,001 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:49,016 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:49,719 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:49,730 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:49,749 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:50,445 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:00:51,484 [INFO] flask_wtf.csrf: The CSRF token is missing.
+2026-10-31 09:00:51,684 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:51,700 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:51,719 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:52,562 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:52,575 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:52,596 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:53,423 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:53,435 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:53,449 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:54,179 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:54,193 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:54,209 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:54,869 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:00:55,835 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:55,850 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:55,865 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:56,512 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:56,522 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:56,537 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:57,597 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:57,622 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:57,635 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:58,316 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:58,330 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:58,349 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:00:58,937 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:00:59,864 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:00:59,874 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:00:59,884 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:00,657 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:00,676 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:00,688 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:01,573 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:01,586 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:01,600 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:02,142 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:02,154 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:02,164 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:02,649 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:01:05,264 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:05,271 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:05,280 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:06,000 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:06,007 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:06,015 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:06,549 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:06,560 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:06,574 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:07,036 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:07,044 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:07,053 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:07,482 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:01:09,267 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:09,280 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:09,289 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:09,747 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:09,755 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:09,764 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:10,289 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:10,296 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:10,304 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:10,757 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:01:10,765 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:01:10,773 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:01:11,204 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:13:54,931 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-31 09:13:54,931 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-10-31 09:13:54,934 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 09:13:57,412 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 09:13:57,417 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 09:14:04,426 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "[32mGET / HTTP/1.1[0m" 302 -
+2026-10-31 09:14:04,508 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "GET /login HTTP/1.1" 200 -
+2026-10-31 09:14:04,676 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "GET /static/css/app.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:14:04,683 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "GET /static/css/sales.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:14:04,689 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "GET /static/css/responsive.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:14:04,695 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "GET /static/css/themes.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:14:04,710 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "GET /static/css/erp-menu.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:14:04,712 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:04,713 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "GET /static/css/billing.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:14:04,716 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "GET /static/css/admin.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:14:04,728 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:04,731 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:04] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:29,967 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:29] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-10-31 09:14:31,362 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:31] "GET /dashboard HTTP/1.1" 200 -
+2026-10-31 09:14:31,596 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:31] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:31,606 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:31] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:31,610 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:31] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:31,614 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:31] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:32,109 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:32] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:32,123 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:32] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:32,124 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:32] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:32,250 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:32] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:32,286 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:32] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:36,269 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "GET /invoices/create HTTP/1.1" 200 -
+2026-10-31 09:14:36,354 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:36,381 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:36,442 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:36,499 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:36,531 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:36,533 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:36,614 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:36,629 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:36,666 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:36] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:39,476 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "GET /invoices HTTP/1.1" 200 -
+2026-10-31 09:14:39,496 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:39,519 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:39,520 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:39,526 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:39,527 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:39,532 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:39,538 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:39,547 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:39,550 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:39] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:40,516 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "GET /customers HTTP/1.1" 200 -
+2026-10-31 09:14:40,539 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:40,552 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:40,561 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:40,566 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:40,600 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:40,609 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:40,610 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:40,613 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:40,619 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:40] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:41,296 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "GET /products HTTP/1.1" 200 -
+2026-10-31 09:14:41,317 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:41,325 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:41,330 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:41,331 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:41,333 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:41,346 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:41,352 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:41,353 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:41,355 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:41] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:42,507 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "GET /customers HTTP/1.1" 200 -
+2026-10-31 09:14:42,525 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:42,536 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:42,538 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:42,541 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:42,547 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:42,586 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:42,597 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:42,595 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:14:42,593 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:14:42] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:25:48,529 [INFO] werkzeug:  * Detected change in 'C:\\Users\\kamle\\PycharmProjects\\gvpowers\\erp\\app.py', reloading
+2026-10-31 09:25:48,771 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 09:25:53,106 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 09:25:53,112 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 09:25:54,500 [INFO] werkzeug:  * Detected change in 'C:\\Users\\kamle\\PycharmProjects\\gvpowers\\erp\\app.py', reloading
+2026-10-31 09:25:54,694 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 09:25:57,298 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 09:25:57,303 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 09:25:59,854 [INFO] werkzeug:  * Detected change in 'C:\\Users\\kamle\\PycharmProjects\\gvpowers\\erp\\app.py', reloading
+2026-10-31 09:26:00,085 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 09:26:03,569 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 09:26:03,575 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 09:26:04,954 [INFO] werkzeug:  * Detected change in 'C:\\Users\\kamle\\PycharmProjects\\gvpowers\\erp\\app.py', reloading
+2026-10-31 09:26:05,146 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 09:26:08,689 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 09:26:08,696 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 09:27:46,318 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:27:46,330 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:27:46,363 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:27:47,165 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:27:47,184 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:27:47,202 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:27:48,129 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:27:48,146 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:27:48,165 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:27:48,842 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:27:48,855 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:27:48,868 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:27:49,541 [INFO] app: Customer email not sent because SMTP is not configured
+2026-10-31 09:27:49,720 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:27:49,734 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:27:49,752 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:27:50,483 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:27:50,495 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:27:50,511 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:27:51,609 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:27:51,621 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:27:51,634 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:27:52,302 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 131:5, unknown property.
+2026-10-31 09:27:52,316 [WARNING] weasyprint: Ignored `word-break: keep-all` at 406:5, invalid value.
+2026-10-31 09:27:52,333 [WARNING] weasyprint: Ignored `print-color-adjust: exact` at 730:9, unknown property.
+2026-10-31 09:31:05,566 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-31 09:31:05,567 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-10-31 09:31:05,575 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 09:31:11,266 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 09:31:11,274 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 09:31:11,514 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[32mGET / HTTP/1.1[0m" 302 -
+2026-10-31 09:31:11,557 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "GET /login HTTP/1.1" 200 -
+2026-10-31 09:31:11,886 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:11,894 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:11,900 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:11,902 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:11,909 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:11,915 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:11,921 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:11,932 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:11,936 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:11,937 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:11] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:27,139 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "POST /login HTTP/1.1" 200 -
+2026-10-31 09:31:27,301 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:27,303 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:27,308 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:27,314 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:27,319 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:27,322 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:27,548 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:27,548 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:27,555 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:27] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:37,854 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:37] "POST /login HTTP/1.1" 200 -
+2026-10-31 09:31:38,057 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:38] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:38,239 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:38] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:38,240 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:38] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:38,571 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:38] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:38,579 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:38] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:38,802 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:38] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:38,810 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:38] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:38,918 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:38] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:31:38,918 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:31:38] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:35,831 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-31 09:32:35,831 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-10-31 09:32:35,835 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 09:32:38,973 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 09:32:38,980 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 09:32:39,221 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "POST /login HTTP/1.1" 200 -
+2026-10-31 09:32:39,406 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:39,413 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:39,419 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:39,427 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:39,475 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:39,487 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:39,505 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:39,514 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:39,517 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:39,559 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:39] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,811 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "POST /login HTTP/1.1" 200 -
+2026-10-31 09:32:50,875 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,877 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,882 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,891 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,893 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,901 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,905 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,906 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,908 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:32:50,918 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:32:50] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:00,377 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-31 09:33:00,377 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-10-31 09:33:00,380 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 09:33:02,907 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 09:33:02,912 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 09:33:05,718 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:05] "POST /login HTTP/1.1" 200 -
+2026-10-31 09:33:05,936 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:05] "GET /static/css/app.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:33:05,948 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:05] "GET /static/css/erp-menu.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:33:05,962 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:05] "GET /logo?v=20260928 HTTP/1.1" 200 -
+2026-10-31 09:33:05,978 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:05] "GET /static/css/admin.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:33:05,990 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:05] "GET /static/js/app.js?v=2.0 HTTP/1.1" 200 -
+2026-10-31 09:33:05,993 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:05] "GET /static/css/billing.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:33:05,997 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:05] "GET /static/css/sales.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:33:06,002 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:06] "GET /static/css/themes.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:33:06,006 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:06] "GET /static/js/erp-menu.js?v=1.1 HTTP/1.1" 200 -
+2026-10-31 09:33:06,007 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:06] "GET /static/css/responsive.css?v=20261101 HTTP/1.1" 200 -
+2026-10-31 09:33:06,155 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:06] "GET /logo?v=20260928 HTTP/1.1" 200 -
+2026-10-31 09:33:25,029 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "POST /login HTTP/1.1" 200 -
+2026-10-31 09:33:25,080 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:25,090 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:25,096 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:25,096 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:25,105 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:25,110 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:25,114 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:25,116 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:25,118 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:33:25,127 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:33:25] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:35:24,224 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:24] "GET /login HTTP/1.1" 200 -
+2026-10-31 09:35:24,511 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:24] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-10-31 09:35:24,661 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:24] "GET /dashboard HTTP/1.1" 200 -
+2026-10-31 09:35:48,831 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:48] "GET /login HTTP/1.1" 200 -
+2026-10-31 09:35:49,113 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:49] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-10-31 09:35:49,147 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:49] "GET /dashboard HTTP/1.1" 200 -
+2026-10-31 09:35:49,173 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:49] "GET /dashboard HTTP/1.1" 200 -
+2026-10-31 09:35:49,242 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:49] "GET /reports HTTP/1.1" 200 -
+2026-10-31 09:35:49,338 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:49] "GET /reports/gst HTTP/1.1" 200 -
+2026-10-31 09:35:49,401 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:49] "GET /reports/profit HTTP/1.1" 200 -
+2026-10-31 09:35:49,451 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:49] "GET /customers HTTP/1.1" 200 -
+2026-10-31 09:35:49,503 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:35:49] "GET /products HTTP/1.1" 200 -
+2026-10-31 09:36:13,634 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-10-31 09:36:13,634 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-10-31 09:36:13,638 [INFO] werkzeug:  * Restarting with stat
+2026-10-31 09:36:19,890 [WARNING] werkzeug:  * Debugger is active!
+2026-10-31 09:36:19,897 [INFO] werkzeug:  * Debugger PIN: 389-848-300
+2026-10-31 09:36:20,098 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[32mGET / HTTP/1.1[0m" 302 -
+2026-10-31 09:36:20,297 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "GET /dashboard HTTP/1.1" 200 -
+2026-10-31 09:36:20,553 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:20,560 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:20,568 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:20,578 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:20,579 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:20,587 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:20,589 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:20,592 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:20,595 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:20,597 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:20] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:25,420 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "GET /invoices/create HTTP/1.1" 200 -
+2026-10-31 09:36:25,473 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:25,486 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:25,487 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:25,491 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:25,499 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:25,501 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:25,502 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:25,508 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:25,511 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:25] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:29,817 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:29] "GET /api/invoices/next-number?date=2026-10-31&serial=009 HTTP/1.1" 200 -
+2026-10-31 09:36:32,258 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:32] "GET /api/invoices/next-number?date=2026-10-31 HTTP/1.1" 200 -
+2026-10-31 09:36:42,465 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "GET /api/invoices/next-number?date=2026-10-31 HTTP/1.1" 200 -
+2026-10-31 09:36:42,614 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "GET /reports HTTP/1.1" 200 -
+2026-10-31 09:36:42,635 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:42,643 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:42,649 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:42,662 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:42,663 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:42,667 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "GET /static/css/reports.css?v=3 HTTP/1.1" 200 -
+2026-10-31 09:36:42,671 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:42,677 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:42,677 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:42,678 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:42,804 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:42] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:44,921 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:44] "GET /reports/gst HTTP/1.1" 200 -
+2026-10-31 09:36:45,163 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:45,202 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:45,223 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:45,226 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:45,235 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:45,334 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:45,435 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:45,442 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "GET /static/css/reports.css?v=2 HTTP/1.1" 200 -
+2026-10-31 09:36:45,448 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:45,476 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:45,857 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:45] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:46,127 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:46] "GET /static/js/reports.js?v=2 HTTP/1.1" 200 -
+2026-10-31 09:36:46,727 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:46] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:51,862 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:51] "GET /reports/low-stock HTTP/1.1" 200 -
+2026-10-31 09:36:51,922 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:51] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:51,969 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:51] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,030 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,040 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,054 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,071 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,177 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,194 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /static/js/reports.js?v=2 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,203 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /static/css/reports.css?v=2 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,218 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,221 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:36:52,228 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:36:52] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,858 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "GET /dashboard HTTP/1.1" 200 -
+2026-10-31 09:37:10,889 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /static/css/app.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,893 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /static/css/admin.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,903 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /static/css/billing.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,904 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /static/css/sales.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,909 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /static/css/responsive.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,914 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /static/css/erp-menu.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,917 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /static/css/themes.css?v=20261101 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,919 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /logo?v=20260928 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,922 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /static/js/app.js?v=2.0 HTTP/1.1[0m" 304 -
+2026-10-31 09:37:10,932 [INFO] werkzeug: 127.0.0.1 - - [31/Oct/2026 09:37:10] "[36mGET /static/js/erp-menu.js?v=1.1 HTTP/1.1[0m" 304 -
