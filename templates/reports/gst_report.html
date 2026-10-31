@@ -17,9 +17,9 @@
     </div>
     <div class="rpt-actions">
       <button class="rpt-btn print" onclick="RP.printPage()"><i data-lucide="printer"></i> Print</button>
-      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='sales', month=month, year=year) }}"><i data-lucide="file-down"></i> PDF</a>
-      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='sales', month=month, year=year) }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
-      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='sales', month=month, year=year) }}"><i data-lucide="file-text"></i> CSV</a>
+      <a class="rpt-btn pdf" href="{{ url_for('report_export', fmt='pdf', report_type='gst', **filters) }}"><i data-lucide="file-down"></i> PDF</a>
+      <a class="rpt-btn excel" href="{{ url_for('report_export', fmt='excel', report_type='gst', **filters) }}"><i data-lucide="file-spreadsheet"></i> Excel</a>
+      <a class="rpt-btn csv" href="{{ url_for('report_export', fmt='csv', report_type='gst', **filters) }}"><i data-lucide="file-text"></i> CSV</a>
     </div>
   </div>
 

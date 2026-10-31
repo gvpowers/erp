@@ -66,6 +66,16 @@
     --navbar-height: 60px;
     --content-max-width: 1400px;
 
+    /* Sizing */
+    --font-root: 16px;
+    --font-body: 0.9375rem;
+    --font-page-title: 1.75rem;
+    --font-section-title: 1.125rem;
+    --font-label: 0.8125rem;
+    --control-height: 44px;
+    --button-height: 40px;
+    --card-padding: 24px;
+
     /* Motion */
     --transition: all 150ms ease;
     --transition-fast: all 100ms ease;
@@ -96,12 +106,13 @@
 
 /* ── Reset ─────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 14px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+html { font-size: var(--font-root); -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
 body {
     font-family: var(--font-sans);
     background: var(--bg-page);
     color: var(--text-primary);
-    line-height: 1.6;
+    font-size: var(--font-body);
+    line-height: 1.55;
     min-height: 100vh;
 }
 a { color: var(--color-primary); text-decoration: none; transition: var(--transition); }
@@ -127,7 +138,7 @@ h1,h2,h3,h4,h5,h6 { color: var(--text-primary); font-weight: 600; }
 
 /* ── Brand Area ───────────────────────────────────────────── */
 .sidebar-brand {
-    height: 150px;
+    height: 100px;
     width: 100%;
     display: flex;
     align-items: center;
@@ -154,7 +165,7 @@ h1,h2,h3,h4,h5,h6 { color: var(--text-primary); font-weight: 600; }
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    padding: 10px 16px;
+    padding: 12px 20px;
     display: block;
 }
 
@@ -317,7 +328,7 @@ h1,h2,h3,h4,h5,h6 { color: var(--text-primary); font-weight: 600; }
 .user-role { font-size: 0.7rem; color: var(--text-muted); text-transform: capitalize; }
 
 /* ── Page Content ──────────────────────────────────────────── */
-.page-content { padding: 24px; flex: 1; max-width: var(--content-max-width); }
+.page-content { padding: 24px; flex: 1; width: 100%; max-width: var(--content-max-width); margin: 0 auto; }
 
 /* ── Page Header ──────────────────────────────────────────── */
 .page-header {
@@ -326,7 +337,7 @@ h1,h2,h3,h4,h5,h6 { color: var(--text-primary); font-weight: 600; }
 }
 .page-header-left { display: flex; flex-direction: column; gap: 4px; }
 .page-header h1 {
-    font-size: 2rem; font-weight: 700; color: var(--text-primary);
+    font-size: var(--font-page-title); font-weight: 700; color: var(--text-primary);
     letter-spacing: -0.025em; line-height: 1.2; margin: 0;
 }
 .page-header p {
@@ -342,7 +353,7 @@ h1,h2,h3,h4,h5,h6 { color: var(--text-primary); font-weight: 600; }
     margin-bottom: 16px;
 }
 .section-header h2 {
-    font-size: 1.375rem; font-weight: 600; color: var(--text-primary);
+    font-size: var(--font-section-title); font-weight: 600; color: var(--text-primary);
     letter-spacing: -0.01em;
 }
 
@@ -363,14 +374,14 @@ h1,h2,h3,h4,h5,h6 { color: var(--text-primary); font-weight: 600; }
     color: var(--text-primary);
     display: flex; align-items: center; gap: 8px;
 }
-.card-body { padding: 24px; }
+.card-body { padding: var(--card-padding); }
 
 /* ── KPI / Stat Cards ─────────────────────────────────────── */
 .kpi-card {
     background: var(--bg-white);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
-    padding: 24px;
+    padding: var(--card-padding);
     box-shadow: var(--shadow-card);
     transition: var(--transition);
     height: 100%;
@@ -388,7 +399,7 @@ h1,h2,h3,h4,h5,h6 { color: var(--text-primary); font-weight: 600; }
 .kpi-icon.blue { background: var(--color-primary-light); color: var(--color-primary); }
 .kpi-icon.yellow { background: var(--color-warning-light); color: var(--color-warning); }
 .kpi-value {
-    font-size: 2rem; font-weight: 700;
+    font-size: var(--font-page-title); font-weight: 700;
     color: var(--text-primary); line-height: 1.2;
     margin-top: 12px;
     letter-spacing: -0.02em;
@@ -413,14 +424,14 @@ h1,h2,h3,h4,h5,h6 { color: var(--text-primary); font-weight: 600; }
     font-weight: 600; font-size: 0.75rem;
     text-transform: uppercase; letter-spacing: 0.04em;
     border-bottom: 2px solid var(--border-color);
-    padding: 14px 16px;
+    padding: 12px 16px;
     white-space: nowrap;
     position: sticky; top: 0; z-index: 1;
 }
 .table tbody td {
-    padding: 14px 16px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border-light);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     color: var(--text-primary);
     vertical-align: middle;
 }
@@ -439,14 +450,14 @@ h1,h2,h3,h4,h5,h6 { color: var(--text-primary); font-weight: 600; }
     background: var(--bg-white);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 12px 16px;
-    font-size: 0.9rem;
+    padding: 10px 14px;
+    font-size: var(--font-body);
     color: var(--text-primary);
     transition: var(--transition);
     width: 100%;
-    height: 48px;
+    height: var(--control-height);
 }
-textarea { height: auto; min-height: 100px; padding: 12px 16px; }
+textarea { height: auto; min-height: 96px; padding: 10px 14px; }
 .form-control:focus, .form-select:focus, textarea:focus {
     border-color: var(--color-primary);
     box-shadow: var(--shadow-focus);
@@ -454,12 +465,12 @@ textarea { height: auto; min-height: 100px; padding: 12px 16px; }
 }
 .form-control::placeholder { color: var(--text-muted); }
 .form-label {
-    font-size: 0.85rem; font-weight: 600;
-    color: var(--text-secondary); margin-bottom: 8px;
+    font-size: var(--font-label); font-weight: 600;
+    color: var(--text-secondary); margin-bottom: 6px;
     display: block;
 }
-.form-text { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
-.form-group { margin-bottom: 20px; }
+.form-text { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+.form-group { margin-bottom: 16px; }
 .form-row {
     display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
 }
@@ -494,10 +505,10 @@ textarea { height: auto; min-height: 100px; padding: 12px 16px; }
 
 /* ── Buttons ───────────────────────────────────────────────── */
 .btn {
-    font-size: 0.85rem; font-weight: 600;
+    font-size: 0.875rem; font-weight: 600;
     border-radius: var(--radius-lg);
-    padding: 10px 20px;
-    height: 40px;
+    padding: 10px 18px;
+    height: var(--button-height);
     transition: var(--transition);
     display: inline-flex; align-items: center; gap: 8px;
     border: none; cursor: pointer;
@@ -552,8 +563,8 @@ textarea { height: auto; min-height: 100px; padding: 12px 16px; }
     color: var(--text-secondary);
 }
 .btn-ghost:hover { background: var(--bg-gray); color: var(--text-primary); }
-.btn-sm { padding: 6px 14px; font-size: 0.8rem; height: 32px; }
-.btn-lg { padding: 14px 28px; font-size: 0.95rem; height: 48px; }
+.btn-sm { padding: 6px 12px; font-size: 0.75rem; height: 30px; }
+.btn-lg { padding: 12px 24px; font-size: 0.9375rem; height: 44px; }
 .btn-link { background: none; border: none; color: var(--color-primary); padding: 4px 8px; height: auto; }
 .btn-link:hover { color: var(--color-primary-hover); background: var(--color-primary-light); }
 

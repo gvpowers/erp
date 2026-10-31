@@ -80,7 +80,7 @@
         padding: 8px 12px;
     }
     .sidebar.mobile-open .sidebar-brand {
-        height: 150px;
+        height: 100px;
         padding: 0;
     }
     .sidebar.mobile-open .brand-icon-link {
@@ -92,7 +92,7 @@
         height: 100%;
         max-width: 100%;
         max-height: 100%;
-        padding: 10px 16px;
+        padding: 12px 20px;
     }
     .main-content {
         margin-left: 0 !important;

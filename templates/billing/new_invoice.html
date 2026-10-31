@@ -1,4 +1,4 @@
-{% extends "layouts/admin_layout.html" %}
+﻿{% extends "layouts/admin_layout.html" %}
 {% from "partials/logo.html" import gv_logo with context %}
 {% block page_title %}{{ 'Edit Invoice' if edit_mode else 'New Invoice' }}{% endblock %}
 {% block back_link %}<a href="{{ url_for('invoice_history') }}" class="ih-back-link"><i data-lucide="arrow-left"></i> Back to Invoice History</a>{% endblock %}
@@ -43,18 +43,24 @@
     <!-- ========== 12-COL MAIN GRID (8 / 4) ========== -->
     <div class="inv-layout">
 
-        <!-- ————————————— LEFT PANEL (8/12) ————————————— -->
+        <!-- â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” LEFT PANEL (8/12) â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” -->
         <div class="inv-col">
 
             <!-- Invoice Details -->
             <section class="inv-card">
                 <header class="inv-card__head"><span class="inv-card__ico"><i data-lucide="file-text"></i></span><span>Invoice Details</span></header>
                 <div class="inv-card__body">
-                    <div class="inv-grid inv-grid--3">
+                    <div class="inv-grid {% if current_user.is_admin %}inv-grid--4{% else %}inv-grid--3{% endif %}">
                         <div class="inv-field">
                             <label class="inv-field__label">Invoice Number</label>
                             <input type="text" class="form-control" id="invoiceNumberInput" value="{{ invoice_number }}" readonly style="background:var(--bg-gray);color:var(--text-muted);font-family:var(--font-mono);font-weight:600;">
                         </div>
+                        {% if current_user.is_admin %}
+                        <div class="inv-field">
+                            <label class="inv-field__label" for="invoiceSerialInput">Invoice Serial Number</label>
+                            <input type="text" class="form-control" id="invoiceSerialInput" value="{{ invoice_serial or '' }}" inputmode="numeric" pattern="[0-9]*" placeholder="{{ invoice_number[-3:] }}" autocomplete="off" spellcheck="false" title="Enter 1-999, or leave blank to keep the current serial." style="font-family:var(--font-mono);font-weight:600;letter-spacing:0.04em;">
+                        </div>
+                        {% endif %}
                         <div class="inv-field">
                             <label class="inv-field__label">Invoice Date</label>
                             <input type="date" class="form-control" id="invoiceDate2" value="{{ invoice_data.invoice_date if edit_mode else today }}">
@@ -228,7 +234,7 @@
             </section>
         </div>
 
-        <!-- ————————————— RIGHT: SUMMARY SIDEBAR (4/12) ————————————— -->
+        <!-- â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” RIGHT: SUMMARY SIDEBAR (4/12) â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” -->
         <aside class="inv-side">
 
             <!-- Invoice Summary -->
@@ -490,7 +496,7 @@
 {% endif %}
 
 <!-- =======================================================
-     SCOPED STYLES — layout & spacing only (no logic changed)
+     SCOPED STYLES â€” layout & spacing only (no logic changed)
      ======================================================= -->
 <style>
 .inv-workspace{
@@ -501,17 +507,17 @@
 .inv-header{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:20px;}
 .inv-header__title{display:flex;align-items:center;gap:14px;min-width:0;}
 .inv-header__text h1{font-size:1.6rem;font-weight:800;color:var(--text-primary);letter-spacing:-0.03em;margin:0;line-height:1.15;}
-.inv-header__text p{font-size:0.82rem;color:var(--text-muted);margin:2px 0 0;}
+.inv-header__text p{font-size:0.875rem;color:var(--text-muted);margin:2px 0 0;}
 .inv-header__ico{width:44px;height:44px;border-radius:12px;background:var(--color-primary-light);color:var(--color-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .inv-header__ico svg{width:20px;height:20px;}
 .inv-header__meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 18px;background:#fff;border:1px solid #E5E7EB;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.05);}
 .inv-meta{display:flex;flex-direction:column;gap:3px;}
-.inv-meta__label{font-size:0.62rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;}
-.inv-meta__value{font-size:0.82rem;font-weight:600;color:var(--text-primary);white-space:nowrap;}
+.inv-meta__label{font-size:0.6875rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;}
+.inv-meta__value{font-size:0.875rem;font-weight:600;color:var(--text-primary);white-space:nowrap;}
 .inv-meta__value--mono{font-family:var(--font-mono);}
 .inv-meta__badge{font-size:0.68rem;font-weight:700;letter-spacing:0.03em;padding:4px 10px;border-radius:999px;white-space:nowrap;width:fit-content;}
 .inv-meta__badge--draft{background:#FEF3C7;color:#B45309;}
-.inv-meta__date-input{height:32px;padding:0 10px;font-size:0.8rem;min-width:150px;}
+.inv-meta__date-input{height:34px;padding:0 10px;font-size:0.8125rem;min-width:150px;}
 .inv-meta--split{display:flex;flex-direction:row;align-items:center;gap:12px;}
 .inv-meta__logo{width:34px;height:34px;object-fit:contain;}
 
@@ -529,14 +535,15 @@
 
 /* Fields */
 .inv-field{display:flex;flex-direction:column;gap:8px;min-width:0;}
-.inv-field__label{font-size:0.68rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;}
+.inv-field__label{font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;}
 .inv-req{color:var(--color-danger);}
 .inv-grid{display:grid;gap:18px;}
 .inv-grid--2{grid-template-columns:repeat(2,1fr);}
 .inv-grid--3{grid-template-columns:repeat(3,1fr);}
+.inv-grid--4{grid-template-columns:repeat(4,1fr);}
 .inv-field--span2{grid-column:1 / -1;}
 .inv-cust-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;}
-.cust-info{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border:1px solid #D6E4FF;background:#F2F7FF;border-radius:12px;font-size:0.8rem;}
+.cust-info{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border:1px solid #D6E4FF;background:#F2F7FF;border-radius:12px;font-size:0.875rem;}
 .cust-info .ic-badge{background:var(--color-primary);color:#fff;font-weight:700;font-size:0.72rem;padding:4px 10px;border-radius:999px;}
 .cust-info .ic-item{color:var(--text-secondary);}
 .cust-info .ic-item b{color:var(--text-primary);font-family:var(--font-mono);font-weight:600;}
@@ -546,13 +553,13 @@
 /* Search bars */
 .autocomplete-wrap{position:relative;}
 .inv-search,.inv-item-search{position:relative;}
-.inv-search .form-control,.inv-item-search .form-control{padding-left:44px;height:46px;font-size:0.88rem;border-radius:12px;border:1px solid #E5E7EB;background:#fff;}
+.inv-search .form-control,.inv-item-search .form-control{padding-left:44px;height:46px;font-size:0.875rem;border-radius:12px;border:1px solid #E5E7EB;background:#fff;}
 .inv-search .form-control:focus,.inv-item-search .form-control:focus{border-color:var(--color-primary);box-shadow:var(--shadow-focus);}
 .inv-search__icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-muted);pointer-events:none;}
 .inv-item-search .inv-search__icon{left:16px;}
-/* Barcode section — separate input + camera button alongside search */
+/* Barcode section â€” separate input + camera button alongside search */
 .inv-barcode-section{display:flex;align-items:stretch;gap:6px;flex-shrink:0;}
-.inv-barcode-input{width:140px;min-width:100px;height:46px;padding:0 10px;font-size:0.88rem;border:1px solid #E5E7EB;border-radius:12px;background:#fff;text-align:center;font-family:var(--font-mono);letter-spacing:0.04em;}
+.inv-barcode-input{width:140px;min-width:100px;height:46px;padding:0 10px;font-size:0.875rem;border:1px solid #E5E7EB;border-radius:12px;background:#fff;text-align:center;font-family:var(--font-mono);letter-spacing:0.04em;}
 .inv-barcode-input:focus{border-color:var(--color-primary);box-shadow:var(--shadow-focus);}
 .inv-barcode-scan-btn{height:46px;width:46px;min-width:46px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--color-primary);background:#fff;color:var(--color-primary);cursor:pointer;}
 .inv-barcode-scan-btn:hover{background:var(--color-primary-light);}
@@ -566,12 +573,12 @@
 .inv-table-wrap{overflow-x:auto;border:1px solid #E5E7EB;border-radius:12px;}
 .inv-items-table{width:100%;border-collapse:collapse;min-width:1080px;}
 .inv-items-table thead th{
-    background:#F8FAFC;color:var(--text-muted);font-weight:700;font-size:0.62rem;
+    background:#F8FAFC;color:var(--text-muted);font-weight:700;font-size:0.6875rem;
     text-transform:uppercase;letter-spacing:0.05em;padding:13px 12px;border-bottom:1px solid #E5E7EB;
     white-space:nowrap;text-align:left;height:48px;position:sticky;top:0;z-index:1;
 }
 .inv-items-table thead th[data-w="w-prod"]{white-space:normal;line-height:1.25;}
-.inv-items-table tbody td{padding:12px;border-bottom:1px solid #F3F4F6;font-size:0.8rem;vertical-align:middle;text-align:left;}
+.inv-items-table tbody td{padding:12px;border-bottom:1px solid #F3F4F6;font-size:0.875rem;vertical-align:middle;text-align:left;}
 .inv-items-table tbody tr:last-child td{border-bottom:none;}
 .inv-items-table tbody tr:hover{background:#F8FAFF;}
 .inv-items-table [data-w="w-prod"]{width:30%;}
@@ -588,19 +595,19 @@
 .inv-items-table td.tr{text-align:right;}
 .inv-items-table .inv-prod{display:flex;align-items:center;gap:10px;min-width:0;}
 .inv-items-table .inv-prod__thumb{width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--color-primary-light);color:var(--color-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.72rem;}
-.inv-items-table .inv-prod__name{font-weight:600;color:var(--text-primary);font-size:0.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;}
-.inv-items-table .inv-prod__sub{font-size:0.68rem;color:var(--text-muted);white-space:nowrap;}
+.inv-items-table .inv-prod__name{font-weight:600;color:var(--text-primary);font-size:0.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;}
+.inv-items-table .inv-prod__sub{font-size:0.75rem;color:var(--text-muted);white-space:nowrap;}
 .inv-items-table .inv-cell-num{font-family:var(--font-mono);color:var(--text-primary);font-weight:500;}
 .inv-items-table .inv-cell-total{font-family:var(--font-mono);font-weight:700;color:var(--color-primary);}
 .inv-items-table .inv-edit{
-    border:1px solid #E5E7EB;border-radius:8px;padding:5px 7px;font-size:0.8rem;
+    border:1px solid #E5E7EB;border-radius:8px;padding:5px 7px;font-size:0.875rem;
     font-family:var(--font-mono);background:#fff;text-align:right;width:78px;
     transition:border-color 150ms ease;
 }
 .inv-items-table .inv-edit:focus{border-color:var(--color-primary);outline:none;box-shadow:var(--shadow-focus);}
 .inv-items-table .inv-edit--sm{width:54px;}
 .inv-items-table .inv-edit--m{width:64px;}
-.inv-items-table .inv-select{border:1px solid #E5E7EB;border-radius:8px;padding:5px 6px;font-size:0.74rem;background:#fff;color:var(--text-primary);cursor:pointer;width:72px;}
+.inv-items-table .inv-select{border:1px solid #E5E7EB;border-radius:8px;padding:5px 6px;font-size:0.8125rem;background:#fff;color:var(--text-primary);cursor:pointer;width:72px;}
 .inv-items-table .inv-del{width:30px;height:30px;border-radius:8px;border:none;background:none;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all 150ms ease;}
 .inv-items-table .inv-del:hover{background:var(--color-danger-light);color:var(--color-danger);}
 .inv-empty{padding:40px 24px;text-align:center;color:var(--text-muted);}
@@ -614,7 +621,7 @@
 
 /* Summary sidebar */
 .inv-summary{display:flex;flex-direction:column;gap:4px;}
-.inv-sum__row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:0.86rem;}
+.inv-sum__row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:0.875rem;}
 .inv-sum__row > span:first-child{color:var(--text-muted);}
 .inv-sum__row--sm{padding:6px 0;}
 .inv-sum__value{font-weight:600;font-family:var(--font-mono);color:var(--text-primary);}
@@ -635,7 +642,7 @@
 .inv-pay .bw-pay-radio{display:none;}
 .inv-pay__chip{
     display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;
-    border:1px solid #E5E7EB;background:#fff;color:var(--text-secondary);font-size:0.78rem;font-weight:600;
+    border:1px solid #E5E7EB;background:#fff;color:var(--text-secondary);font-size:0.8125rem;font-weight:600;
     cursor:pointer;transition:all 150ms ease;
 }
 .inv-pay__chip svg{width:14px;height:14px;}
@@ -646,7 +653,7 @@
 .inv-actions{display:flex;flex-direction:column;gap:12px;}
 .inv-btn{
     display:flex;align-items:center;justify-content:center;gap:8px;
-    height:48px;width:100%;border-radius:12px;font-size:0.86rem;font-weight:700;
+    height:44px;width:100%;border-radius:12px;font-size:0.875rem;font-weight:700;
     cursor:pointer;transition:all 150ms ease;
 }
 .inv-btn svg{width:18px;height:18px;}
@@ -671,7 +678,7 @@
     .inv-header__meta{width:100%;}
 }
 @media (max-width:760px){
-    .inv-grid--3{grid-template-columns:1fr 1fr;}
+    .inv-grid--3,.inv-grid--4{grid-template-columns:1fr 1fr;}
     .inv-grid--2{grid-template-columns:1fr 1fr;}
     .inv-cust-grid{grid-template-columns:1fr;}
     .inv-field--span2{grid-column:auto;}
@@ -690,17 +697,17 @@
     .inv-header{flex-direction:column;align-items:flex-start;}
     .inv-header__meta{width:100%;gap:12px;}
     .inv-cust-grid{grid-template-columns:1fr;}
-    .inv-grid--2,.inv-grid--3{grid-template-columns:1fr;}
+    .inv-grid--2,.inv-grid--3,.inv-grid--4{grid-template-columns:1fr;}
     .inv-items-table [data-w="w-disc"],
     .inv-items-table [data-w="w-price"]{display:none;}
     .inv-items-table .inv-edit{width:60px;}
-    .inv-btn{height:46px;font-size:.82rem;}
+    .inv-btn{height:44px;font-size:.875rem;}
     .inv-sum__grand-value{font-size:1.3rem;}
 }
 </style>
 
 <!-- =======================================================
-     JAVASCRIPT — All logic preserved; the item table
+     JAVASCRIPT â€” All logic preserved; the item table
      render string shows the CGST/SGST display columns.
      Inter-state tax is still calculated into the line
      total, but is never rendered to the user.
@@ -725,7 +732,7 @@
         setTimeout(() => { t.className = 'bw-toast'; }, 3000);
     }
 
-    /* —— State Change ———————————————————————————————————— */
+    /* â€”â€” State Change â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     document.getElementById('custState').addEventListener('change', function() {
         document.getElementById('custStateCode').value = this.value;
         const newIsInter = this.value && this.value !== companyStateCode && this.value !== '';
@@ -734,7 +741,7 @@
         recalcTotals();
     });
 
-    /* —— Customer Search ————————————————————————————————— */
+    /* â€”â€” Customer Search â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     const cs = document.getElementById('customerSearch');
     cs.addEventListener('input', function() {
         clearTimeout(customerSearchTimeout);
@@ -790,11 +797,11 @@
         box.style.display = c ? 'flex' : 'none';
         if (!c) return;
         box.innerHTML = `
-            <span class="ic-badge">Existing customer · ID ${c.id}</span>
+            <span class="ic-badge">Existing customer Â· ID ${c.id}</span>
             <span class="ic-item">Invoices <b>${c.invoice_count || 0}</b></span>
             <span class="ic-item">Purchases <b>Rs. ${fmtInr(c.total_purchases || 0)}</b></span>
             <span class="ic-item" style="color:${(c.outstanding||0)>0?'var(--color-danger)':'var(--color-success)'}">Outstanding <b>Rs. ${fmtNum(c.outstanding||0)}</b></span>
-            <span class="ic-item">Last Invoice ${c.last_invoice_number ? '<b>'+esc(c.last_invoice_number)+'</b>' : '<b>—</b>'}</span>
+            <span class="ic-item">Last Invoice ${c.last_invoice_number ? '<b>'+esc(c.last_invoice_number)+'</b>' : '<b>â€”</b>'}</span>
             <button type="button" class="ic-clear" onclick="clearCustomerSelection()">Clear</button>`;
     }
 
@@ -818,7 +825,7 @@
         });
     });
 
-    /* —— Product Search —————————————————————————————————— */
+    /* â€”â€” Product Search â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     const ps = document.getElementById('productSearch');
     ps.addEventListener('input', function() {
         clearTimeout(productSearchTimeout);
@@ -893,7 +900,7 @@
             recalcTotals();
             ps.value = '';
             hideDropdown('productDropdown');
-            showToast(p.name + ' — Qty updated to ' + existing.qty, 'success');
+            showToast(p.name + ' â€” Qty updated to ' + existing.qty, 'success');
             return;
         }
 
@@ -926,7 +933,7 @@
         showToast('Added: ' + p.name, 'success');
     };
 
-    /* —— Barcode Scanner Support ——————————————————————— */
+    /* â€”â€” Barcode Scanner Support â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     let barcodeBuffer = '';
     let barcodeTimer = null;
     const SCANNER_TIMEOUT = 100;
@@ -939,7 +946,7 @@
         const allowOos = document.getElementById('allowOutOfStock')?.checked || false;
         const stock = parseFloat(p.current_stock || p.stock || 0);
 
-        /* Check if product already in invoice — increment qty */
+        /* Check if product already in invoice â€” increment qty */
         const existing = items.find(it => it.product_id === p.id);
         if (existing) {
             if (!allowOos && stock > 0 && existing.qty >= stock) {
@@ -949,7 +956,7 @@
             existing.qty += 1;
             renderItems();
             recalcTotals();
-            showToast(p.name + ' — Qty updated to ' + existing.qty, 'success');
+            showToast(p.name + ' â€” Qty updated to ' + existing.qty, 'success');
             return;
         }
 
@@ -980,7 +987,7 @@
 showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
     };
 
-    /* —— Add-Item confirmation popup (product not found) ———————————————————————————————— */
+    /* â€”â€” Add-Item confirmation popup (product not found) â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     var CAN_CREATE_PRODUCTS = {% if current_user.is_admin or current_user.role == 'sales' %}true{% else %}false{% endif %};
     const confirmAddItemModal = document.getElementById('confirmAddItemModal');
     const confirmAddItemMsg = document.getElementById('confirmAddItemMsg');
@@ -1037,7 +1044,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
     });
     window.closeConfirmAddItem = closeConfirmAddItem;
 
-    /* —— Add New Product modal —————————————————————————————————— */
+    /* â€”â€” Add New Product modal â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     const addProductModal = document.getElementById('addProductModal');
     const addProductError = document.getElementById('addProductError');
     const addProductSave = document.getElementById('addProductSave');
@@ -1132,7 +1139,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
     if (addProductSave) addProductSave.addEventListener('click', saveNewProduct);
     window.saveNewProduct = saveNewProduct;
 
-    /* —— Exact barcode lookup via API —————————————————————————————— */
+    /* â€”â€” Exact barcode lookup via API â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     function lookupBarcode(code) {
         const allowOos = document.getElementById('allowOutOfStock')?.checked || false;
         fetch('/api/products/barcode/' + encodeURIComponent(code))
@@ -1186,7 +1193,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
         }
     });
 
-    /* —— Dedicated Barcode Input ——————————————————————— */
+    /* â€”â€” Dedicated Barcode Input â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     const barcodeInput = document.getElementById('barcodeInput');
     if (barcodeInput) {
         barcodeInput.addEventListener('keydown', function(e) {
@@ -1203,7 +1210,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
         setTimeout(() => { barcodeInput.focus(); }, 200);
     }
 
-    /* —— Camera Barcode Scanning ——————————————————————— */
+    /* â€”â€” Camera Barcode Scanning â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     const cameraScanBtn = document.getElementById('btnCameraScan');
     const cameraScanModal = document.getElementById('cameraScanModal');
     const closeCameraBtn = document.getElementById('closeCameraScan');
@@ -1274,7 +1281,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
         }
     }
 
-    /* —— Render Items ———————————————————————————————————— */
+    /* â€”â€” Render Items â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     function renderItems() {
         const body = document.getElementById('itemsBody');
         const empty = document.getElementById('emptyState');
@@ -1305,7 +1312,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
                         </div>
                     </div>
                 </td>
-                <td class="inv-cell-num">${esc(item.hsn || '—')}</td>
+                <td class="inv-cell-num">${esc(item.hsn || 'â€”')}</td>
                 <td>
                     <div class="inv-qty">
                         <button type="button" class="inv-qty__btn" onclick="stepQty(${item.id}, -1)" title="Decrease quantity" aria-label="Decrease quantity"><i data-lucide="minus"></i></button>
@@ -1378,7 +1385,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
         recalcTotals();
     };
 
-    /* —— Recalc Totals ——————————————————————————————————— */
+    /* â€”â€” Recalc Totals â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     function recalcTotals() {
         let subtotal = 0, totalDiscount = 0, totalTaxable = 0, totalCgst = 0, totalSgst = 0, totalIgst = 0;
         items.forEach(item => {
@@ -1430,7 +1437,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
 
     document.getElementById('amountPaid').addEventListener('input', recalcTotals);
 
-    /* —— Amount in words (Indian numbering) —————————————— */
+    /* â€”â€” Amount in words (Indian numbering) â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     const WORDS_ONES = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
         "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
     const WORDS_TENS = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
@@ -1470,7 +1477,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
         return neg ? "Minus " + out : out;
     }
 
-    /* —— Generate Invoice ———————————————————————————————— */
+    /* â€”â€” Generate Invoice â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     window.generateInvoice = function() {
         const name = document.getElementById('custName').value.trim();
         if (!name) { showToast('Please enter customer name', 'error'); return; }
@@ -1492,6 +1499,9 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
             notes: document.getElementById('invoiceNotes').value.trim(),
             terms: document.getElementById('invoiceTerms').value.trim(),
             invoice_date: document.getElementById('invoiceDate').value || document.getElementById('invoiceDate2').value,
+            {% if current_user.is_admin %}
+            invoice_serial: document.getElementById('invoiceSerialInput')?.value?.trim() || '',
+            {% endif %}
             due_date: document.getElementById('dueDate').value,
             allow_out_of_stock: document.getElementById('allowOutOfStock')?.checked || false,
             items: items.map(item => ({
@@ -1539,6 +1549,11 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
         document.getElementById('invoiceDate').value = {% if edit_mode %}'{{ invoice_data.invoice_date }}'{% else %}''{% endif %};
         document.getElementById('invoiceDate2').value = {% if edit_mode %}'{{ invoice_data.invoice_date }}'{% else %}'{{ today }}'{% endif %};
         document.getElementById('dueDate').value = {% if edit_mode %}'{{ invoice_data.due_date }}'{% else %}''{% endif %};
+        {% if current_user.is_admin %}
+        const invSerialInput = document.getElementById('invoiceSerialInput');
+        if (invSerialInput) invSerialInput.value = {{ (invoice_serial or '')|tojson }};
+        {% endif %}
+        document.dispatchEvent(new CustomEvent('gv:invoice-reset'));
         document.getElementById('pmCash').checked = true;
         renderItems(); recalcTotals();
     };
@@ -1548,7 +1563,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
     function fmtInr(n) { return Number(n).toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0}); }
     function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-    /* —— Sync duplicated invoice-date inputs ————————————— */
+    /* â€”â€” Sync duplicated invoice-date inputs â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€” */
     const idDate = document.getElementById('invoiceDate');
     const idDate2 = document.getElementById('invoiceDate2');
     if (idDate2) {
@@ -1558,25 +1573,84 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
         idDate.addEventListener('change', function(){ if (idDate2) idDate2.value = this.value; });
     }
 
-    {% if current_user.is_admin and not edit_mode %}
-    /* Admin-only: keep the provisional invoice number in sync with Invoice Date. */
+    {% if current_user.is_admin %}
+    /* Admin-only: manual invoice serial + date-aware invoice number preview. */
     const invoiceNumberDisplay = document.getElementById('invoiceNumber');
     const invoiceNumberInput = document.getElementById('invoiceNumberInput');
+    const invoiceSerialInput = document.getElementById('invoiceSerialInput');
     const NEXT_INVOICE_NUMBER_URL = '{{ url_for("preview_invoice_number") }}';
+    const CURRENT_INVOICE_ID = {% if edit_mode %}{{ invoice.id }}{% else %}null{% endif %};
+    const INITIAL_INVOICE_NUMBER = {{ invoice_number|tojson }};
     let invoiceNumberRequestId = 0;
     let invoiceNumberController = null;
+    let invoiceSerialCheckTimer = null;
 
     function setInvoiceNumber(number) {
         if (invoiceNumberDisplay) invoiceNumberDisplay.textContent = number;
         if (invoiceNumberInput) invoiceNumberInput.value = number;
     }
 
+    function serialFromInvoiceNumber(number) {
+        const match = String(number || '').match(/-(\d+)$/);
+        if (!match) return '';
+        const value = parseInt(match[1], 10);
+        return value > 0 ? String(value).padStart(3, '0') : '';
+    }
+
+    function setSerialPlaceholder(number) {
+        if (invoiceSerialInput) {
+            invoiceSerialInput.placeholder = serialFromInvoiceNumber(number) || '001';
+        }
+    }
+
+    function normalizedSerial() {
+        if (!invoiceSerialInput) return '';
+        const raw = String(invoiceSerialInput.value || '').replace(/\D+/g, '');
+        if (!raw) return '';
+        const value = parseInt(raw, 10);
+        if (!Number.isFinite(value) || value < 1 || value > 999) return '';
+        return String(value).padStart(3, '0');
+    }
+
+    function buildInvoiceNumber(selectedDate, serial) {
+        const parts = String(selectedDate || '').split('-');
+        if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2] || !serial) return '';
+        return 'INV-' + parts[2] + parts[1] + parts[0] + '-' + serial;
+    }
+
+    function currentInvoiceDate() {
+        return (idDate && idDate.value) || (idDate2 && idDate2.value) || '';
+    }
+
+    function updateNumberFromSerial() {
+        const selectedDate = currentInvoiceDate();
+        const serial = normalizedSerial();
+        if (!selectedDate || !serial) return false;
+        setInvoiceNumber(buildInvoiceNumber(selectedDate, serial));
+        return true;
+    }
+
     function refreshInvoiceNumber(selectedDate) {
         if (!selectedDate) return;
+        const rawSerial = invoiceSerialInput
+            ? String(invoiceSerialInput.value || '').replace(/\D+/g, '')
+            : '';
+        const serial = normalizedSerial();
+        if (rawSerial && !serial) {
+            showToast('Invoice serial number must be between 1 and 999.', 'error');
+            return;
+        }
+        if (!serial && CURRENT_INVOICE_ID) {
+            setInvoiceNumber(INITIAL_INVOICE_NUMBER);
+            return;
+        }
         const requestId = ++invoiceNumberRequestId;
         if (invoiceNumberController) invoiceNumberController.abort();
         invoiceNumberController = new AbortController();
-        fetch(NEXT_INVOICE_NUMBER_URL + '?date=' + encodeURIComponent(selectedDate), {
+        let url = NEXT_INVOICE_NUMBER_URL + '?date=' + encodeURIComponent(selectedDate);
+        if (serial) url += '&serial=' + encodeURIComponent(serial);
+        if (CURRENT_INVOICE_ID) url += '&exclude=' + encodeURIComponent(CURRENT_INVOICE_ID);
+        fetch(url, {
             signal: invoiceNumberController.signal,
             cache: 'no-store',
             headers: { 'Accept': 'application/json' }
@@ -1585,10 +1659,12 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
             .then(function(result) {
                 if (requestId !== invoiceNumberRequestId) return;
                 if (!result.ok || !result.data || !result.data.success || !result.data.invoice_number) {
+                    if (result.data && result.data.invoice_number) setInvoiceNumber(result.data.invoice_number);
                     if (result.data && result.data.error) showToast(result.data.error, 'error');
                     return;
                 }
                 setInvoiceNumber(result.data.invoice_number);
+                if (!serial) setSerialPlaceholder(result.data.invoice_number);
             })
             .catch(function(err) {
                 if (err && err.name === 'AbortError') return;
@@ -1604,6 +1680,45 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
         refreshInvoiceNumber(selectedDate);
     }
 
+    function handleInvoiceSerialInput() {
+        if (!invoiceSerialInput) return;
+        const digits = String(invoiceSerialInput.value || '').replace(/\D+/g, '');
+        if (invoiceSerialInput.value !== digits) invoiceSerialInput.value = digits;
+        if (invoiceSerialCheckTimer) clearTimeout(invoiceSerialCheckTimer);
+        if (!digits) {
+            refreshInvoiceNumber(currentInvoiceDate());
+            return;
+        }
+        if (!normalizedSerial()) return;
+        updateNumberFromSerial();
+        invoiceSerialCheckTimer = setTimeout(function() {
+            refreshInvoiceNumber(currentInvoiceDate());
+        }, 250);
+    }
+
+    function handleInvoiceSerialBlur() {
+        if (!invoiceSerialInput) return;
+        const raw = String(invoiceSerialInput.value || '').replace(/\D+/g, '');
+        const serial = normalizedSerial();
+        if (raw && !serial) {
+            showToast('Invoice serial number must be between 1 and 999.', 'error');
+            return;
+        }
+        invoiceSerialInput.value = serial;
+        if (!serial) {
+            refreshInvoiceNumber(currentInvoiceDate());
+            return;
+        }
+        updateNumberFromSerial();
+        refreshInvoiceNumber(currentInvoiceDate());
+    }
+
+    if (invoiceSerialInput) {
+        setSerialPlaceholder(invoiceNumberInput ? invoiceNumberInput.value : '');
+        invoiceSerialInput.addEventListener('input', handleInvoiceSerialInput);
+        invoiceSerialInput.addEventListener('blur', handleInvoiceSerialBlur);
+    }
+
     if (idDate) {
         idDate.addEventListener('change', handleInvoiceDateChange);
         idDate.addEventListener('input', handleInvoiceDateChange);
@@ -1612,6 +1727,9 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
         idDate2.addEventListener('change', handleInvoiceDateChange);
         idDate2.addEventListener('input', handleInvoiceDateChange);
     }
+    document.addEventListener('gv:invoice-reset', function() {
+        refreshInvoiceNumber(currentInvoiceDate());
+    });
     {% endif %}
 
     document.addEventListener('click', function(e) {
@@ -1753,7 +1871,7 @@ showToast('Added: ' + p.name + ' (Qty: 1)', 'success');
 .inv-ac__gst{font-size:0.72rem;color:var(--text-muted);}
 .inv-ac__stock{font-size:0.7rem;font-weight:600;margin-top:1px;}
 
-/* Product autocomplete results — professional ERP hover (blue bg, white text) */
+/* Product autocomplete results â€” professional ERP hover (blue bg, white text) */
 .inv-item-search .inv-ac{border-radius:10px;margin:4px 6px;padding:11px 12px;background:#fff;}
 .inv-item-search .inv-ac:hover,
 .inv-item-search .inv-ac.inv-ac--active{background:#2563EB;color:#fff;cursor:pointer;}

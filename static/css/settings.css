@@ -18,24 +18,24 @@
     --set-radius: 18px;
     --set-radius-sm: 12px;
     --set-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 8px 24px rgba(15, 23, 42, .05);
-    --set-input-h: 48px;
+    --set-input-h: 44px;
     font-family: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
 }
 
 /* Full-width shell */
 .settings-app .gv-shell {
-    width: 95%;
-    max-width: 1500px;
-    margin: 22px auto 0;
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
     display: flex;
-    gap: 28px;
+    gap: 24px;
     align-items: flex-start;
 }
 
 /* ── LEFT NAV (280px) ─────────────────────────────────────── */
 .settings-app .gv-nav {
-    width: 280px;
-    flex: 0 0 280px;
+    width: 260px;
+    flex: 0 0 260px;
     background: var(--set-surface);
     border: 1px solid var(--set-border);
     border-radius: var(--set-radius);
@@ -166,7 +166,7 @@
     border: 1px solid var(--set-border);
     border-radius: var(--set-radius);
     box-shadow: var(--set-shadow);
-    padding: 30px;
+    padding: 24px;
     margin-bottom: 24px;
 }
 .settings-app .gv-card + .gv-card { margin-top: 0; }
