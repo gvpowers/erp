@@ -370,6 +370,80 @@ def peek_next_invoice_number(dt: Optional[date] = None) -> str:
     return f"{prefix}{max(seq, legacy) + 1:03d}"
 
 
+def normalize_invoice_serial(raw) -> Optional[str]:
+    """Return a zero-padded 3-digit invoice serial, or None when blank.
+
+    Raises ``ValueError`` for values that cannot be represented in the
+    ``INV-DDMMYYYY-NNN`` format. The serial is the last segment of the existing
+    ``Invoice.invoice_number`` column, so no separate database column is needed.
+    """
+    if raw is None:
+        return None
+    text = str(raw).strip()
+    if not text:
+        return None
+    if not text.isdigit():
+        raise ValueError('Invoice serial number must contain digits only.')
+    value = int(text)
+    if value < 1 or value > 999:
+        raise ValueError('Invoice serial number must be between 1 and 999.')
+    return f'{value:03d}'
+
+
+def invoice_number_for_serial(dt: date, serial: str) -> str:
+    """Build the canonical invoice number for a date and 3-digit serial."""
+    return f"INV-{dt.strftime('%d%m%Y')}-{serial}"
+
+
+def invoice_serial_from_number(number: Optional[str]) -> Optional[str]:
+    """Extract the serial suffix from an existing invoice number."""
+    if not number:
+        return None
+    serial = str(number).rsplit('-', 1)[-1]
+    if serial.isdigit():
+        return f'{int(serial):03d}'
+    return None
+
+
+def _reserve_manual_invoice_serial(prefix: str, serial_value: int,
+                                   commit: bool = False) -> int:
+    """Raise the sequence counter so a manual serial is never reissued.
+
+    The counter is set to the highest of the manual serial and the legacy
+    maximum already present for that date. It is never decreased, so gaps can
+    be filled manually without causing future automatic numbers to collide.
+    """
+    legacy = _sequence_seed_from_table('invoices', 'invoice_number', prefix)
+    target = max(int(serial_value), legacy)
+    _ts = datetime.utcnow()
+    for _ in range(10):
+        try:
+            upd = db.session.execute(
+                text("UPDATE invoice_sequences SET last_value = CASE "
+                     "WHEN last_value < :target THEN :target ELSE last_value END, "
+                     "updated_at = :ts WHERE seq_key = :key"),
+                {'target': target, 'ts': _ts, 'key': prefix},
+            )
+            if upd.rowcount == 1:
+                if commit:
+                    db.session.commit()
+                return target
+            db.session.execute(
+                text("INSERT INTO invoice_sequences (seq_key, prefix, period, last_value, updated_at) "
+                     "VALUES (:key, :key, :key, :target, :ts)"),
+                {'key': prefix, 'target': target, 'ts': _ts},
+            )
+            if commit:
+                db.session.commit()
+            return target
+        except IntegrityError:
+            db.session.rollback()
+        except OperationalError:
+            db.session.rollback()
+            time.sleep(0.02)
+    raise RuntimeError('Could not reserve the invoice serial number. Please try again.')
+
+
 def generate_quotation_number(existing_numbers: Optional[List[str]] = None, dt: Optional[date] = None,
                               commit: bool = True) -> str:
     """Allocate and permanently consume the next quotation number.
@@ -3661,14 +3735,52 @@ def new_invoice():
                 return jsonify({'success': False, 'error': err}), 400
             flash(err, 'danger')
             return redirect(url_for('new_invoice'))
+        manual_serial = None
+        manual_prefix = None
+        manual_invoice_number = None
+        serial_value = data.get('invoice_serial')
+        serial_raw = '' if serial_value is None else str(serial_value).strip()
+        if not current_user.is_admin:
+            # Sales/Goods must never be able to choose a serial through the API.
+            if serial_raw:
+                err = 'Only an admin can set the invoice serial number.'
+                if request.is_json:
+                    return jsonify({'success': False, 'error': err}), 403
+                flash(err, 'danger')
+                return redirect(url_for('new_invoice'))
+        else:
+            try:
+                manual_serial = normalize_invoice_serial(serial_raw)
+            except ValueError as exc:
+                err = str(exc)
+                if request.is_json:
+                    return jsonify({'success': False, 'error': err}), 400
+                flash(err, 'danger')
+                return redirect(url_for('new_invoice'))
+            if manual_serial:
+                manual_prefix = f"INV-{inv_date.strftime('%d%m%Y')}-"
+                manual_invoice_number = invoice_number_for_serial(inv_date, manual_serial)
+                if Invoice.query.filter_by(invoice_number=manual_invoice_number).first():
+                    err = (f'Invoice number {manual_invoice_number} already exists. '
+                           f'Please choose a different serial number for this invoice date.')
+                    if request.is_json:
+                        return jsonify({'success': False, 'error': err,
+                                        'invoice_number': manual_invoice_number}), 400
+                    flash(err, 'danger')
+                    return redirect(url_for('new_invoice'))
         inv_num = None
         try:
             # Allocate the number inside the save transaction: it is only
             # consumed when the invoice commits successfully. On any failure the
             # whole transaction (counter bump + invoice) rolls back together.
-            # Admins number invoices by the selected invoice date; Sales keep
-            # the existing (today-based) behaviour.
-            inv_num = generate_invoice_number(dt=inv_date if current_user.is_admin else None, commit=False)
+            # Admins may choose a manual serial; otherwise they number by the
+            # selected invoice date. Sales keep the existing today-based
+            # behaviour.
+            if manual_serial:
+                _reserve_manual_invoice_serial(manual_prefix, int(manual_serial), commit=False)
+                inv_num = manual_invoice_number
+            else:
+                inv_num = generate_invoice_number(dt=inv_date if current_user.is_admin else None, commit=False)
             cust = _resolve_customer(data)
             due_date_str = data.get('due_date', '')
             due_date = datetime.strptime(due_date_str, '%Y-%m-%d').date() if due_date_str else None
@@ -3719,6 +3831,20 @@ def new_invoice():
                 c = db.session.get(Customer, inv.customer_id)
                 if c: c.total_purchases = (c.total_purchases or Decimal('0'))+rg; c.invoice_count = (c.invoice_count or 0)+1
             db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            if manual_serial:
+                err = (f'Invoice number {inv_num} is already in use. '
+                       f'Please choose another serial number for this invoice date.')
+            else:
+                err = 'Invoice could not be saved because the invoice number is already in use. Please try again.'
+            if request.is_json:
+                payload = {'success': False, 'error': err}
+                if inv_num:
+                    payload['invoice_number'] = inv_num
+                return jsonify(payload), 400
+            flash(err, 'danger')
+            return redirect(url_for('new_invoice'))
         except Exception:
             db.session.rollback()
             if request.is_json:
@@ -3760,12 +3886,44 @@ def preview_invoice_number():
         invoice_date = datetime.strptime(date_str, '%Y-%m-%d').date()
     except (TypeError, ValueError):
         return jsonify({'success': False, 'error': 'Please select a valid invoice date.'}), 400
+    serial_raw = (request.args.get('serial') or '').strip()
+    exclude_raw = (request.args.get('exclude') or '').strip()
+    exclude_id = None
+    if exclude_raw:
+        if not exclude_raw.isdigit():
+            return jsonify({'success': False, 'error': 'Invalid invoice reference.'}), 400
+        exclude_id = int(exclude_raw)
+    if serial_raw:
+        try:
+            serial = normalize_invoice_serial(serial_raw)
+        except ValueError as exc:
+            return jsonify({'success': False, 'error': str(exc)}), 400
+        number = invoice_number_for_serial(invoice_date, serial)
+        duplicate_query = Invoice.query.filter_by(invoice_number=number)
+        if exclude_id is not None:
+            duplicate_query = duplicate_query.filter(Invoice.id != exclude_id)
+        if duplicate_query.first():
+            resp = jsonify({
+                'success': False,
+                'error': (f'Invoice number {number} already exists. '
+                          f'Please choose a different serial number for this invoice date.'),
+                'invoice_number': number,
+                'serial': serial,
+                'duplicate': True,
+            })
+            resp.status_code = 409
+            resp.headers['Cache-Control'] = 'no-store'
+            return resp
+        resp = jsonify({'success': True, 'invoice_number': number, 'serial': serial})
+        resp.headers['Cache-Control'] = 'no-store'
+        return resp
     try:
         number = peek_next_invoice_number(invoice_date)
     except Exception:
         current_app.logger.exception('Could not preview invoice number for %s', date_str)
         return jsonify({'success': False, 'error': 'Could not calculate the invoice number. Please try again.'}), 500
-    resp = jsonify({'success': True, 'invoice_number': number})
+    resp = jsonify({'success': True, 'invoice_number': number,
+                    'serial': invoice_serial_from_number(number)})
     resp.headers['Cache-Control'] = 'no-store'
     return resp
 
@@ -3847,6 +4005,58 @@ def edit_invoice(iid):
         inv_previous = backup_sync.serialize_invoice(inv)  # pre-edit snapshot for the archive
 
         data = request.get_json(silent=True) or request.form
+        old_invoice_number = inv.invoice_number
+        invoice_date_raw = data.get('invoice_date')
+        try:
+            edit_invoice_date = (datetime.strptime(str(invoice_date_raw), '%Y-%m-%d').date()
+                                 if invoice_date_raw else inv.invoice_date)
+        except (TypeError, ValueError):
+            err = 'Please select a valid invoice date.'
+            if request.is_json:
+                return jsonify({'success': False, 'error': err}), 400
+            flash(err, 'danger')
+            return redirect(url_for('edit_invoice', iid=inv.id))
+
+        serial_value = data.get('invoice_serial')
+        serial_raw = '' if serial_value is None else str(serial_value).strip()
+        target_serial = None
+        new_invoice_number = inv.invoice_number
+        if serial_raw and not current_user.is_admin:
+            err = 'Only an admin can set the invoice serial number.'
+            if request.is_json:
+                return jsonify({'success': False, 'error': err}), 403
+            flash(err, 'danger')
+            return redirect(url_for('edit_invoice', iid=inv.id))
+        if current_user.is_admin:
+            try:
+                target_serial = normalize_invoice_serial(serial_raw)
+            except ValueError as exc:
+                err = str(exc)
+                if request.is_json:
+                    return jsonify({'success': False, 'error': err}), 400
+                flash(err, 'danger')
+                return redirect(url_for('edit_invoice', iid=inv.id))
+            if target_serial:
+                current_serial = invoice_serial_from_number(inv.invoice_number)
+                candidate_number = invoice_number_for_serial(edit_invoice_date, target_serial)
+                legacy_unchanged = (target_serial == current_serial
+                                    and edit_invoice_date == inv.invoice_date
+                                    and candidate_number != inv.invoice_number)
+                if not legacy_unchanged:
+                    new_invoice_number = candidate_number
+                if new_invoice_number != inv.invoice_number:
+                    duplicate = Invoice.query.filter(
+                        Invoice.invoice_number == new_invoice_number,
+                        Invoice.id != inv.id).first()
+                    if duplicate:
+                        err = (f'Invoice number {new_invoice_number} already exists. '
+                               f'Please choose a different serial number for this invoice date.')
+                        if request.is_json:
+                            return jsonify({'success': False, 'error': err,
+                                            'invoice_number': new_invoice_number}), 400
+                        flash(err, 'danger')
+                        return redirect(url_for('edit_invoice', iid=inv.id))
+
         items_data = data.get('items', [])
         if not items_data:
             pn = data.getlist('product_name[]') if hasattr(data, 'getlist') else data.get('product_name', [])
@@ -3980,7 +4190,20 @@ def edit_invoice(iid):
             inv.customer_gstin = (data.get('customer_gstin') or inv.customer_gstin or '').strip()
             inv.customer_state = (data.get('customer_state') or inv.customer_state or '').strip()
             inv.customer_state_code = cust_sc
-        inv.invoice_date = datetime.strptime(data.get('invoice_date', '') or inv.invoice_date.strftime('%Y-%m-%d'), '%Y-%m-%d').date()
+        inv.invoice_date = edit_invoice_date
+        if new_invoice_number != old_invoice_number:
+            inv.invoice_number = new_invoice_number
+            if target_serial:
+                prefix = f"INV-{edit_invoice_date.strftime('%d%m%Y')}-"
+                try:
+                    _reserve_manual_invoice_serial(prefix, int(target_serial), commit=False)
+                except RuntimeError:
+                    db.session.rollback()
+                    err = 'Could not reserve the invoice serial number. Please try again.'
+                    if request.is_json:
+                        return jsonify({'success': False, 'error': err}), 400
+                    flash(err, 'danger')
+                    return redirect(url_for('edit_invoice', iid=inv.id))
         inv.due_date = (datetime.strptime(data.get('due_date', ''), '%Y-%m-%d').date() if data.get('due_date')
                         else None if 'due_date' in data else inv.due_date)
         inv.payment_method = (data.get('payment_method') or inv.payment_method or '').strip()
@@ -4072,8 +4295,10 @@ def edit_invoice(iid):
                                                backup_sync.serialize_payment(_created_payment))
 
         _run_low_stock_check()
+        number_note = (f', Invoice No: {old_invoice_number} -> {new_invoice_number}'
+                       if new_invoice_number != old_invoice_number else '')
         log_audit(current_user.id, 'invoice_updated', 'invoice', inv.id,
-                  f'Edited {inv.invoice_number} (Total: {old_gt} -> {rg}, items: {len(old_items)} -> {len(valid_items)})')
+                  f'Edited {inv.invoice_number}{number_note} (Total: {old_gt} -> {rg}, items: {len(old_items)} -> {len(valid_items)})')
         backup_sync.record_updated('invoice', inv.id, backup_sync.serialize_invoice(inv),
                                    previous_data=inv_previous)
         manifest = _publish_invoice_to_portal(inv)
@@ -4109,6 +4334,7 @@ def edit_invoice(iid):
         } for it in inv.items],
     }
     return render_template('billing/new_invoice.html', invoice=inv, invoice_number=inv.invoice_number,
+                           invoice_serial=invoice_serial_from_number(inv.invoice_number),
                            invoice_data=invoice_data, customers=Customer.query.order_by(Customer.name).all(),
                            products=Product.query.filter_by(is_active=True).order_by(Product.name).all(),
                            edit_mode=True, company=current_app.config.get('COMPANY', {}),
@@ -4919,6 +5145,10 @@ def _user_name_map():
 
 
 _PAYMENT_HEADERS = ['Date', 'Invoice #', 'Customer', 'Amount', 'Method', 'Reference', 'Collected By', 'Remarks']
+_GST_REGISTER_HEADERS = ['Invoice #', 'Date', 'Customer', 'GSTIN', 'State Code', 'State', 'Supply Type',
+                         'Taxable', 'CGST', 'SGST', 'IGST', 'Total Tax', 'Grand Total']
+_PROFIT_HEADERS = ['Invoice #', 'Date', 'Customer', 'Revenue', 'Product Cost', 'Gross Profit',
+                   'GST', 'Discount', 'Net Profit Before Expenses']
 
 
 def _payment_filter_clauses(args, default_period='month'):
@@ -4993,6 +5223,118 @@ def _fetch_low_stock_rows():
             'purchase_price': _money(p.purchase_price),
             'stock_value': _money((p.stock_quantity or 0) * (p.purchase_price or 0)),
             'status': p.stock_status,
+        })
+    return rows
+
+
+def _gst_period(args):
+    from calendar import monthrange
+    now_dt = datetime.now()
+    try:
+        month = int(args.get('month', now_dt.month))
+    except (TypeError, ValueError):
+        month = now_dt.month
+    try:
+        year = int(args.get('year', now_dt.year))
+    except (TypeError, ValueError):
+        year = now_dt.year
+    if not 1 <= month <= 12:
+        month = now_dt.month
+    if not 2000 <= year <= 2100:
+        year = now_dt.year
+    sd = date(year, month, 1)
+    ed = date(year, month, monthrange(year, month)[1])
+    clauses, filters = _invoice_filter_clauses(args, sd=sd, ed=ed)
+    filters.update({'month': month, 'year': year})
+    return now_dt, month, year, clauses, filters
+
+
+def _fetch_gst_rows(clauses):
+    rows = []
+    for inv in Invoice.query.filter(*clauses).order_by(Invoice.invoice_date, Invoice.id).all():
+        taxable = _money(inv.total_taxable)
+        cgst = _money(inv.total_cgst)
+        sgst = _money(inv.total_sgst)
+        igst = _money(inv.total_igst)
+        rows.append({
+            'invoice_number': inv.invoice_number,
+            'invoice_date': inv.invoice_date.isoformat() if inv.invoice_date else '',
+            'customer_name': inv.customer_name or '',
+            'customer_gstin': inv.customer_gstin or '',
+            'state_code': inv.customer_state_code or '',
+            'state': inv.customer_state or '',
+            'supply_type': 'Intra-state' if inv.is_intra_state else 'Inter-state',
+            'taxable': taxable,
+            'cgst': cgst,
+            'sgst': sgst,
+            'igst': igst,
+            'tax': cgst + sgst + igst,
+            'grand_total': _money(inv.grand_total),
+        })
+    return rows
+
+
+def _gst_summary_rows(clauses):
+    hsn = []
+    item_rows = (db.session.query(InvoiceItem, Invoice)
+                 .join(Invoice, Invoice.id == InvoiceItem.invoice_id).filter(*clauses)
+                 .with_entities(InvoiceItem.hsn, InvoiceItem.gst_rate, func.sum(InvoiceItem.qty),
+                                func.sum(InvoiceItem.taxable_value), func.sum(InvoiceItem.cgst),
+                                func.sum(InvoiceItem.sgst), func.sum(InvoiceItem.igst),
+                                func.count(func.distinct(Invoice.id)))
+                 .group_by(InvoiceItem.hsn, InvoiceItem.gst_rate)
+                 .order_by(desc(func.sum(InvoiceItem.taxable_value))).all())
+    for r in item_rows:
+        taxable = _money(r[3])
+        cgst = _money(r[4])
+        sgst = _money(r[5])
+        igst = _money(r[6])
+        hsn.append([r[0] or 'N/A', _money(r[1]), int(r[2] or 0), taxable, cgst, sgst, igst,
+                    cgst + sgst + igst, int(r[7] or 0)])
+    rates = []
+    rate_rows = (db.session.query(InvoiceItem, Invoice)
+                 .join(Invoice, Invoice.id == InvoiceItem.invoice_id).filter(*clauses)
+                 .with_entities(InvoiceItem.gst_rate, func.sum(InvoiceItem.qty),
+                                func.sum(InvoiceItem.taxable_value), func.sum(InvoiceItem.cgst),
+                                func.sum(InvoiceItem.sgst), func.sum(InvoiceItem.igst))
+                 .group_by(InvoiceItem.gst_rate).order_by(InvoiceItem.gst_rate).all())
+    for r in rate_rows:
+        taxable = _money(r[2])
+        cgst = _money(r[3])
+        sgst = _money(r[4])
+        igst = _money(r[5])
+        rates.append([_money(r[0]), int(r[1] or 0), taxable, cgst, sgst, igst, cgst + sgst + igst])
+    gstins = []
+    gstin_rows = (Invoice.query.filter(*clauses)
+                  .with_entities(Invoice.customer_gstin, Invoice.customer_name, func.count(Invoice.id),
+                                 func.coalesce(func.sum(Invoice.total_taxable), 0),
+                                 func.coalesce(func.sum(Invoice.total_cgst + Invoice.total_sgst + Invoice.total_igst), 0),
+                                 func.coalesce(func.sum(Invoice.grand_total), 0))
+                  .group_by(Invoice.customer_gstin, Invoice.customer_name).all())
+    for r in gstin_rows:
+        gstins.append([r[0] or 'B2C', r[1] or 'N/A', int(r[2] or 0), _money(r[3]), _money(r[4]), _money(r[5])])
+    return hsn, rates, gstins
+
+
+def _fetch_profit_rows(clauses):
+    cost_map = {p.id: _money(p.purchase_price) for p in Product.query.all()}
+    rows = []
+    for inv in Invoice.query.filter(*clauses).order_by(desc(Invoice.invoice_date), desc(Invoice.id)).all():
+        revenue = _money(inv.grand_total)
+        discount = _money(inv.total_discount)
+        gst = _money(inv.total_cgst + inv.total_sgst + inv.total_igst)
+        cost = sum(cost_map.get(item.product_id, 0) * float(item.qty or 0) for item in inv.items)
+        gross = revenue - cost
+        rows.append({
+            'invoice_number': inv.invoice_number,
+            'invoice_date': inv.invoice_date.isoformat() if inv.invoice_date else '',
+            'customer_name': inv.customer_name or '',
+            'revenue': revenue,
+            'cost': cost,
+            'gross_profit': gross,
+            'gst': gst,
+            'discount': discount,
+            'net_profit': gross - gst - discount,
         })
     return rows
 
@@ -5206,17 +5548,7 @@ def low_stock_report():
 def gst_report():
     if not current_user.is_admin:
         abort(403)
-    now_dt = datetime.now()
-    try:
-        month = int(request.args.get('month', now_dt.month))
-        year = int(request.args.get('year', now_dt.year))
-    except (TypeError, ValueError):
-        month, year = now_dt.month, now_dt.year
-    from calendar import monthrange
-    sd = date(year, month, 1)
-    ed = date(year, month, monthrange(year, month)[1])
-
-    clauses, filters = _invoice_filter_clauses(request.args, sd=sd, ed=ed)
+    now_dt, month, year, clauses, filters = _gst_period(request.args)
     q = Invoice.query.filter(*clauses)
     item_q = db.session.query(InvoiceItem, Invoice).join(Invoice, Invoice.id == InvoiceItem.invoice_id).filter(*clauses)
 
@@ -5538,6 +5870,12 @@ def report_export(fmt, report_type):
     elif report_type == 'low_stock':
         clauses, filters = [], {}
         user_map = {}
+    elif report_type == 'gst':
+        _now_dt, _month, _year, clauses, filters = _gst_period(request.args)
+        user_map = {}
+    elif report_type == 'profit':
+        clauses, filters = _invoice_filter_clauses(request.args, default_period='month', allow_product=False)
+        user_map = _user_name_map()
     else:
         clauses, filters = _invoice_filter_clauses(request.args, default_period='year', allow_product=False)
         user_map = _user_name_map()
@@ -5588,6 +5926,17 @@ def _export_csv(report_type, clauses, user_map, fname):
         for r in _fetch_low_stock_rows():
             w.writerow([r['name'], r['sku'], r['brand'], r['category'], r['stock'], r['min_stock'],
                         r['max_stock'], r['suggested']])
+    elif report_type == 'gst':
+        w.writerow(_GST_REGISTER_HEADERS)
+        for r in _fetch_gst_rows(clauses):
+            w.writerow([r['invoice_number'], r['invoice_date'], r['customer_name'], r['customer_gstin'],
+                        r['state_code'], r['state'], r['supply_type'], r['taxable'], r['cgst'],
+                        r['sgst'], r['igst'], r['tax'], r['grand_total']])
+    elif report_type == 'profit':
+        w.writerow(_PROFIT_HEADERS)
+        for r in _fetch_profit_rows(clauses):
+            w.writerow([r['invoice_number'], r['invoice_date'], r['customer_name'], r['revenue'],
+                        r['cost'], r['gross_profit'], r['gst'], r['discount'], r['net_profit']])
     else:
         abort(404)
     buf = io.BytesIO(out.getvalue().encode('utf-8-sig'))
@@ -5639,9 +5988,36 @@ def _export_excel(report_type, clauses, user_map, fname):
         for r in _fetch_low_stock_rows():
             ws.append([r['name'], r['sku'], r['brand'], r['category'], r['stock'], r['min_stock'],
                        r['max_stock'], r['suggested']])
+    elif report_type == 'gst':
+        ws = wb.active; ws.title = 'GST Register'
+        ws.append(_GST_REGISTER_HEADERS)
+        for r in _fetch_gst_rows(clauses):
+            ws.append([r['invoice_number'], r['invoice_date'], r['customer_name'], r['customer_gstin'],
+                       r['state_code'], r['state'], r['supply_type'], r['taxable'], r['cgst'],
+                       r['sgst'], r['igst'], r['tax'], r['grand_total']])
+        hsn_rows, rate_rows, gstin_rows = _gst_summary_rows(clauses)
+        ws_hsn = wb.create_sheet('HSN Summary')
+        ws_hsn.append(['HSN', 'Rate %', 'Qty', 'Taxable', 'CGST', 'SGST', 'IGST', 'Total Tax', 'Invoices'])
+        for row in hsn_rows:
+            ws_hsn.append(row)
+        ws_rate = wb.create_sheet('Rate Summary')
+        ws_rate.append(['GST Rate %', 'Qty', 'Taxable', 'CGST', 'SGST', 'IGST', 'Total Tax'])
+        for row in rate_rows:
+            ws_rate.append(row)
+        ws_gstin = wb.create_sheet('GSTIN Summary')
+        ws_gstin.append(['GSTIN', 'Customer', 'Invoices', 'Taxable', 'Tax', 'Grand Total'])
+        for row in gstin_rows:
+            ws_gstin.append(row)
+    elif report_type == 'profit':
+        ws = wb.active; ws.title = 'Profit Report'
+        ws.append(_PROFIT_HEADERS)
+        for r in _fetch_profit_rows(clauses):
+            ws.append([r['invoice_number'], r['invoice_date'], r['customer_name'], r['revenue'],
+                       r['cost'], r['gross_profit'], r['gst'], r['discount'], r['net_profit']])
     else:
         abort(404)
-    _style_excel(ws)
+    for _ws in wb.worksheets:
+        _style_excel(_ws)
     buf = io.BytesIO(); wb.save(buf); buf.seek(0)
     return send_file(buf, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                      as_attachment=True, download_name=fname + '.xlsx')
@@ -5702,6 +6078,17 @@ def _pdf_dataset(report_type, clauses, user_map):
         rows = [[r['name'], r['sku'], r['brand'], r['category'], r['stock'], r['min_stock'],
                  r['max_stock'], r['suggested']] for r in _fetch_low_stock_rows()]
         return 'Low Stock Report', 'Products at or below minimum stock', headers, rows
+    if report_type == 'gst':
+        rows = [[r['invoice_number'], r['invoice_date'], r['customer_name'], r['customer_gstin'],
+                 r['state_code'], r['state'], r['supply_type'], round(r['taxable'], 2),
+                 round(r['cgst'], 2), round(r['sgst'], 2), round(r['igst'], 2),
+                 round(r['tax'], 2), round(r['grand_total'], 2)] for r in _fetch_gst_rows(clauses)]
+        return 'GST Report', 'Invoice-wise GST register', _GST_REGISTER_HEADERS, rows
+    if report_type == 'profit':
+        rows = [[r['invoice_number'], r['invoice_date'], r['customer_name'], round(r['revenue'], 2),
+                 round(r['cost'], 2), round(r['gross_profit'], 2), round(r['gst'], 2),
+                 round(r['discount'], 2), round(r['net_profit'], 2)] for r in _fetch_profit_rows(clauses)]
+        return 'Profit Report', 'Invoice-level revenue and margin', _PROFIT_HEADERS, rows
     abort(404)
 
 
